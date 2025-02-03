@@ -1,5 +1,5 @@
-node_modules
 .idea
+.vscode
 
 # Prerequisites
 *.d
@@ -34,8 +34,15 @@ node_modules
 *.out
 *.app
 
-# CMake build directory
-build
-
 # Apple index
 .DS_Store
+
+# CMake
+build
+cmake-build-debug
+
+# Music Files
+Music_Files
+.mp3
+.wav
+.m4a
