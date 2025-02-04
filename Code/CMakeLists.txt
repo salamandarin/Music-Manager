@@ -4,6 +4,8 @@ project(music)
 add_executable(music
         main.cpp
         metadata_manager.cpp
+        file_manager.cpp
+        core.cpp
 )
 target_compile_options(music PUBLIC -std=c++17)
 
