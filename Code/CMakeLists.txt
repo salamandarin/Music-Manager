@@ -1,7 +1,10 @@
 cmake_minimum_required(VERSION 3.13)
 project(music)
 
-add_executable(music main.cpp)
+add_executable(music
+        main.cpp
+        metadata_manager.cpp
+)
 target_compile_options(music PUBLIC -std=c++17)
 
 # Use pkg-config to locate TagLib

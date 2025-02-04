@@ -1,10 +1,14 @@
 // Samuel Sutton - 2025
-#include <iostream>
 #include <taglib/fileref.h>
 #include <taglib/tag.h>
-
  int main() {
      try {
+         // test reading track data
+         std::cout << "Choose a track to read the metadata from:\n";
+//         display_music_library();
+         int track_choice;
+         std::cin >> track_choice;
+
          // open .mp3 file, check if null
          TagLib::FileRef file("../../Music_Files/dust bowl (demo).mp3");
          if (file.isNull()) {
