@@ -1,5 +1,6 @@
 // Samuel Sutton - 2025
 #pragma once
+#include "track.h"
 #include <string>
 #include <taglib/fileref.h>
 
@@ -8,6 +9,7 @@ public:
     MetadataManager(const std::string& file_path); // constructor
 
     // ---------- GET DATA ----------
+    Track& get_data();
 
     TagLib::String get_track_title();
     TagLib::String get_artist();

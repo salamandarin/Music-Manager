@@ -2,30 +2,50 @@
 #include "file_manager.h"
 #include "metadata_manager.h"
 #include "database_manager.h"
-#include "Data_Types/artist.h"
+#include "artist.h"
+#include <iostream> //TODO: DELETE
 
 void FileManager::move_file(const std::string& current_path, const std::string& new_path){
     // TODO: WRITE CODE
+
+    //TODO: DELETE THIS
+    std::cout << "Pretending to move file......\n\n";
+    std::cout << "File moving from:\n";
+    std::cout << "\t\t" << current_path << "\n";
+    std::cout << "to: \t" << new_path << "\n\n";
+    std::cout << "File moved! [not actually though]\n\n";
 }
 
 std::string FileManager::add_file(const std::string& file_path, const Track& track_data) {
-    std::string new_path = "Music_Files/" // base path for music files
+    std::string new_path = "../../Music_Files/"; // base path for music files
 
     // gather artist real name to add that + artist name to path
-    DatabaseManager database_manager;
-    Artist artist = database_manager.find_artist(track_data.artist)
-    if (!artist) { // if artist isn't in database already
-        // TODO: check if right + scope
-        new_path += (track_data.artist + "/" + track_data.artist + "/"); // artist name x2 cuz person_name/artist_name
+    if (!track_data.artist.empty()) { // if there is artist info
+        DatabaseManager database_manager;
+        std::optional<Artist> possible_artist = database_manager.find_artist(track_data.artist);
+        Artist artist;
+        if (possible_artist) { // if artist is in database already
+            artist = *possible_artist; // TODO: check scope
+        }
+        else { // if artist isn't in database already (therefore person behind isn't known)
+            artist.name = track_data.artist; // TODO: check scope
+            artist.person_behind = track_data.artist; // just use artist name as person name
+        }
+        // add person_behind + artist to path
+        new_path += (artist.person_behind + "/" + artist.name + "/"); // TODO: check scope
     }
-    else { // person_behind/artist_name
-        // TODO: check if right + scope
-        new_path += (artist.person_behind + "/" + artist.artist_name + "/");
+    // if no artist info, add "Artist Unknown" to path
+    else {
+        new_path += "Artist_Unknown/"; // TODO: check scope
     }
 
     // add album name to path (if exists)
-    if (track_data.album) {
-        new_path += (track_data.album + "/");
+    if (!track_data.album.empty()) {
+        new_path += (track_data.album + "/"); // TODO: check scope
+    }
+    // if no album info, add "Album Unknown" tp path
+    else {
+        new_path += "Album_Unknown/"; // TODO: check scope
     }
 
     // move file to new directory

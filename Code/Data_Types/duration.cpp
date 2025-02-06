@@ -3,6 +3,10 @@
 #include <stdexcept>
 #include <string>
 
+// default constructor
+Duration::Duration()
+    :minutes{0}, seconds{0}, duration_in_seconds{0} {}
+
 Duration::Duration(int minutes, int seconds)
    :minutes{minutes}, seconds{seconds}, duration_in_seconds{calc_duration_in_seconds()} {
        if (seconds > 60) {

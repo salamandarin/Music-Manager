@@ -4,7 +4,7 @@
 
 MetadataManager::MetadataManager(const std::string& file_path)
     // save info, open file
-    :file_name{file_path.c_str()}, file(this->file_name), tag{file.tag()} { // save file path, open file
+    :file_name{file_path.c_str()}, file(this->file_name), tag{file.tag()} { // save file path, open file with TagLib
     // check for errors opening file
     if (file.isNull()) {
         throw std::runtime_error("Could not find/open file: " + file_path);
@@ -19,6 +19,17 @@ MetadataManager::MetadataManager(const std::string& file_path)
 //--------------------------------------------------------------------------------
 //                                  GET DATA
 //--------------------------------------------------------------------------------
+Track& MetadataManager::get_data() {
+    Track track_data;
+    // TODO: CODE
+
+    track_data.file_path = file_name;
+
+    return track_data;
+}
+
+
+
 TagLib::String MetadataManager::get_track_title() {
     return tag->title();
 }

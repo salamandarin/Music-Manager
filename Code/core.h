@@ -1,5 +1,6 @@
 // Samuel Sutton - 2025
 #pragma once
+#include <string>
 
 class Core {
 public:
