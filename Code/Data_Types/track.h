@@ -9,6 +9,6 @@ struct Track {
     std::string artist;
     std::string album;
     Duration duration;
-    std::optional<Date> Date;
+    std::optional<Date> date;
     std::string file_path;
 };

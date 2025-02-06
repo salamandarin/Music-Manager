@@ -1,5 +1,6 @@
 // Samuel Sutton - 2025
 #include "core.h"
+#include "print_structs.h" // TODO: DELETE
 #include <taglib/fileref.h>
 #include <taglib/tag.h>
 
@@ -13,6 +14,11 @@ int main() {
         int track_choice;
         std::cin >> track_choice;
         //TODO: finish this.....
+
+
+
+        Track test_track{"test track", "", "test album"};
+        std::cout << test_track;
 
 
         // test adding file

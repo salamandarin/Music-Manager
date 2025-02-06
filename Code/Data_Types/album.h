@@ -5,8 +5,8 @@
 
 struct Album {
     std::string title;
-    Date date;
     std::string artist;
+    std::optional<Date> date;
     std::string image_path;
     std::string type;
 };
