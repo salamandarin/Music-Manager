@@ -11,15 +11,17 @@ public:
     // ---------- GET DATA ----------
     Track& get_data();
 
+    // simple getters
     TagLib::String get_track_title();
     TagLib::String get_artist();
     TagLib::String get_album();
-    unsigned int get_track_num();
+    unsigned int get_tracklist_num();
 
-//    Duration get_duration();
-//    Date get_date();
-//    ??? get_cover_art(); // include alts if id3v2
+    // complex getters
+    Duration get_duration();
+    std::string get_cover_art(); // include alts if id3v2 // TODO: RETURN TYPE?????
 
+    // super complex getters
 //    TagLib::String get_file_type();
 //    TagLib::String get_file_size();
 //    TagLib::String get_file_path();
@@ -34,11 +36,10 @@ public:
 
 
     // ---------- SET DATA ----------
-
     void set_track_title(TagLib::String new_track_title);
     void set_artist(TagLib::String new_artist);
     void set_album(TagLib::String new_album);
-    void set_track_num(unsigned int new_track_num);
+    void set_tracklist_num(unsigned int new_tracklist_num);
 
 
 private:
