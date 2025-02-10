@@ -1,6 +1,7 @@
 // Samuel Sutton - 2025
 #include "core.h"
 #include "print_structs.h" // TODO: DELETE
+#include "metadata_manager.h" // TODO: DELETE
 #include <vector> // TODO: DELETE (only using for printing files)
 #include <taglib/fileref.h>
 #include <taglib/tag.h>
@@ -82,7 +83,7 @@ void edit_metadata_demo(Core& core) {
     int track_choice;
     std::cin >> track_choice;
 
-    if (track_choice > 0 && < files.size()) {
+    if (track_choice > 0 && track_choice < files.size()) {
         MetadataManager metadata_manager{files[track_choice].file_path};
         Track track_data = metadata_manager.get_data();
         std::cout << track_data;
@@ -97,13 +98,13 @@ void edit_metadata_demo(Core& core) {
 void print_music_files(const std::vector<Track>& files) {
     std::cout << "----------------------------------------------------------------------------------------------------\n";
     for (int i = 0; i < files.size(); ++i) {
-        std::cout << i << "\t" << file.title << "\t" << file.artist << "\t" << file.album << "\t" << file.duration << "\n";
+        std::cout << i << "\t" << files[i].title << "\t" << files[i].artist << "\t" << files[i].album << "\t" << files[i].duration << "\n";
         std::cout << "----------------------------------------------------------------------------------------------------\n";
     }
 }
 
 void display_music_library_demo() {
-    std::cout << "         [0]                         [1]                         [2]                         [3]\n"
+    std::cout << "         [0]                         [1]                         [2]                         [3]\n";
     std::cout << "*********************       *********************       *********************       *********************\n";
     std::cout << "*********************       *********************       *********************       *********************\n";
     std::cout << "*********************       *********************       *********************       *********************\n";
