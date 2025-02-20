@@ -2,7 +2,7 @@
 #include "print_structs.h"
 
 std::ostream& operator<<(std::ostream& os, const Track& track) {
-    os << "TRACK DATA\n";
+    os << "\nTRACK DATA\n";
     os << "--------------------\n";
     os << "Title: " << track.title << "\n";
     os << "Artist: " << track.artist << "\n";
@@ -19,7 +19,7 @@ std::ostream& operator<<(std::ostream& os, const Track& track) {
 }
 
 std::ostream& operator<<(std::ostream& os, const Album& album) {
-    os << "ALBUM DATA\n";
+    os << "\nALBUM DATA\n";
     os << "--------------------\n";
     os << "Title: " << album.title << "\n";
     os << "Artist: " << album.artist << "\n";
@@ -34,7 +34,7 @@ std::ostream& operator<<(std::ostream& os, const Album& album) {
 }
 
 std::ostream& operator<<(std::ostream& os, const Artist& artist) {
-    os << "ARTIST DATA\n";
+    os << "\nARTIST DATA\n";
     os << "--------------------\n";
     os << "Name: " << artist.name << "\n";
     os << "Person Behind: " << artist.person_behind << "\n";

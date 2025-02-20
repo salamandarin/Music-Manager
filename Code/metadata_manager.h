@@ -9,13 +9,13 @@ public:
     MetadataManager(const std::string& file_path); // constructor
 
     // ---------- GET DATA ----------
-    Track& get_data();
+    Track get_data();
 
     // simple getters
-    TagLib::String get_track_title();
-    TagLib::String get_artist();
-    TagLib::String get_album();
-    unsigned int get_tracklist_num();
+    std::string get_track_title();
+    std::string get_artist();
+    std::string get_album();
+    int get_tracklist_num();
 
     // complex getters
     Duration get_duration();

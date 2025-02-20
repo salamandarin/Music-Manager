@@ -19,37 +19,42 @@ MetadataManager::MetadataManager(const std::string& file_path)
 //--------------------------------------------------------------------------------
 //                                  GET DATA
 //--------------------------------------------------------------------------------
-Track& MetadataManager::get_data() {
+Track MetadataManager::get_data() {
     Track track;
 
-    track.title = get_track_title(); // TODO: check on going from TagLib::String -> string
-    track.artist = get_artist(); // TODO: check on going from TagLib::String -> string
-    track.album = get_album(); // TODO: check on going from TagLib::String -> string
-    track.tracklist_num = get_tracklist_num(); // TODO: check on going from unsigned int -> int
-    track.duration = get_duration();
+   track.title = get_track_title();
+   track.artist = get_artist();
+   track.album = get_album();
+   track.tracklist_num = get_tracklist_num();
+   track.duration = get_duration();
     // file doesn't hold date - must be manually added to DB
-    track_data.file_path = file_name; // TODO: either keep same, or use tag->complexProperties->GENERALOBJECT->fileName
+    track.file_path = file_name; // TODO: either keep same, or use tag->complexProperties->GENERALOBJECT->fileName
 
     //TODO: add more fields?
 
-    return track_data;
+    return track;
 }
 
 
 
 // ---------- Simple Data Getters ----------
-// TODO: Possibly do data type conversions before returning??? (depending on data types using)
-TagLib::String MetadataManager::get_track_title() {
-    return tag->title();
+std::string MetadataManager::get_track_title() {
+    std::string title_string = tag->title().to8Bit();
+    return title_string;
 }
-TagLib::String MetadataManager::get_artist() {
-    return tag->artist();
+std::string MetadataManager::get_artist() {
+    std::string artist_string = tag->artist().to8Bit();
+    return artist_string;
 }
-TagLib::String MetadataManager::get_album() {
-    return tag->album();
+std::string MetadataManager::get_album() {
+    std::string album_string = tag->album().to8Bit();
+    return album_string;
 }
-unsigned int MetadataManager::get_tracklist_num() {
-    return tag->track();
+int MetadataManager::get_tracklist_num() {
+    if (tag->track() > INT_MAX) {
+        throw std::out_of_range("Tried to get unsigned int value of tracklist number that exceeds INT_MAX");
+    }
+    return static_cast<int>(tag->track());
 }
 
 

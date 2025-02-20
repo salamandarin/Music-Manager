@@ -6,30 +6,37 @@
 #include <taglib/fileref.h>
 #include <taglib/tag.h>
 
-void choose_test_demo(Core& core);
-void add_file_demo(Core& core);
-void read_metadata_demo(Core& core);
-void edit_metadata_demo(Core& core);
+void choose_test_demo(Core& core, std::vector<std::string>& file_names);
+Track choose_track(const std::vector<std::string>& file_names);
 
-void print_music_files(const std::vector<Track>& files);
-void display_music_library_demo();
+void add_file_demo(Core& core);
+void read_metadata_demo(Core& core, const std::vector<std::string>& file_names);
+void edit_metadata_demo(Core& core, std::vector<std::string>& file_names);
+
+void print_music_files(const std::vector<std::string>& file_names);
 
 int main() {
     try {
+        std::string dust_bowl = "../../Music_Files/dust bowl (demo).mp3";
+        std::string lead_poisoning = "../../Music_Files/Lead Poisoning.mp3";
+        std::string nettles = "../../Music_Files/nettles (demo).mp3";
+        std::string pure_feeling = "../../Music_Files/Pure Feeling.mp3";
+        std::vector<std::string> file_names = {dust_bowl, lead_poisoning, nettles, pure_feeling};
+
         Core core;
-        choose_test_demo(core);
+        choose_test_demo(core, file_names);
     }
     catch (std::runtime_error& error) {
         std::cout << "Error: " << error.what() << "\n";
     }
  }
 
-void choose_test_demo(Core& core) {
-    std::cout << "Enter a number to choose a demo to test: (will run last demo by default if invalid input)\n";
-
-    std::cout << "\t[0] Demo - Add file to library\n";
-    std::cout << "\t[1] Demo - Read file metadata\n";
-    std::cout << "\t[2] Demo - Edit file metadata\n";
+void choose_test_demo(Core& core, std::vector<std::string>& file_names) {
+    std::cout << "Enter a number to choose a demo to test: (will run 'view files' default if invalid input)\n";
+    std::cout << "\t[0] Add file to library [DEMO]\n";
+    std::cout << "\t[1] Read file metadata [DEMO]\n";
+    std::cout << "\t[2] Edit file metadata [DEMO]\n";
+    std::cout << "\t[3] View files [DEMO]\n";
 
     std::cout << ">> ";
     int demo_choice;
@@ -38,11 +45,32 @@ void choose_test_demo(Core& core) {
     if (demo_choice == 0) {
         add_file_demo(core);
     }
-    if (demo_choice == 1) {
-        read_metadata_demo(core);
+    else if (demo_choice == 1) {
+        read_metadata_demo(core, file_names);
+    }
+    else if (demo_choice == 2) {
+        edit_metadata_demo(core, file_names);
     }
     else {
-        edit_metadata_demo(core);
+        print_music_files(file_names);
+    }
+}
+Track choose_track(const std::vector<std::string>& file_names) {
+    print_music_files(file_names);
+    std::cout << "Enter a track number: (will choose track 0 if invalid number is entered)\n";
+    std::cout << ">> ";
+    int track_num;
+    std::cin >> track_num;
+
+    if (track_num > 0 && track_num < file_names.size()) {
+        MetadataManager metadata_manager{file_names[track_num]};
+        Track track_data = metadata_manager.get_data();
+        return track_data;
+    }
+    else {
+        MetadataManager metadata_manager{file_names[0]};
+        Track track_data = metadata_manager.get_data();
+        return track_data;
     }
 }
 
@@ -54,64 +82,58 @@ void add_file_demo(Core& core) {
 }
 
 // test reading track data
-void read_metadata_demo(Core& core) {
-    std::cout << "Running 'test reading metadata' simulation......\n\n";
-    std::cout << "Choose a track to read the metadata from:\n";
-    // TODO: display_music_library();
-
-    std::cout << ">> ";
-    int track_choice;
-    std::cin >> track_choice;
-    //TODO: finish this.....
+void read_metadata_demo(Core& core, const std::vector<std::string>& file_names) {
+    std::cout << "\n\t\t\tRunning 'test reading metadata' simulation......\n\n";
+    Track track = choose_track(file_names);
+    std::cout << track;
 }
 
-void edit_metadata_demo(Core& core) {
-    Track dust_bowl = {"../../Music_Files/dust bowl (demo.mp3", "dust bowl (demo)"};
-    Track lead_poisoning = {"../../Music_Files/Lead Poisoning.mp3", "Lead Poisoning"};
-    Track nettles = {"../../Music_Files/nettles.mp3", "nettles (demo)"};
-    Track pure_feeling = {"../../Music_Files/Pure Feeling.mp3", "Pure Feeling"};
-    // TODO: maybe have file_manager get all tracks function??, use get_data() to fill out this?
-    std::vector<Track> files = {dust_bowl, lead_poisoning, nettles, pure_feeling};
+void edit_metadata_demo(Core& core, std::vector<std::string>& file_names) {
+    std::cout << "\n\t\t\tRunning 'test editing metadata' simulation......\n\n";
+    Track track = choose_track(file_names);
+    MetadataManager metadata_manager{track.file_path};
 
-
-    std::cout << "Running 'test reading metadata' simulation......\n\n";
-    std::cout << "Enter the number of the track you want to read the metadata from: (will read first track by default if invalid number is entered)\n";
-    display_music_library_demo();
-    print_music_files(files);
-    
+    std::cout << "Enter a number to choose a field to edit: (will select last option by default if invalid input)\n";
+    std::cout << "\t[0] Title\n";
+    std::cout << "\t[1] Artist\n";
+    std::cout << "\t[2] Album\n";
+    std::cout << "\t[3] Tracklist Number\n";
     std::cout << ">> ";
-    int track_choice;
-    std::cin >> track_choice;
+    int field_choice;
+    std::cin >> field_choice;
 
-    if (track_choice > 0 && track_choice < files.size()) {
-        MetadataManager metadata_manager{files[track_choice].file_path};
-        Track track_data = metadata_manager.get_data();
-        std::cout << track_data;
+    // clear input buffer
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    std::cout << "\nEnter the new data:\n>> ";
+    std::string new_data;
+    std::getline(std::cin, new_data);
+
+    if (field_choice == 0) {
+        metadata_manager.set_track_title(new_data);
+    }
+    else if (field_choice == 1) {
+        metadata_manager.set_artist(new_data);
+    }
+    else if (field_choice == 2) {
+        metadata_manager.set_album(new_data);
     }
     else {
-        MetadataManager metadata_manager{files[0].file_path};
-        Track track_data = metadata_manager.get_data();
-        std::cout << track_data;  
+        int new_num = std::stoi(new_data);
+        metadata_manager.set_tracklist_num(new_num);
     }
+
+    std::cout << metadata_manager.get_data();
 }
 
-void print_music_files(const std::vector<Track>& files) {
+void print_music_files(const std::vector<std::string>& file_names) {
+    std::cout << " #\t\tTitle\t\t\t\tArtist\t\t\t\t\tAlbum\t\t\t\t\tDuration\n";
     std::cout << "----------------------------------------------------------------------------------------------------\n";
-    for (int i = 0; i < files.size(); ++i) {
-        std::cout << i << "\t" << files[i].title << "\t" << files[i].artist << "\t" << files[i].album << "\t" << files[i].duration << "\n";
+    for (int i = 0; i < file_names.size(); ++i) {
+        MetadataManager metadata_manager{file_names[i]};
+        Track track = metadata_manager.get_data();
+
+        std::cout << " " << i << "\t" << track.title << "\t\t\t" << track.artist << "\t\t\t" << track.album << "\t\t\t" << track.duration << "\n";
         std::cout << "----------------------------------------------------------------------------------------------------\n";
     }
-}
-
-void display_music_library_demo() {
-    std::cout << "         [0]                         [1]                         [2]                         [3]\n";
-    std::cout << "*********************       *********************       *********************       *********************\n";
-    std::cout << "*********************       *********************       *********************       *********************\n";
-    std::cout << "*********************       *********************       *********************       *********************\n";
-    std::cout << "*********************       *********************       *********************       *********************\n";
-    std::cout << "*********************       *********************       *********************       *********************\n";
-    std::cout << "*********************       *********************       *********************       *********************\n";
-    std::cout << "*********************       *********************       *********************       *********************\n";
-    std::cout << "*********************       *********************       *********************       *********************\n";
-    std::cout << " dust bowl (demo).mp3        Lead Poisoning.mp3          nettles (demo).mp3           Pure Feeling.mp3\n\n";
 }
