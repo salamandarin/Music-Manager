@@ -127,13 +127,13 @@ void edit_metadata_demo(Core& core, std::vector<std::string>& file_names) {
 }
 
 void print_music_files(const std::vector<std::string>& file_names) {
-    std::cout << " #\t\tTitle\t\t\t\tArtist\t\t\t\t\tAlbum\t\t\t\t\tDuration\n";
+    std::cout << " #\t\tTitle\t\t\t\tArtist\t\t\t\t\tAlbum\t\t\t\t\tTrack Number\n";
     std::cout << "----------------------------------------------------------------------------------------------------\n";
     for (int i = 0; i < file_names.size(); ++i) {
         MetadataManager metadata_manager{file_names[i]};
         Track track = metadata_manager.get_data();
 
-        std::cout << " " << i << "\t" << track.title << "\t\t\t" << track.artist << "\t\t\t" << track.album << "\t\t\t" << track.duration << "\n";
+        std::cout << " " << i << "\t" << track.title << "\t\t\t" << track.artist << "\t\t\t" << track.album << "\t\t\t" << track.tracklist_num << "\n";
         std::cout << "----------------------------------------------------------------------------------------------------\n";
     }
 }

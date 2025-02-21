@@ -34,7 +34,6 @@ public:
 //    TagLib::String get_encoded_with();
 //    TagLib::String get_format();
 
-
     // ---------- SET DATA ----------
     void set_track_title(TagLib::String new_track_title);
     void set_artist(TagLib::String new_artist);
