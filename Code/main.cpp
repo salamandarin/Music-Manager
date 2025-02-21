@@ -78,7 +78,7 @@ void add_file_demo(Core& core) {
     // test adding file
     std::cout << "Running 'test adding file' simulation......\n\n";
     std::cout << "You are adding 'dust bowl (demo)' to your music library :)\n\n";
-    core.add_file("../../Music_Files/dust bowl (demo).mp3");
+    core.add_track("../../Music_Files/dust bowl (demo).mp3");
 }
 
 // test reading track data

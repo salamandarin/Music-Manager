@@ -15,6 +15,10 @@ Date::Date(int month, int day, int year)
         throw std::runtime_error("Tried to construct Date with year outside the range of 0-2500");
     }
 }
+// Default constructor
+Date::Date()
+    :month{Month{0}}, day{0}, year{0} {}
+
 
 // ---------- Equality Operators ----------
 bool Date::operator==(const Date& rhs) const {

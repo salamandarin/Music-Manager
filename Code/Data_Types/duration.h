@@ -5,10 +5,8 @@
 
 class Duration {
 public:
-    // default constructor
-    Duration();
-
     // constructors
+    Duration(); // default constructor
     Duration(int minutes, int seconds);
     Duration(int duration_in_seconds);
 

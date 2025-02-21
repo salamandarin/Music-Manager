@@ -22,14 +22,14 @@ void DatabaseManager::log_new_track(const Track& track_data) {
     std::cout << "Track added to database! [not actually though]\n\n";
 }
 
-void log_new_album(const Album& album_data) {
+void DatabaseManager::log_new_album(const Album& album_data) {
     // TODO: CODE
 
     // TODO: either check for already existing stuff here, or do before calling function
 
 
 }
-void log_new_artist(const Artist& artist_data) {
+void DatabaseManager::log_new_artist(const Artist& artist_data) {
     // TODO: CODE
 
     // TODO: either check for already existing stuff here, or do before calling function
@@ -39,7 +39,21 @@ void log_new_artist(const Artist& artist_data) {
 
 
 //--------------------------------------------------------------------------------
-//                                  TOOLS
+//                                  GET DATA
+//--------------------------------------------------------------------------------
+std::optional<std::string> DatabaseManager::get_file_path(const int& track_id) {
+    // TODO: WRITE CODE to return file path IF exists
+}
+
+//--------------------------------------------------------------------------------
+//                                  SET DATA
+//--------------------------------------------------------------------------------
+void DatabaseManager::set_track_date(const int& track_id, const Date& new_date) {
+    // TODO: CODE
+}
+
+//--------------------------------------------------------------------------------
+//                                  SEARCH TOOLS
 //--------------------------------------------------------------------------------
 // look for album title matches, return Album if found
 std::optional<Album> DatabaseManager::find_album(const std::string& album_title) {

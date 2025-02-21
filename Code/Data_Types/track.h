@@ -5,6 +5,7 @@
 #include <string>
 
 struct Track {
+    int id;
     std::string file_path;
     std::string title;
     std::string artist;

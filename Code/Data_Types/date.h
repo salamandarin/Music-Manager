@@ -6,6 +6,7 @@
 class Date {
 public:
     Date(int month, int day, int year); // Constructor
+    Date(); // Default constructor
 
     // Equality operators
     bool operator==(const Date& rhs) const;
