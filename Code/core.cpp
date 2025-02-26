@@ -21,13 +21,13 @@ void Core::add_track(const std::string& file_path) {
 
     // 3. log info to database
     DatabaseManager database_manager;
-    database_manager.log_new_track(track_data);
+    database_manager.add_track(track_data);
 }
 
 // ---------- Add Track w/o File ----------
 void Core::add_track(const Track& track) {
     DatabaseManager database_manager;
-    database_manager.log_new_track(track);
+    database_manager.add_track(track);
 }
 
 //--------------------------------------------------------------------------------

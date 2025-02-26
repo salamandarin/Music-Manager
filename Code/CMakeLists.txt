@@ -23,6 +23,8 @@ target_include_directories(music PRIVATE ${TAGLIB_INCLUDE_DIRS})
 target_link_directories(music PRIVATE ${TAGLIB_LIBRARY_DIRS})
 target_link_libraries(music PRIVATE ${TAGLIB_LIBRARIES})
 
+find_package(SQLite3 REQUIRED)
+target_link_libraries(music PRIVATE SQLite::SQLite3)
 
 
 # TEST EXECUTABLE

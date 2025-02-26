@@ -6,11 +6,12 @@
 
 struct Track {
     int id;
-    std::string file_path;
     std::string title;
     std::string artist;
     std::string album;
-    int tracklist_num;
     Duration duration;
     std::optional<Date> date;
+    int tracklist_num;
+    std::string file_path;
+    std::string image_path;
 };

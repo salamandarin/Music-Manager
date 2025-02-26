@@ -42,7 +42,11 @@ build
 cmake-build-debug
 
 # Music Files
-Music_Files
-.mp3
-.wav
-.m4a
+Music_Files/*
+*.mp3
+*.wav
+*.m4a
+
+# Database
+*.db
+*.sqlite

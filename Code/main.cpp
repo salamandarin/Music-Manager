@@ -2,6 +2,7 @@
 #include "core.h"
 #include "print_structs.h" // TODO: DELETE
 #include "metadata_manager.h" // TODO: DELETE
+#include "database_manager.h" // TODO: DELETE
 #include <vector> // TODO: DELETE (only using for printing files)
 #include <taglib/fileref.h>
 #include <taglib/tag.h>
@@ -17,17 +18,21 @@ void print_music_files(const std::vector<std::string>& file_names);
 
 int main() {
     try {
-        std::string dust_bowl = "../../Music_Files/dust bowl (demo).mp3";
-        std::string lead_poisoning = "../../Music_Files/Lead Poisoning.mp3";
-        std::string nettles = "../../Music_Files/nettles (demo).mp3";
-        std::string pure_feeling = "../../Music_Files/Pure Feeling.mp3";
-        std::vector<std::string> file_names = {dust_bowl, lead_poisoning, nettles, pure_feeling};
+        DatabaseManager database_manager;
 
-        Core core;
-        choose_test_demo(core, file_names);
+        database_manager.add_person("test person");
+
+        // std::string dust_bowl = "../../Music_Files/dust bowl (demo).mp3";
+        // std::string lead_poisoning = "../../Music_Files/Lead Poisoning.mp3";
+        // std::string nettles = "../../Music_Files/nettles (demo).mp3";
+        // std::string pure_feeling = "../../Music_Files/Pure Feeling.mp3";
+        // std::vector<std::string> file_names = {dust_bowl, lead_poisoning, nettles, pure_feeling};
+
+        // Core core;
+        // choose_test_demo(core, file_names);
     }
     catch (std::runtime_error& error) {
-        std::cout << "Error: " << error.what() << "\n";
+        std::cout << "\nError: " << error.what() << "\n";
     }
  }
 
