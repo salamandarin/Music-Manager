@@ -20,7 +20,12 @@ int main() {
     try {
         DatabaseManager database_manager;
 
-        database_manager.add_person("test person");
+        database_manager.add_person("person 1");
+        database_manager.add_person("person 2");
+        database_manager.add_person("person 3");
+        database_manager.add_person("person 4");
+        database_manager.remove_person(3);
+
         database_manager.add_artist(Artist{0, "test artist"});
         database_manager.add_album(Album{0, "test album"});
         database_manager.add_track(Track{0, "test track"});

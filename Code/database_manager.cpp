@@ -171,7 +171,21 @@ void DatabaseManager::remove_artist(int artist_id) {
     // TODO: CODE (remove albums, artists, people too if they no longer have any tracks or CREDITS)
 }
 void DatabaseManager::remove_person(int person_id) {
+    
     // TODO: CODE (remove albums, artists, people too if they no longer have any tracks or CREDITS)
+
+    // prep & bind sql
+    const char* sql_to_prep = "DELETE FROM people WHERE person_id = ?";
+    sqlite3_stmt* sql = prepare_sql(sql_to_prep);
+    bind_input_to_sql(sql, 1, person_id);
+
+    // execute
+    if (sqlite3_step(sql) != SQLITE_DONE) {
+        sqlite3_finalize(sql);  // clean up if failed
+        throw std::runtime_error(sqlite3_errmsg(database));
+    }
+
+    sqlite3_finalize(sql); // clean up sql statement
 }
 
 
