@@ -50,21 +50,21 @@ private:
         int number;
         std::string name;
 
-        std::string find_month_name(const int& month_number) const;
+        std::string find_month_name(int month_number) const;
         int find_month_number(const std::string& month_name) const;
 
         std::string set_month(int month_number);
 
         bool operator==(const Month& rhs) const;
-        bool operator==(const int& rhs) const;
+        bool operator==(int rhs) const;
         bool operator==(const std::string& rhs) const;
 
         bool operator<(const Month& rhs) const;
-        bool operator<(const int& rhs) const;
+        bool operator<(int rhs) const;
         bool operator<(const std::string& rhs) const;
 
         bool operator>(const Month& rhs) const;
-        bool operator>(const int& rhs) const;
+        bool operator>(int rhs) const;
         bool operator>(const std::string& rhs) const;
     };
 

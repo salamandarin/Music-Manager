@@ -33,7 +33,7 @@ void Core::add_track(const Track& track) {
 //--------------------------------------------------------------------------------
 //                                  REMOVE TRACK
 //--------------------------------------------------------------------------------
-void Core::remove_track(const int& track_id) {
+void Core::remove_track(int track_id) {
     // TODO: WRITE CODE
 
     // remove actual file (IF exists)
@@ -46,7 +46,7 @@ void Core::remove_track(const int& track_id) {
 //--------------------------------------------------------------------------------
 
 // ---------- INFO IN BOTH DATABASE & METADATA ----------
-void Core::set_track_title(const int& track_id, const std::string& new_track_title) {
+void Core::set_track_title(int track_id, const std::string& new_track_title) {
     // TODO: CODE - MAY OR MAY NOT HAVE FILE
 
     // check if it has file attached
@@ -65,20 +65,20 @@ void Core::set_track_title(const int& track_id, const std::string& new_track_tit
     // update title in DB
     // TODO: CODE
 }
-void Core::set_track_artist(const int& track_id, const std::string& new_artist) {
+void Core::set_track_artist(int track_id, const std::string& new_artist) {
     // TODO: CODE - MAY OR MAY NOT HAVE FILE
 }
-void Core::set_track_album(const int& track_id, const std::string& new_album) {
+void Core::set_track_album(int track_id, const std::string& new_album) {
     // TODO: CODE - MAY OR MAY NOT HAVE FILE
 }
 
 // ---------- METADATA ONLY INFO ----------
-void Core::set_track_tracklist_num(const int& track_id, const int& new_tracklist_num) {
+void Core::set_track_tracklist_num(int track_id, int new_tracklist_num) {
     // TODO: CODE - MAY OR MAY NOT HAVE FILE
 }
 
 // ---------- DATABASE ONLY INFO ----------
-void Core::set_track_date(const int& track_id, const Date& new_date) {
+void Core::set_track_date(int track_id, const Date& new_date) {
     DatabaseManager database_manager;
     database_manager.set_track_date(track_id, new_date);
 }
@@ -86,7 +86,7 @@ void Core::set_track_date(const int& track_id, const Date& new_date) {
 //--------------------------------------------------------------------------------
 //                                  GET TRACK DATA
 //--------------------------------------------------------------------------------
-Track Core::get_track_data(const int& track_id) {
+Track Core::get_track_data(int track_id) {
     // TODO: CODE
 
     // info to fetch from DB

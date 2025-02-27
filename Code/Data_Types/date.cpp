@@ -216,7 +216,7 @@ std::ostream& operator<<(std::ostream& os, const Date date) {
 Date::Month::Month(int number)
     :number{number}, name{find_month_name(number)} {}
 
-std::string Date::Month::find_month_name(const int& month_number) const {
+std::string Date::Month::find_month_name(int month_number) const {
     if (month_number == 0) {
         return "null";
     }
@@ -314,7 +314,7 @@ std::string Date::Month::set_month(int month_number)  {
 bool Date::Month::operator==(const Month& rhs) const {
     return number == rhs.number;
 }
-bool Date::Month::operator==(const int& rhs) const {
+bool Date::Month::operator==(int rhs) const {
     return number == rhs;
 }
 bool Date::Month::operator==(const std::string& rhs) const {
@@ -325,7 +325,7 @@ bool Date::Month::operator==(const std::string& rhs) const {
 bool Date::Month::operator<(const Month& rhs) const {
     return number < rhs.number;
 }
-bool Date::Month::operator<(const int& rhs) const {
+bool Date::Month::operator<(int rhs) const {
     return number < rhs;
 }
 bool Date::Month::operator<(const std::string& rhs) const {
@@ -335,7 +335,7 @@ bool Date::Month::operator<(const std::string& rhs) const {
 bool Date::Month::operator>(const Month& rhs) const {
     return number > rhs.number;
 }
-bool Date::Month::operator>(const int& rhs) const {
+bool Date::Month::operator>(int rhs) const {
     return number > rhs;
 }
 bool Date::Month::operator>(const std::string& rhs) const {

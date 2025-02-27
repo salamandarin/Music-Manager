@@ -20,17 +20,17 @@ public:
     void add_person(const std::string& person);
 
     // remove objects from DB
-    void remove_track(const int& track_id);
-    void remove_album(const int& album_id);
-    void remove_artist(const int& artist_id);
-    void remove_person(const int& person_id);
+    void remove_track(int track_id);
+    void remove_album(int album_id);
+    void remove_artist(int artist_id);
+    void remove_person(int person_id);
 
     // get data
-    std::optional<std::string> get_file_path(const int& track_id);
+    std::optional<std::string> get_file_path(int track_id);
     std::optional<int> get_person_id(const std::string& person_name);
 
     // set data
-    void set_track_date(const int& track_id, const Date& new_date);
+    void set_track_date(int track_id, const Date& new_date);
 
     // search if info exists in DB
     std::optional<Album> find_album(const std::string& album_title); // look for album title matches, return Album if found
