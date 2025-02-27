@@ -28,6 +28,9 @@ public:
     // get data
     std::optional<std::string> get_file_path(int track_id);
     std::optional<int> get_person_id(const std::string& person_name);
+    std::optional<int> get_artist_id(const std::string& artist_name);
+    std::optional<int> get_album_id(const std::string& album_title);
+    std::optional<int> get_album_type_id(const std::string& album_type);
 
     // set data
     void set_track_date(int track_id, const Date& new_date);
@@ -39,8 +42,12 @@ public:
 private:
     void execute_sql(const std::string& sql); // only used in constructor
     sqlite3_stmt* prepare_sql(const char* sql_to_prepare);
-    void bind_input_to_sql(sqlite3_stmt* sql, int index, const std::string& input_value); // bind string
-    void bind_input_to_sql(sqlite3_stmt* sql, int index, int input_value); // bind int
+
+    // bind input to sql statement
+    void bind_input_to_sql(sqlite3_stmt* sql, int index, const std::optional<std::string>& input_value); // optional string
+    void bind_input_to_sql(sqlite3_stmt* sql, int index, const std::optional<int>& input_value); // optional int
+    void bind_input_to_sql(sqlite3_stmt* sql, int index, const std::string& input_value); // string
+    void bind_input_to_sql(sqlite3_stmt* sql, int index, int input_value); // int
 
     sqlite3* database;
 };
