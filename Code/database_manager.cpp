@@ -38,6 +38,12 @@ void DatabaseManager::add_track(const Track& track) {
 
     // TODO: fetch file data, add to DB (OR NOT CUZ MAY BE NON-FILE?? + outside scope of function)
  
+    // check if exists in DB already
+    std::optional<int> track_id = get_track_id(track.title);
+    if (track_id) {
+        return; // return early if found
+    }
+
     // get artist & album ids
     std::optional<int> artist_id = get_artist_id(track.artist);
     std::optional<int> album_id = get_album_id(track.album);
@@ -67,8 +73,13 @@ void DatabaseManager::add_track(const Track& track) {
 
     sqlite3_finalize(sql); // clean up sql statement
 }
-
 void DatabaseManager::add_album(const Album& album) {
+    // check if exists in DB already
+    std::optional<int> album_id = get_album_id(album.title);
+    if (album_id) {
+        return; // return early if found
+    }
+    
     // get artist & type ids
     std::optional<int> artist_id = get_artist_id(album.artist);
     std::optional<int> type_id = get_album_type_id(album.type);
@@ -94,8 +105,13 @@ void DatabaseManager::add_album(const Album& album) {
 
     sqlite3_finalize(sql); // clean up sql statement
 }
-
 void DatabaseManager::add_artist(const Artist& artist) {
+    // check if exists in DB already
+    std::optional<int> artist_id = get_artist_id(artist.name);
+    if (artist_id) {
+        return; // return early if found
+    }
+
     // get person id
     if (artist.person_behind.empty()) { // if no person passed in
         // TODO: 1. check if artist is in db already to get person_behind (OR NOT IF DONE IN PRIOR FUNCTION???)
@@ -122,6 +138,12 @@ void DatabaseManager::add_artist(const Artist& artist) {
     sqlite3_finalize(sql); // clean up sql statement
 }
 void DatabaseManager::add_person(const std::string& person) {
+    // check if exists in DB already
+    std::optional<int> person_id = get_person_id(person);
+    if (person_id) {
+        return; // return early if found
+    }
+
     // prep & bind sql
     const char* sql_to_prep = "INSERT INTO people (name) VALUES ( ? )";
     sqlite3_stmt* sql = prepare_sql(sql_to_prep);
@@ -154,13 +176,32 @@ void DatabaseManager::remove_person(int person_id) {
 
 
 //--------------------------------------------------------------------------------
-//                                  GET DATA
+//                                  GET ENTIRE OBJECTS
+//--------------------------------------------------------------------------------
+
+// look for album title matches, return Album if found
+std::optional<Album> DatabaseManager::get_album(const std::string& album_title) {
+    //TODO: WRITE REAL CODE, maybe cut down duplicated code
+
+    // return album found (or nothing)
+}
+
+// look for artist name matches, return Artist if found
+std::optional<Artist> DatabaseManager::get_artist(const std::string& artist_name) {
+    //TODO: WRITE REAL CODE, maybe cut down duplicated code
+
+    // return artist found (or nothing)
+}
+
+//--------------------------------------------------------------------------------
+//                                  GET SPECIFIC DATA
 //--------------------------------------------------------------------------------
 std::optional<std::string> DatabaseManager::get_file_path(int track_id) {
     // TODO: WRITE CODE to return file path IF exists
     return std::nullopt;
 }
 
+// ------------------------- GET ID BY NAME -------------------------
 std::optional<int> DatabaseManager::get_id_by_name(const std::string& name_to_search,
                                                    const std::string& table,
                                                    const std::string& id_type,
@@ -187,18 +228,21 @@ std::optional<int> DatabaseManager::get_id_by_name(const std::string& name_to_se
         return std::nullopt; 
     }                                        
 }
-
-std::optional<int> DatabaseManager::get_person_id(const std::string& person_name) {
-    return get_id_by_name(person_name, "people", "person_id", "name");
-}
-std::optional<int> DatabaseManager::get_artist_id(const std::string& artist_name) {
-    return get_id_by_name(artist_name, "artists", "artist_id", "name");
+// ------------------------- GET ID BY NAME WRAPPERS -------------------------
+std::optional<int> DatabaseManager::get_track_id(const std::string& track_title) {
+    return get_id_by_name(track_title, "tracks", "track_id", "title");
 }
 std::optional<int> DatabaseManager::get_album_id(const std::string& album_title) {
     return get_id_by_name(album_title, "albums", "album_id", "title");
 }
 std::optional<int> DatabaseManager::get_album_type_id(const std::string& album_type) {
     return get_id_by_name(album_type, "album_types", "type_id", "name");
+}
+std::optional<int> DatabaseManager::get_artist_id(const std::string& artist_name) {
+    return get_id_by_name(artist_name, "artists", "artist_id", "name");
+}
+std::optional<int> DatabaseManager::get_person_id(const std::string& person_name) {
+    return get_id_by_name(person_name, "people", "person_id", "name");
 }
 
 //--------------------------------------------------------------------------------
@@ -207,24 +251,6 @@ std::optional<int> DatabaseManager::get_album_type_id(const std::string& album_t
 void DatabaseManager::set_track_date(int track_id, const Date& new_date) {
     // TODO: CODE
 }
-
-//--------------------------------------------------------------------------------
-//                                  SEARCH TOOLS
-//--------------------------------------------------------------------------------
-// look for album title matches, return Album if found
-std::optional<Album> DatabaseManager::find_album(const std::string& album_title) {
-    //TODO: WRITE REAL CODE, maybe cut down duplicated code
-
-    // return album found (or nothing)
-}
-
-// look for artist name matches, return Artist if found
-std::optional<Artist> DatabaseManager::find_artist(const std::string& artist_name) {
-    //TODO: WRITE REAL CODE, maybe cut down duplicated code
-
-    // return artist found (or nothing)
-}
-
 
 //--------------------------------------------------------------------------------
 //                                  PRIVATE FUNCTIONS
@@ -251,7 +277,7 @@ sqlite3_stmt* DatabaseManager::prepare_sql(const char* sql_to_prepare) {
     return new_sql;
 }
 
-// ------------------------- BIND -------------------------
+// ------------------------- BIND SQL -------------------------
 // optional string
 void DatabaseManager::bind_input_to_sql(sqlite3_stmt* sql, int index, const std::optional<std::string>& input_value) {
     if (input_value) {

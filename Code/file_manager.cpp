@@ -22,7 +22,7 @@ std::string FileManager::add_file(const std::string& file_path, const Track& tra
     // gather artist real name to add that + artist name to path
     if (!track_data.artist.empty()) { // if there is artist info
         DatabaseManager database_manager;
-        std::optional<Artist> possible_artist = database_manager.find_artist(track_data.artist);
+        std::optional<Artist> possible_artist = database_manager.get_artist(track_data.artist);
         Artist artist;
         if (possible_artist) { // if artist is in database already
             artist = *possible_artist; // TODO: check scope

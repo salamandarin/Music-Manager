@@ -25,24 +25,26 @@ public:
     void remove_artist(int artist_id);
     void remove_person(int person_id);
 
-    // get data
+    // get data for entire objects
+    std::optional<Album> get_album(const std::string& album_title); // look for album title matches, return Album if found
+    std::optional<Artist> get_artist(const std::string& artist_name); // look for artist name matches, return Artist if found
+
+    // get specific data
     std::optional<std::string> get_file_path(int track_id);
-    
-    std::optional<int> DatabaseManager::get_id_by_name(const std::string& name_to_search,
+
+    std::optional<int> get_id_by_name(const std::string& name_to_search,
                                                        const std::string& table,
                                                        const std::string& id_type,
                                                        const std::string& name_type);
-    std::optional<int> get_person_id(const std::string& person_name);
-    std::optional<int> get_artist_id(const std::string& artist_name);
+    std::optional<int> get_track_id(const std::string& track_title);
     std::optional<int> get_album_id(const std::string& album_title);
     std::optional<int> get_album_type_id(const std::string& album_type);
+    std::optional<int> get_artist_id(const std::string& artist_name);
+    std::optional<int> get_person_id(const std::string& person_name);
 
     // set data
     void set_track_date(int track_id, const Date& new_date);
 
-    // search if info exists in DB
-    std::optional<Album> find_album(const std::string& album_title); // look for album title matches, return Album if found
-    std::optional<Artist> find_artist(const std::string& artist_name); // look for artist name matches, return Artist if found
 
 private:
     void execute_sql(const std::string& sql); // only used in constructor
