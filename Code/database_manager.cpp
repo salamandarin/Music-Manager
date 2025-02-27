@@ -161,23 +161,45 @@ std::optional<std::string> DatabaseManager::get_file_path(int track_id) {
     return std::nullopt;
 }
 
-std::optional<int> DatabaseManager::get_person_id(const std::string& person_name) {
-    // TODO: WRITE CODE to return id IF exists (also person_name could be "")
-    return std::nullopt;
-}
-std::optional<int> DatabaseManager::get_artist_id(const std::string& artist_name) {
-    // TODO: WRITE CODE to return id IF exists (also artist_name could be "")
-    return std::nullopt;
-}
-std::optional<int> DatabaseManager::get_album_id(const std::string& album_title) {
-    // TODO: WRITE CODE to return id IF exists (also album_title could be "")
-    return std::nullopt;
-}
-std::optional<int> DatabaseManager::get_album_type_id(const std::string& album_type) {
-    // TODO: WRITE CODE to return id IF exists (also album_type could be "")
-    return std::nullopt;
+std::optional<int> DatabaseManager::get_id_by_name(const std::string& name_to_search,
+                                                   const std::string& table,
+                                                   const std::string& id_type,
+                                                   const std::string& name_type) {
+    // if no name provided
+    if (name_to_search.empty()) {
+        return std::nullopt;
+    }
+
+    std::string sql_to_prep = "SELECT " + id_type + " FROM " + table + " WHERE " + name_type + " = ?;";
+    sqlite3_stmt* sql = prepare_sql(sql_to_prep.c_str());
+    bind_input_to_sql(sql, 1, name_to_search);
+
+    int result = sqlite3_step(sql);
+    // if result is found
+    if (result == SQLITE_ROW) {
+        int id = sqlite3_column_int(sql, 0);
+        sqlite3_finalize(sql); // clean up sql statement
+        return id;
+    }
+    // if result is NOT found
+    else {
+        sqlite3_finalize(sql); // clean up sql statement
+        return std::nullopt; 
+    }                                        
 }
 
+std::optional<int> DatabaseManager::get_person_id(const std::string& person_name) {
+    return get_id_by_name(person_name, "people", "person_id", "name");
+}
+std::optional<int> DatabaseManager::get_artist_id(const std::string& artist_name) {
+    return get_id_by_name(artist_name, "artists", "artist_id", "name");
+}
+std::optional<int> DatabaseManager::get_album_id(const std::string& album_title) {
+    return get_id_by_name(album_title, "albums", "album_id", "title");
+}
+std::optional<int> DatabaseManager::get_album_type_id(const std::string& album_type) {
+    return get_id_by_name(album_type, "album_types", "type_id", "name");
+}
 
 //--------------------------------------------------------------------------------
 //                                  SET DATA
