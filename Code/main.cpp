@@ -21,6 +21,10 @@ int main() {
         DatabaseManager database_manager;
 
         database_manager.add_person("test person");
+        database_manager.add_artist(Artist{1, "test artist"});
+        database_manager.add_person("bobberino");
+
+
 
         // std::string dust_bowl = "../../Music_Files/dust bowl (demo).mp3";
         // std::string lead_poisoning = "../../Music_Files/Lead Poisoning.mp3";

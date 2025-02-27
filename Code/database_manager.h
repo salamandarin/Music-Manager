@@ -14,10 +14,10 @@ public:
     ~DatabaseManager();
 
     // add new objects to DB
-    void add_track(const Track& track_data); // add new track and its data to DB
-    void add_album(const Album& album_data);
-    void add_artist(const Artist& artist_data);
-    void add_person(const std::string& person_name);
+    void add_track(const Track& track); // add new track and its data to DB
+    void add_album(const Album& album);
+    void add_artist(const Artist& artist);
+    void add_person(const std::string& person);
 
     // remove objects from DB
     void remove_track(const int& track_id);
@@ -27,6 +27,7 @@ public:
 
     // get data
     std::optional<std::string> get_file_path(const int& track_id);
+    std::optional<int> get_person_id(const std::string& person_name);
 
     // set data
     void set_track_date(const int& track_id, const Date& new_date);
@@ -37,7 +38,9 @@ public:
 
 private:
     void execute_sql(const std::string& sql); // only used in constructor
-    sqlite3_stmt* prepare_sql(const char* sql_to_prepare, const std::string& input_value);
-    
+    sqlite3_stmt* prepare_sql(const char* sql_to_prepare);
+    void bind_input_to_sql(sqlite3_stmt* sql, int index, const std::string& input_value); // bind string
+    void bind_input_to_sql(sqlite3_stmt* sql, int index, int input_value); // bind int
+
     sqlite3* database;
 };
