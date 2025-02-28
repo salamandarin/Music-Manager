@@ -20,6 +20,7 @@ public:
 
     // remove objects
     void remove_track(int track_id);
+    void remove_track(const std::string& track_title);
     void remove_album(int album_id);
     void remove_artist(int artist_id);
     void remove_person(int person_id);

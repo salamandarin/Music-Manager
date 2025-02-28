@@ -14,6 +14,7 @@ void add_files_demo(Core& core,const std::vector<std::string>& file_names);
 void read_metadata_demo(Core& core, const std::vector<std::string>& file_names);
 void edit_metadata_demo(Core& core, std::vector<std::string>& file_names);
 void add_track_nonfile_track_demo(Core& core);
+void remove_track_from_db_demo(Core& core, std::vector<std::string>& file_names);
 
 void print_music_files(const std::vector<std::string>& file_names);
 
@@ -49,7 +50,7 @@ void choose_test_demo(Core& core, std::vector<std::string>& file_names) {
     std::cout << "\t[1] Read file metadata [DEMO]\n";
     std::cout << "\t[2] Edit file metadata [DEMO]\n";
     std::cout << "\t[3] Add new track (w/o file) [DEMO]\n";
-    std::cout << "\t[4] View files [DEMO]\n";
+    std::cout << "\t[4] Remove track (only from db) [DEMO]\n";
 
     std::cout << ">> ";
     int demo_choice;
@@ -66,6 +67,9 @@ void choose_test_demo(Core& core, std::vector<std::string>& file_names) {
     }
     else if (demo_choice == 3) {
         add_track_nonfile_track_demo(core);
+    }
+    else if (demo_choice == 4) {
+        remove_track_from_db_demo(core, file_names);
     }
     else {
         print_music_files(file_names);
@@ -168,6 +172,17 @@ void add_track_nonfile_track_demo(Core& core) {
     core.add_track(track);
 
     std::cout << "\nAdded '" << title << "' to database!\n";
+}
+
+void remove_track_from_db_demo(Core& core, std::vector<std::string>& file_names) {
+    // clear input buffer
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    std::cout << "\nEnter title of track to remove from Database:\n>> ";
+    std::string track_title;
+    std::getline(std::cin, track_title);
+
+    core.remove_track(track_title);
 }
 
 void print_music_files(const std::vector<std::string>& file_names) {
