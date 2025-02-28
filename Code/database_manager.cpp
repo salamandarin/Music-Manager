@@ -12,9 +12,6 @@ DatabaseManager::DatabaseManager() {
     if (return_code){
         throw std::runtime_error(sqlite3_errmsg(database));
     }
-    else {// TODO: DELETE
-        std::cout << "Opened database successfully\n";
-    }
 
     // initialize tables from .sql file
     std::string file_name = "../Database/tables.sql";
@@ -41,10 +38,7 @@ DatabaseManager::~DatabaseManager() {
 //--------------------------------------------------------------------------------
 //                                  ADD OBJECTS
 //--------------------------------------------------------------------------------
-void DatabaseManager::add_track(const Track& track) {
-
-    // TODO: fetch file data, add to DB (OR NOT CUZ MAY BE NON-FILE?? + outside scope of function)
- 
+void DatabaseManager::add_track(const Track& track) { 
     // check if exists in DB already
     std::optional<int> track_id = get_track_id(track.title);
     if (track_id) {
@@ -110,14 +104,7 @@ void DatabaseManager::add_artist(const Artist& artist) {
     }
 
     // get person id
-    if (artist.person_behind.empty()) { // if no person passed in
-        // TODO: 1. make artist.person_behind_id = artist.name, MAKE NEW PERSON
-        // TODO: 1. fetch id from new person made (OR CHANGE Artist artist.person_behind & CONTINUE TO THE FETCH STUFF BELOW)
-    }
-    // get person id if name passed in
     std::optional<int> possible_person_id = get_person_id(artist.person_behind);
-
-    // TODO: MAKE NEW PERSON
 
     // prep sql
     const char* sql_to_prep = "INSERT INTO artists (name, person_behind_id, image_path) VALUES (?, ?, ?)";
@@ -333,6 +320,15 @@ void DatabaseManager::bind_input_to_sql(sqlite3_stmt* sql, int index, const std:
 }
 // string
 void DatabaseManager::bind_input_to_sql(sqlite3_stmt* sql, int index, const std::string& input_value) {
+    // check if empty string, bind null if so
+    if (input_value.empty()) {
+        if (sqlite3_bind_null(sql, index) != SQLITE_OK) {
+            sqlite3_finalize(sql);  // clean up if failed
+            throw std::runtime_error(sqlite3_errmsg(database));
+        }
+        return;
+    }
+    // bind non-empty strings
     if (sqlite3_bind_text(sql, index, input_value.c_str(), -1, SQLITE_TRANSIENT) != SQLITE_OK) {
         throw std::runtime_error(sqlite3_errmsg(database));
     }
