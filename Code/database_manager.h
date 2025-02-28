@@ -32,10 +32,11 @@ public:
     // get specific data
     std::optional<std::string> get_file_path(int track_id);
 
+    // get id by name
     std::optional<int> get_id_by_name(const std::string& name_to_search,
-                                                       const std::string& table,
-                                                       const std::string& id_type,
-                                                       const std::string& name_type);
+                                      const std::string& table,
+                                      const std::string& id_label,
+                                      const std::string& name_label);
     std::optional<int> get_track_id(const std::string& track_title);
     std::optional<int> get_album_id(const std::string& album_title);
     std::optional<int> get_album_type_id(const std::string& album_type);
@@ -47,8 +48,8 @@ public:
 
 
 private:
-    void execute_sql(const std::string& sql); // only used in constructor
     sqlite3_stmt* prepare_sql(const char* sql_to_prepare);
+    void execute_sql(sqlite3_stmt* sql);
 
     // bind input to sql statement
     void bind_input_to_sql(sqlite3_stmt* sql, int index, const std::optional<std::string>& input_value); // optional string

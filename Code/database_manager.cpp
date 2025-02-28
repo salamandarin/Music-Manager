@@ -24,7 +24,13 @@ DatabaseManager::DatabaseManager() {
     }
     std::string tables_sql{std::istreambuf_iterator<char>{file}, {}};
     
-    execute_sql(tables_sql);
+    // execute tables_sql
+    char* error_message = nullptr;
+    if (sqlite3_exec(database, tables_sql.c_str(), nullptr, nullptr, &error_message) != SQLITE_OK) {
+        std::string error = "SQL error: " + std::string(error_message);
+        sqlite3_free(error_message);
+        throw std::runtime_error(error);
+    }
 }
 
 DatabaseManager::~DatabaseManager() {
@@ -66,12 +72,7 @@ void DatabaseManager::add_track(const Track& track) {
     bind_input_to_sql(sql, 8, track.image_path);
 
     // execute
-    if (sqlite3_step(sql) != SQLITE_DONE) {
-        sqlite3_finalize(sql);  // clean up if failed
-        throw std::runtime_error(sqlite3_errmsg(database));
-    }
-
-    sqlite3_finalize(sql); // clean up sql statement
+    execute_sql(sql);
 }
 void DatabaseManager::add_album(const Album& album) {
     // check if exists in DB already
@@ -98,12 +99,7 @@ void DatabaseManager::add_album(const Album& album) {
     bind_input_to_sql(sql, 5, album.image_path);
 
     // execute
-    if (sqlite3_step(sql) != SQLITE_DONE) {
-        sqlite3_finalize(sql);  // clean up if failed
-        throw std::runtime_error(sqlite3_errmsg(database));
-    }
-
-    sqlite3_finalize(sql); // clean up sql statement
+    execute_sql(sql);
 }
 void DatabaseManager::add_artist(const Artist& artist) {
     // check if exists in DB already
@@ -130,12 +126,7 @@ void DatabaseManager::add_artist(const Artist& artist) {
     bind_input_to_sql(sql, 3, artist.image_path);
 
     // execute
-    if (sqlite3_step(sql) != SQLITE_DONE) {
-        sqlite3_finalize(sql);  // clean up if failed
-        throw std::runtime_error(sqlite3_errmsg(database));
-    }
-
-    sqlite3_finalize(sql); // clean up sql statement
+    execute_sql(sql);
 }
 void DatabaseManager::add_person(const std::string& person) {
     // check if exists in DB already
@@ -150,12 +141,7 @@ void DatabaseManager::add_person(const std::string& person) {
     bind_input_to_sql(sql, 1, person);
 
     // execute
-    if (sqlite3_step(sql) != SQLITE_DONE) {
-        sqlite3_finalize(sql);  // clean up if failed
-        throw std::runtime_error(sqlite3_errmsg(database));
-    }
-
-    sqlite3_finalize(sql); // clean up sql statement
+    execute_sql(sql);
 }
 
 //--------------------------------------------------------------------------------
@@ -172,12 +158,7 @@ void DatabaseManager::remove_track(int track_id) {
     bind_input_to_sql(sql, 1, track_id);
 
     // execute
-    if (sqlite3_step(sql) != SQLITE_DONE) {
-        sqlite3_finalize(sql);  // clean up if failed
-        throw std::runtime_error(sqlite3_errmsg(database));
-    }
-
-    sqlite3_finalize(sql); // clean up sql statement
+    execute_sql(sql);
 }
 void DatabaseManager::remove_album(int album_id) {
     
@@ -190,12 +171,7 @@ void DatabaseManager::remove_album(int album_id) {
     bind_input_to_sql(sql, 1, album_id);
 
     // execute
-    if (sqlite3_step(sql) != SQLITE_DONE) {
-        sqlite3_finalize(sql);  // clean up if failed
-        throw std::runtime_error(sqlite3_errmsg(database));
-    }
-
-    sqlite3_finalize(sql); // clean up sql statement
+    execute_sql(sql);
 }
 void DatabaseManager::remove_artist(int artist_id) {
     
@@ -208,12 +184,7 @@ void DatabaseManager::remove_artist(int artist_id) {
     bind_input_to_sql(sql, 1, artist_id);
 
     // execute
-    if (sqlite3_step(sql) != SQLITE_DONE) {
-        sqlite3_finalize(sql);  // clean up if failed
-        throw std::runtime_error(sqlite3_errmsg(database));
-    }
-
-    sqlite3_finalize(sql); // clean up sql statement
+    execute_sql(sql);
 }
 void DatabaseManager::remove_person(int person_id) {
     
@@ -226,12 +197,7 @@ void DatabaseManager::remove_person(int person_id) {
     bind_input_to_sql(sql, 1, person_id);
 
     // execute
-    if (sqlite3_step(sql) != SQLITE_DONE) {
-        sqlite3_finalize(sql);  // clean up if failed
-        throw std::runtime_error(sqlite3_errmsg(database));
-    }
-
-    sqlite3_finalize(sql); // clean up sql statement
+    execute_sql(sql);
 }
 
 
@@ -264,14 +230,14 @@ std::optional<std::string> DatabaseManager::get_file_path(int track_id) {
 // ------------------------- GET ID BY NAME -------------------------
 std::optional<int> DatabaseManager::get_id_by_name(const std::string& name_to_search,
                                                    const std::string& table,
-                                                   const std::string& id_type,
-                                                   const std::string& name_type) {
+                                                   const std::string& id_label,
+                                                   const std::string& name_label) {
     // if no name provided
     if (name_to_search.empty()) {
         return std::nullopt;
     }
 
-    std::string sql_to_prep = "SELECT " + id_type + " FROM " + table + " WHERE " + name_type + " = ?;";
+    std::string sql_to_prep = "SELECT " + id_label + " FROM " + table + " WHERE " + name_label + " = ?;";
     sqlite3_stmt* sql = prepare_sql(sql_to_prep.c_str());
     bind_input_to_sql(sql, 1, name_to_search);
 
@@ -315,16 +281,6 @@ void DatabaseManager::set_track_date(int track_id, const Date& new_date) {
 //--------------------------------------------------------------------------------
 //                                  PRIVATE FUNCTIONS
 //--------------------------------------------------------------------------------
-void DatabaseManager::execute_sql(const std::string& sql) { // only used in constructor
-    char* error_message = nullptr;
-    int return_code = sqlite3_exec(database, sql.c_str(), nullptr, nullptr, &error_message);
-    if (return_code != SQLITE_OK) {
-        std::string error = "SQL error: " + std::string(error_message);
-        sqlite3_free(error_message);
-        throw std::runtime_error(error);
-    }
-}
-
 sqlite3_stmt* DatabaseManager::prepare_sql(const char* sql_to_prepare) {
     // prepare sql
     sqlite3_stmt* new_sql;
@@ -335,6 +291,16 @@ sqlite3_stmt* DatabaseManager::prepare_sql(const char* sql_to_prepare) {
     }
 
     return new_sql;
+}
+
+void DatabaseManager::execute_sql(sqlite3_stmt* sql) {
+    // execute
+    if (sqlite3_step(sql) != SQLITE_DONE) {
+        sqlite3_finalize(sql);  // clean up if failed
+        throw std::runtime_error(sqlite3_errmsg(database));
+    }
+
+    sqlite3_finalize(sql); // clean up sql statement
 }
 
 // ------------------------- BIND SQL -------------------------
