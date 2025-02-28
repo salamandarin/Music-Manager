@@ -37,6 +37,7 @@ DatabaseManager::~DatabaseManager() {
     // close database
     sqlite3_close(database);
 }
+
 //--------------------------------------------------------------------------------
 //                                  ADD OBJECTS
 //--------------------------------------------------------------------------------
@@ -110,11 +111,13 @@ void DatabaseManager::add_artist(const Artist& artist) {
 
     // get person id
     if (artist.person_behind.empty()) { // if no person passed in
-        // TODO: 1. check if artist is in db already to get person_behind (OR NOT IF DONE IN PRIOR FUNCTION???)
-        // TODO: 2. make artist.person_behind_id = artist.name, MAKE NEW PERSON
-        // TODO: 3. fetch id from new person made (OR CHANGE Artist artist.person_behind & CONTINUE TO THE FETCH STUFF BELOW)
+        // TODO: 1. make artist.person_behind_id = artist.name, MAKE NEW PERSON
+        // TODO: 1. fetch id from new person made (OR CHANGE Artist artist.person_behind & CONTINUE TO THE FETCH STUFF BELOW)
     }
+    // get person id if name passed in
     std::optional<int> possible_person_id = get_person_id(artist.person_behind);
+
+    // TODO: MAKE NEW PERSON
 
     // prep sql
     const char* sql_to_prep = "INSERT INTO artists (name, person_behind_id, image_path) VALUES (?, ?, ?)";

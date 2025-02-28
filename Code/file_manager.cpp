@@ -25,27 +25,27 @@ std::string FileManager::add_file(const std::string& file_path, const Track& tra
         std::optional<Artist> possible_artist = database_manager.get_artist(track_data.artist);
         Artist artist;
         if (possible_artist) { // if artist is in database already
-            artist = *possible_artist; // TODO: check scope
-        }
+            artist = *possible_artist; 
+        } // TODO: possibly add file to db first so person is always known??? or not
         else { // if artist isn't in database already (therefore person behind isn't known)
-            artist.name = track_data.artist; // TODO: check scope
+            artist.name = track_data.artist;
             artist.person_behind = track_data.artist; // just use artist name as person name
         }
         // add person_behind + artist to path
-        new_path += (artist.person_behind + "/" + artist.name + "/"); // TODO: check scope
+        new_path += (artist.person_behind + "/" + artist.name + "/");
     }
     // if no artist info, add "Artist Unknown" to path
     else {
-        new_path += "Artist_Unknown/"; // TODO: check scope
+        new_path += "Artist_Unknown/";
     }
 
     // add album name to path (if exists)
     if (!track_data.album.empty()) {
-        new_path += (track_data.album + "/"); // TODO: check scope
+        new_path += (track_data.album + "/");
     }
-    // if no album info, add "Album Unknown" tp path
+    // if no album info, add "Album Unknown" to path
     else {
-        new_path += "Album_Unknown/"; // TODO: check scope
+        new_path += "Album_Unknown/";
     }
 
     // move file to new directory
