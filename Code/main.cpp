@@ -44,6 +44,9 @@ int main() {
         database_manager.add_track(Track{0, "track 4"});
         database_manager.remove_track(3);
 
+        // test cascading data
+        database_manager.add_track(Track{0, "cascading track test - origin", "cascading artist", "cascading album"});
+
 
         // std::string dust_bowl = "../../Music_Files/dust bowl (demo).mp3";
         // std::string lead_poisoning = "../../Music_Files/Lead Poisoning.mp3";

@@ -14,7 +14,7 @@ public:
     ~DatabaseManager();
 
     // add new objects to DB
-    void add_track(const Track& track); // add new track and its data to DB
+    void add_track(const Track& track);
     void add_album(const Album& album);
     void add_artist(const Artist& artist);
     void add_person(const std::string& person);

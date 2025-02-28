@@ -45,12 +45,23 @@ void DatabaseManager::add_track(const Track& track) {
         return; // return early if found
     }
 
+    // handle adding new cascading data
+    // add new artist (if not in DB)
+    if (!track.artist.empty()) { // if artist is NOT empty
+        Artist new_artist;
+        new_artist.name = track.artist;
+        add_artist(new_artist);
+    }
+    // add new album (if not in DB)
+    if (!track.album.empty()) { // if album is NOT empty
+        Album new_album;
+        new_album.title = track.album;
+        add_album(new_album);
+    }
+
     // get artist & album ids
     std::optional<int> artist_id = get_artist_id(track.artist);
     std::optional<int> album_id = get_album_id(track.album);
-
-    // TODO: check if need to add new album to DB, make new if so
-    // TODO: check if need to add new artist to DB, make new if so
 
     // prep sql
     const char* sql_to_prep = "INSERT INTO tracks (title, artist_id, album_id, duration, date, tracklist_num, file_path, image_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -75,12 +86,18 @@ void DatabaseManager::add_album(const Album& album) {
     if (album_id) {
         return; // return early if found
     }
-    
-    // get artist & type ids
+
+    // handle adding new cascading data
+    // add new artist (if not in DB)
+    if (!album.artist.empty()) { // if artist is NOT empty
+        Artist new_artist;
+        new_artist.name = album.artist;
+        add_artist(new_artist);
+    }
+
+    // get artist & album type ids
     std::optional<int> artist_id = get_artist_id(album.artist);
     std::optional<int> type_id = get_album_type_id(album.type);
-
-    // TODO: check if need to add new artist to DB, make new if so
 
     // prep sql
     const char* sql_to_prep = "INSERT INTO albums (title, artist_id, date, type_id, image_path) VALUES (?, ?, ?, ?, ?)";
@@ -102,6 +119,11 @@ void DatabaseManager::add_artist(const Artist& artist) {
     if (artist_id) {
         return; // return early if found
     }
+
+    // handle adding new cascading data
+    // add new person (use artist name if person name not provided)
+    std::string person_name = artist.person_behind.empty() ? artist.name : artist.person_behind;
+    add_person(person_name);
 
     // get person id
     std::optional<int> possible_person_id = get_person_id(artist.person_behind);
