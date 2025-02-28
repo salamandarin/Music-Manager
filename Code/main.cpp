@@ -20,19 +20,19 @@ void print_music_files(const std::vector<std::string>& file_names);
 int main() {
     try {
         std::vector<std::string> file_names = {
-            "dust bowl (demo).mp3",
-            "nettles (demo).mp3",
-            "Pure Feeling.mp3",
-            "Child of Cain.mp3",
-            "Will You Still Love Me Tomorrow (Remastered Cover).mp3",
-            "Florida Heat.mp3",
-            "Iron Maiden.mp3",
-            "The Wake.mp3",
-            "As Far as I Could Get.mp3",
-            "Can't Stop Loving You (Cover).mp3",
-            "Conductor.mp3",
-            "south alabama (god's country demo).mp3",
-            "Lead Poisoning.mp3",
+            "../../Music_Files/dust bowl (demo).mp3",
+            "../../Music_Files/nettles (demo).mp3",
+            "../../Music_Files/Pure Feeling.mp3",
+            "../../Music_Files/Child of Cain.mp3",
+            "../../Music_Files/Will You Still Love Me Tomorrow (Remastered Cover).mp3",
+            "../../Music_Files/Florida Heat.mp3",
+            "../../Music_Files/Iron Maiden.mp3",
+            "../../Music_Files/The Wake.mp3",
+            "../../Music_Files/As Far as I Could Get.mp3",
+            "../../Music_Files/Can't Stop Loving You (Cover).mp3",
+            "../../Music_Files/Conductor.mp3",
+            "../../Music_Files/south alabama (god's country demo).mp3",
+            "../../Music_Files/Lead Poisoning.mp3",
         };
 
         Core core;
@@ -96,7 +96,7 @@ void add_files_demo(Core& core,const std::vector<std::string>& file_names) {
     for (const std::string& file : file_names) {
         core.add_track(file);
     }
-    std::cout << "\n\nAdded all files to database! Go check it!\n\n";
+    std::cout << "\n\n\t\t\t\t\tAdded all files to database! Go check it!\n\n";
 }
 
 // test reading track data

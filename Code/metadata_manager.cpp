@@ -2,9 +2,9 @@
 #include "metadata_manager.h"
 #include <taglib/tag.h>
 
-MetadataManager::MetadataManager(const std::string& file_name) // assumes it's in "../../Music_Files/"
+MetadataManager::MetadataManager(const std::string& file_name)
     // save file path, open file with TagLib
-    :file_path{"../../Music_Files/" + file_name}, file(this->file_path.c_str()), tag{file.tag()} {
+    :file_path{file_name}, file(this->file_path.c_str()), tag{file.tag()} {
     // check for errors opening file
     if (file.isNull()) {
         throw std::runtime_error("Could not find/open file: " + file_name + "\nFull path: " + file_path);
