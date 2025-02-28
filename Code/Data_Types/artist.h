@@ -3,7 +3,7 @@
 #include <string>
 
 struct Artist {
-    int id;
+    int id=0;
     std::string name;
     std::string person_behind;
     std::string image_path;

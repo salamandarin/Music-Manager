@@ -5,13 +5,13 @@
 #include <string>
 
 struct Track {
-    int id;
+    int id=0;
     std::string title;
     std::string artist;
     std::string album;
     Duration duration;
     std::optional<Date> date;
-    int tracklist_num;
+    int tracklist_num=0;
     std::string file_path;
     std::string image_path;
 };

@@ -4,7 +4,7 @@
 #include <string>
 
 struct Album {
-    int id;
+    int id=0;
     std::string title;
     std::string artist;
     std::optional<Date> date;
