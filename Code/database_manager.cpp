@@ -126,7 +126,7 @@ void DatabaseManager::add_artist(const Artist& artist) {
     add_person(person_name);
 
     // get person id
-    std::optional<int> possible_person_id = get_person_id(artist.person_behind);
+    std::optional<int> possible_person_id = get_person_id(person_name); // use person name from above
 
     // prep sql
     const char* sql_to_prep = "INSERT INTO artists (name, person_behind_id, image_path) VALUES (?, ?, ?)";

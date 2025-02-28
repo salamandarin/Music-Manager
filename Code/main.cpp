@@ -10,52 +10,35 @@
 void choose_test_demo(Core& core, std::vector<std::string>& file_names);
 Track choose_track(const std::vector<std::string>& file_names);
 
-void add_file_demo(Core& core);
+void add_files_demo(Core& core,const std::vector<std::string>& file_names);
 void read_metadata_demo(Core& core, const std::vector<std::string>& file_names);
 void edit_metadata_demo(Core& core, std::vector<std::string>& file_names);
+void add_track_nonfile_track_demo(Core& core);
 
 void print_music_files(const std::vector<std::string>& file_names);
 
 int main() {
     try {
+        std::string lead_poisoning = "../../Music_Files/Lead Poisoning.mp3";
+        std::vector<std::string> file_names = {
+            "../../Music_Files/dust bowl (demo).mp3",
+            "../../Music_Files/nettles (demo).mp3",
+            "../../Music_Files/Pure Feeling.mp3",
+            "../../Music_Files/Child of Cain.mp3",
+            "../../Music_Files/Will You Still Love Me Tomorrow (Remastered Cover).mp3",
+            "../../Music_Files/Florida Heat.mp3",
+            "../../Music_Files/Iron Maiden.mp3",
+            "../../Music_Files/The Wake.mp3",
+            "../../Music_Files/As Far as I Could Get.mp3",
+            "../../Music_Files/Can't Stop Loving You (Cover).mp3",
+            "../../Music_Files/Conductor.mp3",
+            "../../Music_Files/south alabama (god's country demo).mp3",
+            "../../Music_Files/Lead Poisoning.mp3",
+        };
+
+        Core core;
         DatabaseManager database_manager;
-
-        database_manager.add_person("person 1");
-        database_manager.add_person("person 2");
-        database_manager.add_person("person 3");
-        database_manager.add_person("person 4");
-        database_manager.remove_person(3);
-
-        database_manager.add_artist(Artist{0, "artist 1"});
-        database_manager.add_artist(Artist{0, "artist 2"});
-        database_manager.add_artist(Artist{0, "artist 3"});
-        database_manager.add_artist(Artist{0, "artist 4"});
-        database_manager.remove_artist(3);
-
-        database_manager.add_album(Album{0, "album 1"});
-        database_manager.add_album(Album{0, "album 2"});
-        database_manager.add_album(Album{0, "album 3"});
-        database_manager.add_album(Album{0, "album 4"});
-        database_manager.remove_album(3);
-
-        database_manager.add_track(Track{0, "track 1"});
-        database_manager.add_track(Track{0, "track 2"});
-        database_manager.add_track(Track{0, "track 3"});
-        database_manager.add_track(Track{0, "track 4"});
-        database_manager.remove_track(3);
-
-        // test cascading data
-        database_manager.add_track(Track{0, "cascading track test - origin", "cascading artist", "cascading album"});
-
-
-        // std::string dust_bowl = "../../Music_Files/dust bowl (demo).mp3";
-        // std::string lead_poisoning = "../../Music_Files/Lead Poisoning.mp3";
-        // std::string nettles = "../../Music_Files/nettles (demo).mp3";
-        // std::string pure_feeling = "../../Music_Files/Pure Feeling.mp3";
-        // std::vector<std::string> file_names = {dust_bowl, lead_poisoning, nettles, pure_feeling};
-
-        // Core core;
-        // choose_test_demo(core, file_names);
+        choose_test_demo(core, file_names);
     }
     catch (std::runtime_error& error) {
         std::cout << "\nError: " << error.what() << "\n";
@@ -64,23 +47,27 @@ int main() {
 
 void choose_test_demo(Core& core, std::vector<std::string>& file_names) {
     std::cout << "Enter a number to choose a demo to test: (will run 'view files' default if invalid input)\n";
-    std::cout << "\t[0] Add file to library [DEMO]\n";
+    std::cout << "\t[0] Add all files to database [DEMO]\n";
     std::cout << "\t[1] Read file metadata [DEMO]\n";
     std::cout << "\t[2] Edit file metadata [DEMO]\n";
-    std::cout << "\t[3] View files [DEMO]\n";
+    std::cout << "\t[3] Add new track (w/o file) [DEMO]\n";
+    std::cout << "\t[4] View files [DEMO]\n";
 
     std::cout << ">> ";
     int demo_choice;
     std::cin >> demo_choice;
 
     if (demo_choice == 0) {
-        add_file_demo(core);
+        add_files_demo(core, file_names);
     }
     else if (demo_choice == 1) {
         read_metadata_demo(core, file_names);
     }
     else if (demo_choice == 2) {
         edit_metadata_demo(core, file_names);
+    }
+    else if (demo_choice == 3) {
+        add_track_nonfile_track_demo(core);
     }
     else {
         print_music_files(file_names);
@@ -105,11 +92,13 @@ Track choose_track(const std::vector<std::string>& file_names) {
     }
 }
 
-void add_file_demo(Core& core) {
-    // test adding file
-    std::cout << "Running 'test adding file' simulation......\n\n";
-    std::cout << "You are adding 'dust bowl (demo)' to your music library :)\n\n";
-    core.add_track("../../Music_Files/dust bowl (demo).mp3");
+// add all files to database
+void add_files_demo(Core& core,const std::vector<std::string>& file_names) {
+    std::cout << "Running 'add files to database'......\n\n";
+    for (const std::string& file : file_names) {
+        core.add_track(file);
+    }
+    std::cout << "\n\nAdded all files to database! Go check it!\n\n";
 }
 
 // test reading track data
@@ -155,6 +144,32 @@ void edit_metadata_demo(Core& core, std::vector<std::string>& file_names) {
     }
 
     std::cout << metadata_manager.get_data();
+}
+
+void add_track_nonfile_track_demo(Core& core) {
+    // clear input buffer
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    std::cout << "\nEnter the new track title: ";
+    std::string title;
+    std::getline(std::cin, title);
+
+    std::cout << "Enter track album:\n>> ";
+    std::string album;
+    std::getline(std::cin, album);
+
+    std::cout << "Enter track artist:\n>> ";
+    std::string artist;
+    std::getline(std::cin, artist);
+
+    Track track;
+    track.title = title;
+    track.album = album;
+    track.artist = artist;
+
+    core.add_track(track);
+
+    std::cout << "\nAdded '" << title << "' to database!\n";
 }
 
 void print_music_files(const std::vector<std::string>& file_names) {

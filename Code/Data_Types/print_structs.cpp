@@ -4,12 +4,12 @@
 std::ostream& operator<<(std::ostream& os, const Track& track) {
     os << "\nTRACK DATA\n";
     os << "--------------------\n";
-    os << "ID: " << track.id << "\n";
+    // os << "ID: " << track.id << "\n";
     os << "Title: " << track.title << "\n";
     os << "Artist: " << track.artist << "\n";
     os << "Album: " << track.album << "\n";
     os << "# in Album Tracklist: " << track.tracklist_num << "\n";
-    os << "Duration: " << track.duration << "\n";
+    // os << "Duration: " << track.duration << "\n";
     if (track.date) {
         os << "Date: " << *track.date << "\n";
     }

@@ -9,11 +9,10 @@ void FileManager::move_file(const std::string& current_path, const std::string& 
     // TODO: WRITE CODE
 
     //TODO: DELETE THIS
-    std::cout << "Pretending to move file......\n\n";
+    std::cout << "Pretending to move file......\n";
     std::cout << "File moving from:\n";
     std::cout << "\t\t" << current_path << "\n";
     std::cout << "to: \t" << new_path << "\n\n";
-    std::cout << "File moved! [not actually though]\n\n";
 }
 
 std::string FileManager::add_file(const std::string& file_path, const Track& track_data) {
