@@ -148,7 +148,7 @@ void add_track_nonfile_track_demo(Core& core) {
     // clear input buffer
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-    std::cout << "\nEnter the new track title: ";
+    std::cout << "\nEnter the new track title:\n>> ";
     std::string title;
     std::getline(std::cin, title);
 
