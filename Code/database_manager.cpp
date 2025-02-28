@@ -219,16 +219,18 @@ void DatabaseManager::remove_person(int person_id) {
 
 // look for album title matches, return Album if found
 std::optional<Album> DatabaseManager::get_album(const std::string& album_title) {
-    //TODO: WRITE REAL CODE, maybe cut down duplicated code
+    //TODO: CODE
 
-    // return album found (or nothing)
+    // return album found (or nullopt)
+    return std::nullopt;
 }
 
 // look for artist name matches, return Artist if found
 std::optional<Artist> DatabaseManager::get_artist(const std::string& artist_name) {
-    //TODO: WRITE REAL CODE, maybe cut down duplicated code
+    //TODO: CODE
 
-    // return artist found (or nothing)
+    // return artist found (or nullopt)
+    return std::nullopt;
 }
 
 //--------------------------------------------------------------------------------
