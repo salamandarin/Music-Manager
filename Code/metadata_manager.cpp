@@ -2,15 +2,15 @@
 #include "metadata_manager.h"
 #include <taglib/tag.h>
 
-MetadataManager::MetadataManager(const std::string& file_path)
-    // save info, open file
-    :file_name{file_path.c_str()}, file(this->file_name), tag{file.tag()} { // save file path, open file with TagLib
+MetadataManager::MetadataManager(const std::string& file_name) // assumes it's in "../../Music_Files/"
+    // save file path, open file with TagLib
+    :file_path{"../../Music_Files/" + file_name}, file(this->file_path.c_str()), tag{file.tag()} {
     // check for errors opening file
     if (file.isNull()) {
-        throw std::runtime_error("Could not find/open file: " + file_path);
+        throw std::runtime_error("Could not find/open file: " + file_name + "\nFull path: " + file_path);
     }
     if (!file.tag()) {
-        throw std::runtime_error("Could not access tags from file: " + file_path);
+        throw std::runtime_error("Could not access tags from file: " + file_name+ "\nFull path: " + file_path);
     }
 
     //TODO: CHECK FOR OTHER FILE / MIME TYPES !!!
@@ -22,13 +22,13 @@ MetadataManager::MetadataManager(const std::string& file_path)
 Track MetadataManager::get_data() {
     Track track;
 
-   track.title = get_track_title();
-   track.artist = get_artist();
-   track.album = get_album();
-   track.tracklist_num = get_tracklist_num();
-   track.duration = get_duration();
+    track.title = get_track_title();
+    track.artist = get_artist();
+    track.album = get_album();
+    track.tracklist_num = get_tracklist_num();
+    track.duration = get_duration();
     // file doesn't hold date - must be manually added to DB
-    track.file_path = file_name; // TODO: either keep same, or use tag->complexProperties->GENERALOBJECT->fileName
+    track.file_path = file_path; // TODO: either keep same, or use tag->complexProperties->GENERALOBJECT->fileName
 
     //TODO: add more fields?
 

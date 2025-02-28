@@ -6,7 +6,8 @@
 
 class MetadataManager {
 public:
-    MetadataManager(const std::string& file_path); // constructor
+    // constructor
+    MetadataManager(const std::string& file_name); // assumes it's in "../../Music_Files/"
 
     // ---------- GET DATA ----------
     Track get_data();
@@ -42,7 +43,7 @@ public:
 
 
 private:
-    const TagLib::FileName file_name;
+    const std::string file_path;
     TagLib::FileRef file;
     TagLib::Tag *tag;
 };
