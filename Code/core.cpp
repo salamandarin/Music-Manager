@@ -2,7 +2,6 @@
 #include "core.h"
 #include "metadata_manager.h"
 #include "file_manager.h"
-#include "database_manager.h"
 
 //--------------------------------------------------------------------------------
 //                                  ADD OBJECTS
@@ -20,15 +19,13 @@ void Core::add_track(const std::string& file_path) {
     track_data.file_path = new_file_path; // update track_data with new file path
 
     // 3. log info to database
-    DatabaseManager database_manager;
-    database_manager.add_track(track_data);
+    database.add_track(track_data);
 }
 
 // ---------- Add Track w/ or w/o File ----------
 void Core::add_track(const Track& track) {
     if (track.file_path.empty()) {
-        DatabaseManager database_manager;
-        database_manager.add_track(track);
+        database.add_track(track);
     }
     else {
         // divert to other function if has file
@@ -36,17 +33,14 @@ void Core::add_track(const Track& track) {
     }
 }
 
-void add_album(const Album& album) {
-    DatabaseManager database_manager;
-    database_manager.add_album(album);
+void Core::add_album(const Album& album) {
+    database.add_album(album);
 }
-void add_artist(const Artist& artist) {
-    DatabaseManager database_manager;
-    database_manager.add_artist(artist);
+void Core::add_artist(const Artist& artist) {
+    database.add_artist(artist);
 }
-void add_person(const std::string& person) {
-    DatabaseManager database_manager;
-    database_manager.add_person(person);
+void Core::add_person(const std::string& person) {
+    database.add_person(person);
 }
 
 //--------------------------------------------------------------------------------
@@ -56,27 +50,23 @@ void Core::remove_track(int track_id) {
     // TODO: Remove actual file !!!! (ONLY IF exists) !!!!!
 
     // remove in database
-    DatabaseManager database_manager;
-    database_manager.remove_track(track_id);
+    database.remove_track(track_id);
 }
-void remove_album(int album_id) {
+void Core::remove_album(int album_id) {
     // remove in database
-    DatabaseManager database_manager;
-    database_manager.remove_album(album_id);
+    database.remove_album(album_id);
 
     // TODO: remove from all track metadata (or refresh??) (do 1st or 2nd??)
 }
-void remove_artist(int artist_id) {
+void Core::remove_artist(int artist_id) {
     // remove in database
-    DatabaseManager database_manager;
-    database_manager.remove_artist(artist_id);
+    database.remove_artist(artist_id);
 
     // TODO: remove from all track metadata (or refresh??) (do 1st or 2nd??)
 }
-void remove_person(int person_id) {
+void Core::remove_person(int person_id) {
     // remove in database
-    DatabaseManager database_manager;
-    database_manager.remove_person(person_id);
+    database.remove_person(person_id);
 }
 
 //--------------------------------------------------------------------------------
@@ -88,8 +78,7 @@ void Core::set_track_title(int track_id, const std::string& new_track_title) {
     // TODO: CODE - MAY OR MAY NOT HAVE FILE
 
     // check if it has file attached
-    DatabaseManager database_manager;
-    std::optional<std::string> possible_file_path = database_manager.get_file_path(track_id);
+    std::optional<std::string> possible_file_path = database.get_file_path(track_id);
     if (possible_file_path) {
         // update title in metadata
         std::string file_path = *possible_file_path;
@@ -117,8 +106,7 @@ void Core::set_track_tracklist_num(int track_id, int new_tracklist_num) {
 
 // ---------- DATABASE ONLY INFO ----------
 void Core::set_track_date(int track_id, const Date& new_date) {
-    DatabaseManager database_manager;
-    database_manager.set_track_date(track_id, new_date);
+    database.set_track_date(track_id, new_date);
 }
 
 //--------------------------------------------------------------------------------

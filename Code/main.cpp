@@ -36,7 +36,6 @@ int main() {
         };
 
         Core core;
-        DatabaseManager database_manager;
         choose_test_demo(core, file_names);
     }
     catch (std::runtime_error& error) {

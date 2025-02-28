@@ -4,6 +4,7 @@
 #include "album.h"
 #include "artist.h"
 #include "date.h"
+#include "database_manager.h"
 #include <string>
 
 class Core {
@@ -36,4 +37,7 @@ public:
 
     // get track data
     Track get_track_data(int track_id);
+
+private:
+    DatabaseManager database;
 };
