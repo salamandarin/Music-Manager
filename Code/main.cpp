@@ -26,9 +26,23 @@ int main() {
         database_manager.add_person("person 4");
         database_manager.remove_person(3);
 
-        database_manager.add_artist(Artist{0, "test artist"});
-        database_manager.add_album(Album{0, "test album"});
-        database_manager.add_track(Track{0, "test track"});
+        database_manager.add_artist(Artist{0, "artist 1"});
+        database_manager.add_artist(Artist{0, "artist 2"});
+        database_manager.add_artist(Artist{0, "artist 3"});
+        database_manager.add_artist(Artist{0, "artist 4"});
+        database_manager.remove_artist(3);
+
+        database_manager.add_album(Album{0, "album 1"});
+        database_manager.add_album(Album{0, "album 2"});
+        database_manager.add_album(Album{0, "album 3"});
+        database_manager.add_album(Album{0, "album 4"});
+        database_manager.remove_album(3);
+
+        database_manager.add_track(Track{0, "track 1"});
+        database_manager.add_track(Track{0, "track 2"});
+        database_manager.add_track(Track{0, "track 3"});
+        database_manager.add_track(Track{0, "track 4"});
+        database_manager.remove_track(3);
 
 
         // std::string dust_bowl = "../../Music_Files/dust bowl (demo).mp3";
