@@ -1,6 +1,8 @@
 // Samuel Sutton - 2025
 #pragma once
 #include "track.h"
+#include "album.h"
+#include "artist.h"
 #include "date.h"
 #include <string>
 
@@ -8,10 +10,18 @@ class Core {
 public:
     Core() = default;
 
-    // add & remove tracks
+    // add objects
     void add_track(const std::string& file_path); // track w/ file
-    void add_track(const Track& track); // track w/o file
+    void add_track(const Track& track); // track w/ or w/o file
+    void add_album(const Album& album);
+    void add_artist(const Artist& artist);
+    void add_person(const std::string& person);
+
+    // remove objects
     void remove_track(int track_id);
+    void remove_album(int album_id);
+    void remove_artist(int artist_id);
+    void remove_person(int person_id);
 
     // set track data (in both DB & metadata if applicable)
     void set_track_title(int track_id, const std::string& new_track_title);

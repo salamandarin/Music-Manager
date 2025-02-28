@@ -5,7 +5,7 @@
 #include "database_manager.h"
 
 //--------------------------------------------------------------------------------
-//                                  ADD TRACK
+//                                  ADD OBJECTS
 //--------------------------------------------------------------------------------
 
 // ---------- Add Track w/ File ----------
@@ -24,21 +24,59 @@ void Core::add_track(const std::string& file_path) {
     database_manager.add_track(track_data);
 }
 
-// ---------- Add Track w/o File ----------
+// ---------- Add Track w/ or w/o File ----------
 void Core::add_track(const Track& track) {
+    if (track.file_path.empty()) {
+        DatabaseManager database_manager;
+        database_manager.add_track(track);
+    }
+    else {
+        // divert to other function if has file
+        add_track(track.file_path);
+    }
+}
+
+void add_album(const Album& album) {
     DatabaseManager database_manager;
-    database_manager.add_track(track);
+    database_manager.add_album(album);
+}
+void add_artist(const Artist& artist) {
+    DatabaseManager database_manager;
+    database_manager.add_artist(artist);
+}
+void add_person(const std::string& person) {
+    DatabaseManager database_manager;
+    database_manager.add_person(person);
 }
 
 //--------------------------------------------------------------------------------
-//                                  REMOVE TRACK
+//                                  REMOVE OBJECTS
 //--------------------------------------------------------------------------------
 void Core::remove_track(int track_id) {
-    // TODO: WRITE CODE
+    // TODO: Remove actual file !!!! (ONLY IF exists) !!!!!
 
-    // remove actual file (IF exists)
-    
     // remove in database
+    DatabaseManager database_manager;
+    database_manager.remove_track(track_id);
+}
+void remove_album(int album_id) {
+    // remove in database
+    DatabaseManager database_manager;
+    database_manager.remove_album(album_id);
+
+    // TODO: remove from all track metadata (or refresh??) (do 1st or 2nd??)
+}
+void remove_artist(int artist_id) {
+    // remove in database
+    DatabaseManager database_manager;
+    database_manager.remove_artist(artist_id);
+
+    // TODO: remove from all track metadata (or refresh??) (do 1st or 2nd??)
+}
+void remove_person(int person_id) {
+    // remove in database
+    DatabaseManager database_manager;
+    database_manager.remove_person(person_id);
 }
 
 //--------------------------------------------------------------------------------
