@@ -20,20 +20,26 @@ void print_music_files(const std::vector<std::string>& file_names);
 
 int main() {
     try {
+        std::cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\t\t\t------------------------------------------------------------------------------------\n";
+        std::cout << "\t\t\t| PUT A mp3 FILE NAMED 'test.mp3' IN THE 'Music_Files' FOLDER FOR THIS TO WORK!!!! |\n";
+        std::cout << "\t\t\t------------------------------------------------------------------------------------\n\n\n";
+
         std::vector<std::string> file_names = {
-            "../../Music_Files/dust bowl (demo).mp3",
-            "../../Music_Files/nettles (demo).mp3",
-            "../../Music_Files/Pure Feeling.mp3",
-            "../../Music_Files/Child of Cain.mp3",
-            "../../Music_Files/Will You Still Love Me Tomorrow (Remastered Cover).mp3",
-            "../../Music_Files/Florida Heat.mp3",
-            "../../Music_Files/Iron Maiden.mp3",
-            "../../Music_Files/The Wake.mp3",
-            "../../Music_Files/As Far as I Could Get.mp3",
-            "../../Music_Files/Can't Stop Loving You (Cover).mp3",
-            "../../Music_Files/Conductor.mp3",
-            "../../Music_Files/south alabama (god's country demo).mp3",
-            "../../Music_Files/Lead Poisoning.mp3",
+                "../../Music_Files/test.mp3",
+                
+//            "../../Music_Files/dust bowl (demo).mp3",
+//            "../../Music_Files/nettles (demo).mp3",
+//            "../../Music_Files/Pure Feeling.mp3",
+//            "../../Music_Files/Child of Cain.mp3",
+//            "../../Music_Files/Will You Still Love Me Tomorrow (Remastered Cover).mp3",
+//            "../../Music_Files/Florida Heat.mp3",
+//            "../../Music_Files/Iron Maiden.mp3",
+//            "../../Music_Files/The Wake.mp3",
+//            "../../Music_Files/As Far as I Could Get.mp3",
+//            "../../Music_Files/Can't Stop Loving You (Cover).mp3",
+//            "../../Music_Files/Conductor.mp3",
+//            "../../Music_Files/south alabama (god's country demo).mp3",
+//            "../../Music_Files/Lead Poisoning.mp3",
         };
 
         Core core;
