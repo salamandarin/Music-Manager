@@ -3,19 +3,18 @@
 #include "metadata_manager.h"
 #include "database_manager.h"
 #include "artist.h"
+#include <filesystem>
 #include <iostream> //TODO: DELETE
 
 void FileManager::move_file(const std::string& current_path, const std::string& new_path){
-    // TODO: WRITE CODE
-
-    //TODO: DELETE THIS
-    std::cout << "Pretending to move file......\n";
-    std::cout << "File moving from:\n";
-    std::cout << "\t\t" << current_path << "\n";
-    std::cout << "to: \t" << new_path << "\n\n";
+    std::filesystem::create_directories(std::filesystem::path(new_path).parent_path());
+    std::filesystem::rename(current_path, new_path);
 }
 
 std::string FileManager::add_file(const std::string& file_path, const Track& track_data) {
+    std::filesystem::path path = "../../Music_Files/Lead Poisoning.mp3";
+    std::string file_name = path.filename().string(); // get file name
+
     std::string new_path = "../../Music_Files/"; // base path for music files
 
     // gather artist real name to add that + artist name to path
@@ -46,6 +45,9 @@ std::string FileManager::add_file(const std::string& file_path, const Track& tra
     else {
         new_path += "Album_Unknown/";
     }
+
+    // add file name to path
+    new_path += file_name;
 
     // move file to new directory
     move_file(file_path, new_path);

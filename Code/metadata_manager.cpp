@@ -1,6 +1,7 @@
 // Samuel Sutton - 2025
 #include "metadata_manager.h"
 #include <taglib/tag.h>
+#include <filesystem>
 
 MetadataManager::MetadataManager(const std::string& file_path)
     // save file path, open file with TagLib
@@ -69,6 +70,10 @@ std::string MetadataManager::get_cover_art() { // include alts if id3v2 // TODO:
     // TODO: CODE
     return ".......cover art path placeholder..........";
 } 
+
+
+// ---------- File Info ----------
+
 
 
 //--------------------------------------------------------------------------------
