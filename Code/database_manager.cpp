@@ -72,7 +72,7 @@ void DatabaseManager::add_track(const Track& track) {
     bind_input_to_sql(sql, 2, artist_id); // int fk artist_id
     bind_input_to_sql(sql, 3, album_id); // int fk album_id
     bind_input_to_sql(sql, 4, track.duration.to_string());
-    // bind_input_to_sql(sql, 5, track.date.to_string()); // TODO: FIX
+    bind_input_to_sql(sql, 5, track.date.to_string());
     bind_input_to_sql(sql, 6, track.tracklist_num);
     bind_input_to_sql(sql, 7, track.file_path);
     bind_input_to_sql(sql, 8, track.image_path);
@@ -106,7 +106,7 @@ void DatabaseManager::add_album(const Album& album) {
     // bind input to sql
     bind_input_to_sql(sql, 1, album.title);
     bind_input_to_sql(sql, 2, artist_id); // int fk artist_id
-    // bind_input_to_sql(sql, 3, album.date.to_string()); // TODO: FIX
+    bind_input_to_sql(sql, 3, album.date.to_string());
     bind_input_to_sql(sql, 4, type_id); // int fk type_id
     bind_input_to_sql(sql, 5, album.image_path);
 
@@ -212,6 +212,12 @@ void DatabaseManager::remove_person(int person_id) {
     execute_sql(sql);
 }
 
+//--------------------------------------------------------------------------------
+//                                  CHECK IF DATA EXISTS
+//--------------------------------------------------------------------------------
+bool DatabaseManager::track_exists(int track_id) {
+    return object_exists("track_id", "tracks", track_id);
+}
 
 //--------------------------------------------------------------------------------
 //                                  GET ENTIRE OBJECTS
@@ -242,58 +248,69 @@ std::optional<std::string> DatabaseManager::get_file_path(int track_id) {
 }
 
 // ------------------------- GET ID BY NAME -------------------------
-std::optional<int> DatabaseManager::get_id_by_name(const std::string& name_to_search,
-                                                   const std::string& table,
-                                                   const std::string& id_label,
-                                                   const std::string& name_label) {
-    // if no name provided
-    if (name_to_search.empty()) {
-        return std::nullopt;
-    }
-
-    std::string sql_to_prep = "SELECT " + id_label + " FROM " + table + " WHERE " + name_label + " = ?;";
-    sqlite3_stmt* sql = prepare_sql(sql_to_prep.c_str());
-    bind_input_to_sql(sql, 1, name_to_search);
-
-    int result = sqlite3_step(sql);
-    // if result is found
-    if (result == SQLITE_ROW) {
-        int id = sqlite3_column_int(sql, 0);
-        sqlite3_finalize(sql); // clean up sql statement
-        return id;
-    }
-    // if result is NOT found
-    else {
-        sqlite3_finalize(sql); // clean up sql statement
-        return std::nullopt; 
-    }                                        
-}
-// ------------------------- GET ID BY NAME WRAPPERS -------------------------
 std::optional<int> DatabaseManager::get_track_id(const std::string& track_title) {
-    return get_id_by_name(track_title, "tracks", "track_id", "title");
+    return get_id_by_name("track_id", "tracks", "title", track_title);
 }
 std::optional<int> DatabaseManager::get_album_id(const std::string& album_title) {
-    return get_id_by_name(album_title, "albums", "album_id", "title");
+    return get_id_by_name("album_id", "albums", "title", album_title);
 }
 std::optional<int> DatabaseManager::get_album_type_id(const std::string& album_type) {
-    return get_id_by_name(album_type, "album_types", "type_id", "name");
+    return get_id_by_name("type_id", "album_types", "name", album_type);
 }
 std::optional<int> DatabaseManager::get_artist_id(const std::string& artist_name) {
-    return get_id_by_name(artist_name, "artists", "artist_id", "name");
+    return get_id_by_name("artist_id", "artists", "name", artist_name);
 }
 std::optional<int> DatabaseManager::get_person_id(const std::string& person_name) {
-    return get_id_by_name(person_name, "people", "person_id", "name");
+    return get_id_by_name("person_id", "people", "name", person_name);
+}
+
+// get title from id
+std::optional<std::string> DatabaseManager::get_track_title(int track_id) {
+    // prep & bind sql
+    std::string sql_to_prep = "SELECT title FROM tracks WHERE track_id = ?;";
+    sqlite3_stmt* sql = prepare_sql(sql_to_prep.c_str());
+    bind_input_to_sql(sql, 1, track_id); // bind id
+
+    int result = sqlite3_step(sql);
+    // if result is found, return title
+    if (result == SQLITE_ROW) {
+        const unsigned char* title = sqlite3_column_text(sql, 0);
+        std::string track_title = reinterpret_cast<const char*>(title);
+        sqlite3_finalize(sql); // clean up sql statement
+        return track_title;
+    } 
+    // if result is NOT found, return null
+    else {
+        sqlite3_finalize(sql); // clean up sql statement
+        return std::nullopt;
+    }
 }
 
 //--------------------------------------------------------------------------------
 //                                  SET DATA
 //--------------------------------------------------------------------------------
+void DatabaseManager::set_track_title(int track_id, const std::string& new_title) {
+    // make sure track exists
+    if (!track_exists(track_id)) { // if track DOESN'T exist
+        throw std::runtime_error("Tried to edit track title, but track with ID: " + std::to_string(track_id) + " not found.");
+    }
+
+    // prep & bind sql
+    const char* sql_to_prep = "UPDATE tracks SET title = ? WHERE track_id = ?;";
+    sqlite3_stmt* sql = prepare_sql(sql_to_prep);
+    bind_input_to_sql(sql, 1, new_title); // bind title
+    bind_input_to_sql(sql, 2, track_id); // bind id
+
+    // execute
+    execute_sql(sql);
+}
+
 void DatabaseManager::set_track_date(int track_id, const Date& new_date) {
     // TODO: CODE
 }
 
 //--------------------------------------------------------------------------------
-//                                  PRIVATE FUNCTIONS
+//                  PRIVATE FUNCTIONS - PREP/BIND/EXECUTE SQL
 //--------------------------------------------------------------------------------
 sqlite3_stmt* DatabaseManager::prepare_sql(const char* sql_to_prepare) {
     // prepare sql
@@ -363,4 +380,61 @@ void DatabaseManager::bind_input_to_sql(sqlite3_stmt* sql, int index, int input_
         sqlite3_finalize(sql);  // clean up if failed
         throw std::runtime_error(sqlite3_errmsg(database));
     }
+}
+
+//--------------------------------------------------------------------------------
+//                      PRIVATE FUNCTIONS - QUERY
+//--------------------------------------------------------------------------------
+// get id by name
+std::optional<int> DatabaseManager::get_id_by_name(const std::string& id_label,
+                                                   const std::string& table,
+                                                   const std::string& name_label,
+                                                   const std::string& name_to_search) {
+    // if no name provided
+    if (name_to_search.empty()) {
+        return std::nullopt;
+    }
+
+    // prep sql
+    std::string sql_to_prep = "SELECT ? FROM ? WHERE ? = ?";
+    sqlite3_stmt* sql = prepare_sql(sql_to_prep.c_str());
+
+    // bind input to sql
+    bind_input_to_sql(sql, 1, id_label);
+    bind_input_to_sql(sql, 2, table);
+    bind_input_to_sql(sql, 3, name_label);
+    bind_input_to_sql(sql, 4, name_to_search);
+
+    int result = sqlite3_step(sql);
+    // if result is found, return id
+    if (result == SQLITE_ROW) {
+        int id = sqlite3_column_int(sql, 0);
+        sqlite3_finalize(sql); // clean up sql statement
+        return id;
+    }
+    // if result is NOT found, return null
+    else {
+        sqlite3_finalize(sql); // clean up sql statement
+        return std::nullopt;
+    }                                        
+}
+
+// check if data exists
+bool DatabaseManager::object_exists(const std::string& id_label, const std::string& table, int object_id) {
+    // prep sql
+    const char* sql_to_prep = "SELECT ? FROM ? WHERE ? = ?;";
+    sqlite3_stmt* sql = prepare_sql(sql_to_prep);
+
+    // bind input to sql
+    bind_input_to_sql(sql, 1, id_label); // same as 3
+    bind_input_to_sql(sql, 2, table);
+    bind_input_to_sql(sql, 3, id_label); // same as 1
+    bind_input_to_sql(sql, 3, object_id);
+
+    // execute
+    int result = sqlite3_step(sql);
+    bool exists = (result == SQLITE_ROW);
+
+    sqlite3_finalize(sql); // clean up sql statement
+    return exists;
 }

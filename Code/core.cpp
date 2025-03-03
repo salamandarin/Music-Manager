@@ -86,7 +86,13 @@ void Core::remove_person(int person_id) {
 
 // ---------- INFO IN BOTH DATABASE & METADATA ----------
 void Core::set_track_title(int track_id, const std::string& new_track_title) {
-    // TODO: CODE - MAY OR MAY NOT HAVE FILE
+    // make sure new title isn't same as old title
+    std::optional<std::string> current_title = database.get_track_title(track_id);
+    if (current_title) { // if has not-null title
+        if (*current_title == new_track_title) {
+            return; // return if new title is the same as old
+        }
+    }
 
     // check if it has file attached
     std::optional<std::string> possible_file_path = database.get_file_path(track_id);
