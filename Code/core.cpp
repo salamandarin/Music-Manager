@@ -95,10 +95,10 @@ void Core::set_track_title(int track_id, const std::string& new_track_title) {
         std::string file_path = *possible_file_path;
         MetadataManager file_metadata{file_path};
         file_metadata.set_track_title(new_track_title);
-    }
 
-    // update file name
-    // TODO: CODE
+        // update file name to match
+        file_manager.update_file_name(file_path, new_track_title);
+    }
 
     // update title in DB
     // TODO: CODE
