@@ -10,10 +10,11 @@ public:
     Duration(int minutes, int seconds);
     Duration(int duration_in_seconds);
 
-
+    // getters
     int get_duration_in_seconds() const;
     int get_minutes() const;
     int get_seconds() const;
+    std::string to_string() const;
 
     // equality
     bool operator==(const Duration& rhs) const;
@@ -24,7 +25,6 @@ public:
 
     bool operator<=(const Duration& rhs) const;
     bool operator>=(const Duration& rhs) const;
-
 
     friend std::ostream& operator<<(std::ostream& os, const Duration duration);
 

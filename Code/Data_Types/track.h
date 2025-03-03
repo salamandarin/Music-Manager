@@ -10,7 +10,7 @@ struct Track {
     std::string artist;
     std::string album;
     Duration duration;
-    std::optional<Date> date;
+    Date date;
     int tracklist_num=0;
     std::string file_path;
     std::string image_path;

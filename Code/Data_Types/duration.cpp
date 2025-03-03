@@ -39,6 +39,10 @@ int Duration::get_seconds() const {
     return seconds;
 }
 
+std::string Duration::to_string() const {
+    std::string duration_string = minutes + ":" + seconds;
+    return duration_string;
+}
 
 bool Duration::operator==(const Duration& rhs) const {
     return duration_in_seconds == rhs.get_duration_in_seconds();
@@ -72,6 +76,6 @@ int Duration::calc_seconds_leftover(int duration_in_seconds) const {
 
 
 std::ostream& operator<<(std::ostream& os, const Duration duration) {
-    os << std::to_string(duration.calc_duration_in_seconds());
+    os << duration.to_string();
     return os;
 }

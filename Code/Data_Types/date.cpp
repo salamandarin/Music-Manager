@@ -175,6 +175,10 @@ int Date::get_day() const {
 int Date::get_year() const {
     return year;
 }
+std::string Date::to_string() const {
+    std::string date_string = month.name + "/" + std::to_string(day) + "/" + std::to_string(year);
+    return date_string;
+}
 
 /// ---------- Helper Functions ----------
 bool Date::is_leap_year() const {

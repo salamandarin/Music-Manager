@@ -7,7 +7,7 @@ struct Album {
     int id=0;
     std::string title;
     std::string artist;
-    std::optional<Date> date;
+    Date date;
     std::string type;
     std::string image_path;
 };

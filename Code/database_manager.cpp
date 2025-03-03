@@ -71,8 +71,8 @@ void DatabaseManager::add_track(const Track& track) {
     bind_input_to_sql(sql, 1, track.title);
     bind_input_to_sql(sql, 2, artist_id); // int fk artist_id
     bind_input_to_sql(sql, 3, album_id); // int fk album_id
-    // bind_input_to_sql(sql, 4, album.duration); // TODO: MAKE STRING
-    // bind_input_to_sql(sql, 5, album.date); // TODO: MAKE STRING
+    bind_input_to_sql(sql, 4, track.duration.to_string());
+    // bind_input_to_sql(sql, 5, track.date.to_string()); // TODO: FIX
     bind_input_to_sql(sql, 6, track.tracklist_num);
     bind_input_to_sql(sql, 7, track.file_path);
     bind_input_to_sql(sql, 8, track.image_path);
@@ -106,7 +106,7 @@ void DatabaseManager::add_album(const Album& album) {
     // bind input to sql
     bind_input_to_sql(sql, 1, album.title);
     bind_input_to_sql(sql, 2, artist_id); // int fk artist_id
-    // bind_input_to_sql(sql, 3, album.date); // TODO: MAKE STRING
+    // bind_input_to_sql(sql, 3, album.date.to_string()); // TODO: FIX
     bind_input_to_sql(sql, 4, type_id); // int fk type_id
     bind_input_to_sql(sql, 5, album.image_path);
 

@@ -34,6 +34,7 @@ public:
     std::string get_month_name() const;
     int get_day() const;
     int get_year() const;
+    std::string to_string() const;
 
     // Helper functions
     bool is_leap_year() const;

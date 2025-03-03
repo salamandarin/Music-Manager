@@ -9,10 +9,8 @@ std::ostream& operator<<(std::ostream& os, const Track& track) {
     os << "Artist: " << track.artist << "\n";
     os << "Album: " << track.album << "\n";
     os << "# in Album Tracklist: " << track.tracklist_num << "\n";
-    // os << "Duration: " << track.duration << "\n";
-    if (track.date) {
-        os << "Date: " << *track.date << "\n";
-    }
+    os << "Duration: " << track.duration << "\n";
+    os << "Date: " << track.date << "\n";
     os << "File Path: " << track.file_path << "\n";
 
     os << "\n";
@@ -25,9 +23,7 @@ std::ostream& operator<<(std::ostream& os, const Album& album) {
     os << "ID: " << album.id << "\n";
     os << "Title: " << album.title << "\n";
     os << "Artist: " << album.artist << "\n";
-    if (album.date) {
-        os << "Date: " << *album.date << "\n";
-    }
+    os << "Date: " << album.date << "\n";
     os << "Image Path: " << album.image_path << "\n";
     os << "Type: " << album.type << "\n";
 
