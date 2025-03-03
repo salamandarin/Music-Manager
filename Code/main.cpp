@@ -36,7 +36,8 @@ int main() {
         };
 
         Core core;
-        choose_test_demo(core, file_names);
+        core.add_tracks_from_folder("../../mp3_files");
+        // choose_test_demo(core, file_names);
     }
     catch (std::runtime_error& error) {
         std::cout << "\nError: " << error.what() << "\n";

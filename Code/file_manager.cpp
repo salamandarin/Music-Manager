@@ -7,12 +7,14 @@
 #include <iostream> //TODO: DELETE
 
 void FileManager::move_file(const std::string& current_path, const std::string& new_path){
+    // TODO: ADD ERROR HANDLING (check get_files_from_directory() for reference)
+
     std::filesystem::create_directories(std::filesystem::path(new_path).parent_path());
     std::filesystem::rename(current_path, new_path);
 }
 
-std::string FileManager::add_file(const std::string& file_path, const Track& track_data) {
-    std::filesystem::path path = "../../Music_Files/Lead Poisoning.mp3";
+std::string FileManager::create_new_path(const std::string& file_path, const Track& track_data) {
+    std::filesystem::path path = file_path;
     std::string file_name = path.filename().string(); // get file name
 
     std::string new_path = "../../Music_Files/"; // base path for music files
@@ -54,4 +56,21 @@ std::string FileManager::add_file(const std::string& file_path, const Track& tra
 
     // return new file_path
     return new_path;
+}
+
+std::vector<std::string> FileManager::get_files_from_folder(const std::string& folder_path) {
+    std::filesystem::path directory_path = folder_path;
+
+    // if directory doesn't exist or isn't a directory
+    if (!std::filesystem::exists(directory_path) || !std::filesystem::is_directory(directory_path)) {
+        throw std::runtime_error("Tried adding files from invalid directory path");
+    }
+
+    std::vector<std::string> file_paths;
+    for (const auto& file : std::filesystem::directory_iterator(directory_path)) {
+        if (std::filesystem::is_regular_file(file)) {
+            file_paths.push_back(file.path().string());
+        }
+    }
+    return file_paths;
 }

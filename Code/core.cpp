@@ -4,7 +4,7 @@
 #include "file_manager.h"
 
 //--------------------------------------------------------------------------------
-//                                  ADD OBJECTS
+//                                  ADD TRACKS
 //--------------------------------------------------------------------------------
 
 // ---------- Add Track w/ File ----------
@@ -14,8 +14,7 @@ void Core::add_track(const std::string& file_path) {
     Track track_data = metadata_manager.get_data();
 
     // 2. move file to correct location
-    FileManager file_manager;
-    std::string new_file_path = file_manager.add_file(file_path, track_data);
+    std::string new_file_path = file_manager.create_new_path(file_path, track_data);
     track_data.file_path = new_file_path; // update track_data with new file path
 
     // 3. log info to database
@@ -32,6 +31,18 @@ void Core::add_track(const Track& track) {
         add_track(track.file_path);
     }
 }
+
+void Core::add_tracks_from_folder(const std::string& folder_path) {
+    std::vector<std::string> file_paths = file_manager.get_files_from_folder(folder_path);
+    for (const std::string& file_path : file_paths) {
+        add_track(file_path);
+    }
+}
+
+//--------------------------------------------------------------------------------
+//                                  ADD OTHER OBJECTS
+//--------------------------------------------------------------------------------
+
 
 void Core::add_album(const Album& album) {
     database.add_album(album);

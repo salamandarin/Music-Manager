@@ -5,15 +5,19 @@
 #include "artist.h"
 #include "date.h"
 #include "database_manager.h"
+#include "file_manager.h"
 #include <string>
 
 class Core {
 public:
     Core() = default;
 
-    // add objects
+    // add tracks
     void add_track(const std::string& file_path); // track w/ file
     void add_track(const Track& track); // track w/ or w/o file
+    void add_tracks_from_folder(const std::string& folder_path);
+
+    // add other objects
     void add_album(const Album& album);
     void add_artist(const Artist& artist);
     void add_person(const std::string& person);
@@ -40,4 +44,5 @@ public:
 
 private:
     DatabaseManager database;
+    FileManager file_manager;
 };
