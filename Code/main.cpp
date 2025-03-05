@@ -36,8 +36,12 @@ int main() {
         };
 
         Core core;
-        core.add_tracks_from_folder("../../mp3_files");
-        // choose_test_demo(core, file_names);
+        // core.add_tracks_from_folder("../../mp3_files");
+
+        DatabaseManager database;
+        std::optional<int> id = database.get_track_id("Colossus");
+        std::cout << *id;
+//        choose_test_demo(core, file_names);
     }
     catch (std::runtime_error& error) {
         std::cout << "\nError: " << error.what() << "\n";
