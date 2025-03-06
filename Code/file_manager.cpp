@@ -8,6 +8,9 @@
 
 namespace filesystem = std::filesystem;
 
+//--------------------------------------------------------------------------------
+//                              FILE FUNCTIONS
+//--------------------------------------------------------------------------------
 std::string FileManager::create_new_path(const std::string& file_path, const Track& track_data) {
     filesystem::path path = file_path;
     std::string file_name = path.filename().string(); // get file name
@@ -66,7 +69,7 @@ void FileManager::move_file(const std::string& current_path, const std::string& 
     // move file from current path -> new path
     filesystem::rename(current_path, new_path);
 
-    // delete folders in old path that are empty as a result of move
+    // delete folders (from old path) that might be empty now
     delete_empty_parent_folders(parent_folder_path.string());
 }
 
@@ -84,7 +87,22 @@ void FileManager::rename_file(const std::string& file_path, const std::string& n
     filesystem::rename(file_path, new_path); 
 }
 
+void FileManager::delete_file(const std::string& file_path) {
+    // check if file doesn't exist or isn't a regular file
+    if (!filesystem::exists(file_path) || !filesystem::is_regular_file(file_path)) {
+        throw std::runtime_error("Tried to delete file that doesn't exist or isn't a regular file");
+    }
 
+    // delete file
+    filesystem::remove(file_path);
+
+    // delete folders that might be empty now
+    delete_empty_parent_folders(filesystem::path(file_path).parent_path().string());
+}
+
+//--------------------------------------------------------------------------------
+//                              FOLDER FUNCTIONS
+//--------------------------------------------------------------------------------
 std::vector<std::string> FileManager::get_files_from_folder(const std::string& folder_path) {
     // check if folder doesn't exist or isn't a folder
     if (!filesystem::exists(folder_path) || !filesystem::is_directory(folder_path)) {

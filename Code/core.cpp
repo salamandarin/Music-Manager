@@ -59,7 +59,11 @@ void Core::remove_track(int track_id) {
     // remove in database
     database.remove_track(track_id);
 
-    // TODO: Remove actual file !!!! (ONLY IF exists) !!!!!
+    // delete file (if exists)
+    std::optional<std::string> possible_file_path = database.get_track_file_path(track_id);
+    if (possible_file_path) { // check if file exists
+        file_manager.delete_file(*possible_file_path); // delete file
+    }
 }
 void Core::remove_album(int album_id) {
     // remove in database
