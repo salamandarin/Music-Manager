@@ -24,6 +24,7 @@ void Core::add_track(const std::string& file_path) {
 // ---------- Add Track w/ or w/o File ----------
 void Core::add_track(const Track& track) {
     if (track.file_path.empty()) {
+        // just add to database
         database.add_track(track);
     }
     else {
@@ -42,8 +43,6 @@ void Core::add_tracks_from_folder(const std::string& folder_path) {
 //--------------------------------------------------------------------------------
 //                                  ADD OTHER OBJECTS
 //--------------------------------------------------------------------------------
-
-
 void Core::add_album(const Album& album) {
     database.add_album(album);
 }
@@ -58,10 +57,10 @@ void Core::add_person(const std::string& person) {
 //                                  REMOVE OBJECTS
 //--------------------------------------------------------------------------------
 void Core::remove_track(int track_id) {
-    // TODO: Remove actual file !!!! (ONLY IF exists) !!!!!
-
     // remove in database
     database.remove_track(track_id);
+
+    // TODO: Remove actual file !!!! (ONLY IF exists) !!!!!
 }
 void Core::remove_album(int album_id) {
     // remove in database
@@ -86,44 +85,113 @@ void Core::remove_person(int person_id) {
 
 // ---------- INFO IN BOTH DATABASE & METADATA ----------
 void Core::set_track_title(int track_id, const std::string& new_track_title) {
-    // make sure new title isn't same as old title
+    // make sure isn't same as old title
     std::optional<std::string> current_title = database.get_track_title(track_id);
-    if (current_title) { // if has not-null title
+    if (current_title) {
         if (*current_title == new_track_title) {
-            return; // return if new title is the same as old
+            return; // return if same as old
         }
     }
 
-    // check if it has file attached
-    std::optional<std::string> possible_file_path = database.get_file_path(track_id);
-    if (possible_file_path) {
-        // update title in metadata
-        std::string file_path = *possible_file_path;
-        MetadataManager file_metadata{file_path};
+    // update in database
+    database.set_track_title(track_id, new_track_title);
+
+    // update in metadata + file name + path (if there is file)
+    std::optional<std::string> possible_file_path = database.get_track_file_path(track_id);
+    if (possible_file_path) { // check if file exists
+        // update in metadata
+        MetadataManager file_metadata{*possible_file_path};
         file_metadata.set_track_title(new_track_title);
 
         // update file name to match
-        file_manager.update_file_name(file_path, new_track_title);
+        file_manager.update_file_name(*possible_file_path, new_track_title);
+
+        // TODO: UPDATE FILE PATH?
+        // TODO: Update file path in db to, OR make priv function that does all??
+    }
+}
+void Core::set_track_artist(int track_id, const std::string& new_artist_name) {
+    // make sure isn't same as old artist
+    std::optional<Artist> current_artist = database.get_track_artist(track_id);
+    if (current_artist) {
+        if (current_artist->name == new_artist_name) {
+            return; // return if same as old
+        }
     }
 
-    // update title in DB
-    // TODO: CODE
-}
-void Core::set_track_artist(int track_id, const std::string& new_artist) {
-    // TODO: CODE - MAY OR MAY NOT HAVE FILE
-}
-void Core::set_track_album(int track_id, const std::string& new_album) {
-    // TODO: CODE - MAY OR MAY NOT HAVE FILE
-}
+    // update in database
+    database.set_track_artist(track_id, new_artist_name);
 
-// ---------- METADATA ONLY INFO ----------
-void Core::set_track_tracklist_num(int track_id, int new_tracklist_num) {
-    // TODO: CODE - MAY OR MAY NOT HAVE FILE
-}
+    // update in metadata + file path (if there is file)
+    std::optional<std::string> possible_file_path = database.get_track_file_path(track_id);
+    if (possible_file_path) { // check if file exists
+        // update in metadata
+        MetadataManager file_metadata{*possible_file_path};
+        file_metadata.set_artist(new_artist_name);
 
-// ---------- DATABASE ONLY INFO ----------
+        // TODO: UPDATE FILE PATH, MOVE TO NEW FOLDER!!!!!!!!!!
+        // TODO: Update file path in db to, OR make priv function that does all??
+    }
+
+    // TODO: possibly overload to also take in Artist type too, use that to set person?
+}
+void Core::set_track_album(int track_id, const std::string& new_album_title) {
+    // make sure isn't same as old album
+    std::optional<Album> current_album = database.get_track_album(track_id);
+    if (current_album) {
+        if (current_album->title == new_album_title) {
+            return; // return if same as old
+        }
+    }
+
+    // update in database
+    database.set_track_album(track_id, new_album_title);
+
+    // update in metadata + file path (if there is file)
+    std::optional<std::string> possible_file_path = database.get_track_file_path(track_id);
+    if (possible_file_path) { // check if file exists
+        // update in metadata
+        MetadataManager file_metadata{*possible_file_path};
+        file_metadata.set_album(new_album_title);
+
+        // TODO: UPDATE FILE PATH
+    }
+
+    // TODO: possibly overload to also take in Album type too, use that info too?
+}
 void Core::set_track_date(int track_id, const Date& new_date) {
+    // make sure isn't same as old date
+    std::optional<Date> current_date = database.get_track_date(track_id);
+    if (current_date) {
+        if (*current_date == new_date) {
+            return; // return if same as old
+        }
+    }
+
+    // update in database
     database.set_track_date(track_id, new_date);
+
+    // TODO: check if date is in metadata, set if so
+}
+void Core::set_track_tracklist_num(int track_id, int new_tracklist_num) {
+    // make sure isn't same as old tracklist num
+    std::optional<int> current_tracklist_num = database.get_track_tracklist_num(track_id);
+    if (current_tracklist_num) {
+        if (*current_tracklist_num == new_tracklist_num) {
+            return; // return if same as old
+        }
+    }
+
+    // update in database
+    database.set_track_tracklist_num(track_id, new_tracklist_num);
+
+    // update in metadata (if there is file)
+    std::optional<std::string> possible_file_path = database.get_track_file_path(track_id);
+    if (possible_file_path) { // check if file exists
+        // update in metadata
+        MetadataManager file_metadata{*possible_file_path};
+        file_metadata.set_tracklist_num(new_tracklist_num);
+    }
 }
 
 //--------------------------------------------------------------------------------
