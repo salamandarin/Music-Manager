@@ -26,8 +26,7 @@ void Core::add_track(const Track& track) {
     if (track.file_path.empty()) {
         // just add to database
         database.add_track(track);
-    }
-    else {
+    } else {
         // divert to other function if has file
         add_track(track.file_path);
     }
@@ -104,9 +103,8 @@ void Core::set_track_title(int track_id, const std::string& new_track_title) {
         file_metadata.set_track_title(new_track_title);
 
         // update file name to match
-        file_manager.update_file_name(*possible_file_path, new_track_title);
+        file_manager.rename_file(*possible_file_path, new_track_title);
 
-        // TODO: UPDATE FILE PATH?
         // TODO: Update file path in db to, OR make priv function that does all??
     }
 }
@@ -155,6 +153,7 @@ void Core::set_track_album(int track_id, const std::string& new_album_title) {
         file_metadata.set_album(new_album_title);
 
         // TODO: UPDATE FILE PATH
+        // TODO: Update file path in db to, OR make priv function that does all??
     }
 
     // TODO: possibly overload to also take in Album type too, use that info too?

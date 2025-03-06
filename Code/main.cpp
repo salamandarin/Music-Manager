@@ -37,7 +37,9 @@ int main() {
 
         Core core;
 
-        choose_test_demo(core, file_names);
+        FileManager file_manager;
+        file_manager.delete_empty_parent_folders("../../Music_Files/Ethel Cain/Ethel Cain/Album_Unknown");
+        // choose_test_demo(core, file_names);
     }
     catch (std::runtime_error& error) {
         std::cout << "\nError: " << error.what() << "\n";
