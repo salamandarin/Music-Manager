@@ -31,8 +31,7 @@ DatabaseManager::DatabaseManager() {
 }
 
 DatabaseManager::~DatabaseManager() {
-    // close database
-    sqlite3_close(database);
+    sqlite3_close(database); // close database
 }
 
 //--------------------------------------------------------------------------------
@@ -160,10 +159,6 @@ void DatabaseManager::add_person(const std::string& person) {
 //                                  REMOVE OBJECTS
 //--------------------------------------------------------------------------------
 void DatabaseManager::remove_track(int track_id) {
-    
-    // TODO: CODE (remove albums, artists, people too if they no longer have any tracks or CREDITS)
-    // TODO: OR JUST FLAG INSTEAD OF REMOVING STUFF (might still want)
-    
     // prep & bind sql
     const char* sql_to_prep = "DELETE FROM tracks WHERE track_id = ?";
     sqlite3_stmt* sql = prepare_sql(sql_to_prep);
@@ -171,12 +166,11 @@ void DatabaseManager::remove_track(int track_id) {
 
     // execute
     execute_sql(sql);
+
+    // TODO: remove cascading data (remove albums, artists, people) too if they no longer have any tracks or CREDITS?
+    // TODO: OR JUST FLAG INSTEAD OF REMOVING STUFF (might still want)
 }
 void DatabaseManager::remove_album(int album_id) {
-    
-    // TODO: CODE (remove albums, artists, people too if they no longer have any tracks or CREDITS)
-    // TODO: OR JUST FLAG INSTEAD OF REMOVING STUFF (might still want)
-    
     // prep & bind sql
     const char* sql_to_prep = "DELETE FROM albums WHERE album_id = ?";
     sqlite3_stmt* sql = prepare_sql(sql_to_prep);
@@ -184,12 +178,11 @@ void DatabaseManager::remove_album(int album_id) {
 
     // execute
     execute_sql(sql);
+
+    // TODO: remove cascading data (remove albums, artists, people) too if they no longer have any tracks or CREDITS?
+    // TODO: OR JUST FLAG INSTEAD OF REMOVING STUFF (might still want)
 }
 void DatabaseManager::remove_artist(int artist_id) {
-    
-    // TODO: CODE (remove albums, artists, people too if they no longer have any tracks or CREDITS)
-    // TODO: OR JUST FLAG INSTEAD OF REMOVING STUFF (might still want)
-    
     // prep & bind sql
     const char* sql_to_prep = "DELETE FROM artists WHERE artist_id = ?";
     sqlite3_stmt* sql = prepare_sql(sql_to_prep);
@@ -197,12 +190,11 @@ void DatabaseManager::remove_artist(int artist_id) {
 
     // execute
     execute_sql(sql);
+
+    // TODO: remove cascading data (remove albums, artists, people) too if they no longer have any tracks or CREDITS?
+    // TODO: OR JUST FLAG INSTEAD OF REMOVING STUFF (might still want)
 }
 void DatabaseManager::remove_person(int person_id) {
-    
-    // TODO: CODE (remove albums, artists, people too if they no longer have any tracks or CREDITS)
-    // TODO: OR JUST FLAG INSTEAD OF REMOVING STUFF (might still want)
-
     // prep & bind sql
     const char* sql_to_prep = "DELETE FROM people WHERE person_id = ?";
     sqlite3_stmt* sql = prepare_sql(sql_to_prep);
@@ -210,6 +202,9 @@ void DatabaseManager::remove_person(int person_id) {
 
     // execute
     execute_sql(sql);
+
+    // TODO: remove cascading data (remove albums, artists, people) too if they no longer have any tracks or CREDITS?
+    // TODO: OR JUST FLAG INSTEAD OF REMOVING STUFF (might still want)
 }
 
 //--------------------------------------------------------------------------------
@@ -249,10 +244,9 @@ std::optional<std::string> DatabaseManager::get_track_title(int track_id) {
     bind_input_to_sql(sql, 1, track_id); // bind id
 
     int result = sqlite3_step(sql);
-    // if result is found, return title
+    // if result is found, return data
     if (result == SQLITE_ROW) {
-        const unsigned char* title = sqlite3_column_text(sql, 0);
-        std::string track_title = reinterpret_cast<const char*>(title);
+        std::string track_title = reinterpret_cast<const char*>(sqlite3_column_text(sql, 0));
         sqlite3_finalize(sql); // clean up sql statement
         return track_title;
     } 
@@ -510,17 +504,20 @@ void DatabaseManager::set_object_value(const std::string& table,
                                        int id) {
     // make sure object exists
     if (!object_exists(id_label, table, id)) { // if object DOESN'T exist
+        // make error message
         std::string error_message = "Tried to set " + value_label + " to '" + value;
         error_message += "' for object in " + table + ", but object with ";
         error_message += id_label + " '" + std::to_string(id) + "' was not found";
+        // throw error
         throw std::runtime_error(error_message);
     }
 
-    // prep & bind sql
+    // prep sql
     std::string sql_to_prep =  "UPDATE " + table + " SET " + value_label;
     sql_to_prep += " = ? WHERE " + id_label + "= ?";
     sqlite3_stmt* sql = prepare_sql(sql_to_prep.c_str());
 
+    // bind input to sql
     bind_input_to_sql(sql, 1, value);
     bind_input_to_sql(sql, 2, id);
 
@@ -530,14 +527,12 @@ void DatabaseManager::set_object_value(const std::string& table,
 
 // check if object exists
 bool DatabaseManager::object_exists(const std::string& id_label, const std::string& table, int id) {
-    // prep sql
+    // prep & bind sql
     std::string sql_to_prep = "SELECT " + id_label + " FROM " + table + " WHERE " + id_label + " = ?;";
-    sqlite3_stmt* sql = prepare_sql(sql_to_prep.c_str());
+    sqlite3_stmt* sql = prepare_sql(sql_to_prep.c_str()); /
+    bind_input_to_sql(sql, 1, id); // bind id
 
-    // bind input to sql
-    bind_input_to_sql(sql, 1, id);
-
-    // execute
+    // execute & get result
     int result = sqlite3_step(sql);
     bool exists = (result == SQLITE_ROW);
 
