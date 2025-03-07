@@ -74,8 +74,7 @@ public:
     void set_person_name(int person_id, const std::string& name);
 
 private:
-    sqlite3_stmt* prepare_sql(const char* sql_to_prepare);
-    void execute_sql(sqlite3_stmt* sql);
+    sqlite3_stmt* prepare_sql(const std::string& sql_to_prepare);
 
     // bind input to sql statement
     void bind_input_to_sql(sqlite3_stmt* sql, int index, const std::optional<std::string>& input_value); // optional string
@@ -84,6 +83,17 @@ private:
     void bind_input_to_sql(sqlite3_stmt* sql, int index, int input_value); // int
 
     // ---------- backend of other functions ---------- 
+
+    // execute sql queries
+    void execute_sql(sqlite3_stmt* sql); // queries with no return
+    template<typename T> // queries with return
+    std::optional<T> query_sql(sqlite3_stmt* sql, T (*result_extractor)(sqlite3_stmt*));
+
+    // type extractors
+    static std::string extract_string(sqlite3_stmt* sql);
+    static int extract_int(sqlite3_stmt* sql);
+    static bool extract_bool(sqlite3_stmt* sql);
+
     // get id by name
     std::optional<int> get_id_by_name(const std::string& id_label,
                                      const std::string& table,
@@ -102,3 +112,20 @@ private:
     // data
     sqlite3* database;
 };
+
+
+// execute sql queries that do return stuff
+template<typename T>
+    std::optional<T> DatabaseManager::query_sql(sqlite3_stmt* sql, T (*result_extractor)(sqlite3_stmt*)) {
+    // if result is found, return data
+    if (sqlite3_step(sql) == SQLITE_ROW) {
+        T extracted_value = result_extractor(sql);
+        sqlite3_finalize(sql); // clean up sql statement
+        return extracted_value;
+    }
+    // if result is NOT found, return null
+    else {
+        sqlite3_finalize(sql); // clean up sql statement
+        return std::nullopt;
+    }
+}

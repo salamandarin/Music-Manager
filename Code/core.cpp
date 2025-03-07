@@ -56,26 +56,26 @@ void Core::add_person(const std::string& person) {
 //                                  REMOVE OBJECTS
 //--------------------------------------------------------------------------------
 void Core::remove_track(int track_id) {
-    // remove in database
-    database.remove_track(track_id);
-
     // delete file (if exists)
     std::optional<std::string> possible_file_path = database.get_track_file_path(track_id);
     if (possible_file_path) { // check if file exists
         file_manager.delete_file(*possible_file_path); // delete file
     }
+
+    // remove in database (must do last or else can't get file path)
+    database.remove_track(track_id);
 }
 void Core::remove_album(int album_id) {
+    // TODO: remove from all track metadata (or refresh??) (do 1st or 2nd??)
+
     // remove in database
     database.remove_album(album_id);
-
-    // TODO: remove from all track metadata (or refresh??) (do 1st or 2nd??)
 }
 void Core::remove_artist(int artist_id) {
+    // TODO: remove from all track metadata (or refresh??) (do 1st or 2nd??)
+
     // remove in database
     database.remove_artist(artist_id);
-
-    // TODO: remove from all track metadata (or refresh??) (do 1st or 2nd??)
 }
 void Core::remove_person(int person_id) {
     // remove in database

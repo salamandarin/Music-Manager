@@ -37,13 +37,12 @@ int main() {
 
         Core core;
 
+        int track_id = 30;
         DatabaseManager database;
-        std::optional<std::string> file_path = database.get_track_file_path(3);
-        std::cout << "File Path: " << *file_path << "\n";
+        std::optional<std::string> possible_file_path = database.get_track_file_path(track_id);
+        std::cout << "FILE PATH MAIN: " << *possible_file_path << "\n";
 
-        FileManager file_manager;
-        file_manager.delete_file(*file_path);
-
+        core.remove_track(track_id);
         // choose_test_demo(core, file_names);
     }
     catch (std::runtime_error& error) {
