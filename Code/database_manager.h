@@ -30,8 +30,13 @@ public:
 
     // ------------------------- GET DATA -------------------------
     // get data for entire objects
-    std::optional<Album> get_album(const std::string& album_title); // look for album title matches, return Album if found
-    std::optional<Artist> get_artist(const std::string& artist_name); // look for artist name matches, return Artist if found
+    std::optional<Track> get_track(int track_id);
+    std::optional<Album> get_album(int album_id);
+    std::optional<Artist> get_artist(int artist_id);
+
+    // get entire objects by name (not id)
+    std::optional<Album> get_album(const std::string& album_title);
+    std::optional<Artist> get_artist(const std::string& artist_name);
 
     // get specific track data
     std::optional<std::string> get_track_title(int track_id);
@@ -41,6 +46,12 @@ public:
     std::optional<int> get_track_tracklist_num(int track_id);
     std::optional<std::string> get_track_file_path(int track_id);
     std::optional<std::string> get_track_image_path(int track_id);
+
+    // get specific album data
+    std::optional<std::string> get_album_title(int album_id);
+
+    // get specific artist data
+    std::optional<std::string> get_artist_name(int artist_id);
 
     // get id from name
     std::optional<int> get_track_id(const std::string& track_title);

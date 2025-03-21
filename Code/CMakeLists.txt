@@ -27,7 +27,8 @@ find_package(SQLite3 REQUIRED)
 target_link_libraries(music PRIVATE SQLite::SQLite3)
 
 
-# TEST EXECUTABLE
+
+# ---------------------- TEST EXECUTABLE ----------------------
 add_executable(metadata_tests
         metadata_tests.cpp
         metadata_manager.cpp

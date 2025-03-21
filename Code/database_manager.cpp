@@ -209,25 +209,56 @@ bool DatabaseManager::track_exists(int track_id) {
 //--------------------------------------------------------------------------------
 //                                  GET ENTIRE OBJECTS
 //--------------------------------------------------------------------------------
+std::optional<Track> DatabaseManager::get_track(int track_id) {
+    // TODO: CODE
 
-// look for album title matches, return Album if found
-std::optional<Album> DatabaseManager::get_album(const std::string& album_title) {
+    // return track found (or nullopt)
+    return std::nullopt;
+}
+
+std::optional<Album> DatabaseManager::get_album(int album_id) {
     //TODO: CODE
 
     // return album found (or nullopt)
     return std::nullopt;
 }
-
-// look for artist name matches, return Artist if found
-std::optional<Artist> DatabaseManager::get_artist(const std::string& artist_name) {
+std::optional<Artist> DatabaseManager::get_artist(int artist_id) {
     //TODO: CODE
 
     // return artist found (or nullopt)
     return std::nullopt;
 }
 
+// ------------------------ GET OBJECTS BY NAME ------------------------
+std::optional<Album> DatabaseManager::get_album(const std::string& album_title) {
+    // get id from title
+    std::optional<int> album_id = get_album_id(album_title);
+
+    // return album if exists
+    if (album_id) {
+        return get_album(*album_id);
+    }
+    // return null if no album
+    else {
+        return std::nullopt;
+    }
+}
+std::optional<Artist> DatabaseManager::get_artist(const std::string& artist_name) {
+    // get id from name
+    std::optional<int> artist_id = get_artist_id(artist_name);
+
+    // return artist if exists
+    if (artist_id) {
+        return get_artist(*artist_id);
+    }
+    // return null if no artist
+    else {
+        return std::nullopt;
+    }
+}
+
 //--------------------------------------------------------------------------------
-//                                  GET SPECIFIC DATA
+//                                  GET SPECIFIC TRACK DATA
 //--------------------------------------------------------------------------------
 std::optional<std::string> DatabaseManager::get_track_title(int track_id) {
     // prep & bind sql
@@ -238,14 +269,38 @@ std::optional<std::string> DatabaseManager::get_track_title(int track_id) {
     return query_sql<std::string>(sql, extract_string);
 }
 std::optional<Artist> DatabaseManager::get_track_artist(int track_id) {
-    // TODO: CODE
-    // TODO: have (this?) function to grab track artist id, then use that info to call get_artist()!!!!!
-    return std::nullopt;
+    // prep & bind sql
+    sqlite3_stmt* sql = prepare_sql("SELECT artist_id FROM tracks WHERE track_id = ?");
+    bind_input_to_sql(sql, 1, track_id); // bind id
+
+    // get artist id
+    std::optional<int> artist_id = query_sql<int>(sql, extract_int);
+
+    // return artist if exists
+    if (artist_id) {
+        return get_artist(*artist_id);
+    }
+    // return null if no artist
+    else {
+        return std::nullopt;
+    }
 }
 std::optional<Album> DatabaseManager::get_track_album(int track_id) {
-    // TODO: CODE
-    // TODO: have (this?) function to grab track album id, then use that info to call get_album()!!!!!
-    return std::nullopt;
+    // prep & bind sql
+    sqlite3_stmt* sql = prepare_sql("SELECT album_id FROM tracks WHERE track_id = ?");
+    bind_input_to_sql(sql, 1, track_id); // bind id
+
+    // get album id
+    std::optional<int> album_id = query_sql<int>(sql, extract_int);
+
+    // return album if exists
+    if (album_id) {
+        return get_album(*album_id);
+    }
+    // return null if no album
+    else {
+        return std::nullopt;
+    }
 }
 std::optional<Date> DatabaseManager::get_track_date(int track_id) {
     // TODO: CONVERT OPTIONAL STRING TO OPTIONAL DATE (preserve nullopt)
@@ -271,6 +326,30 @@ std::optional<std::string> DatabaseManager::get_track_image_path(int track_id) {
     // prep & bind sql
     sqlite3_stmt* sql = prepare_sql("SELECT image_path FROM tracks WHERE track_id = ?");
     bind_input_to_sql(sql, 1, track_id); // bind id
+
+    // execute & return result
+    return query_sql<std::string>(sql, extract_string);
+}
+
+//--------------------------------------------------------------------------------
+//                                  GET SPECIFIC ALBUM DATA
+//--------------------------------------------------------------------------------
+std::optional<std::string> DatabaseManager::get_album_title(int album_id) {
+    // prep & bind sql
+    sqlite3_stmt* sql = prepare_sql("SELECT title FROM albums WHERE album_id = ?");
+    bind_input_to_sql(sql, 1, album_id); // bind id
+
+    // execute & return result
+    return query_sql<std::string>(sql, extract_string);
+}
+
+//--------------------------------------------------------------------------------
+//                                  GET SPECIFIC ARTIST DATA
+//--------------------------------------------------------------------------------
+std::optional<std::string> DatabaseManager::get_artist_name(int artist_id) {
+    // prep & bind sql
+    sqlite3_stmt* sql = prepare_sql("SELECT name FROM artists WHERE artist_id = ?");
+    bind_input_to_sql(sql, 1, artist_id); // bind id
 
     // execute & return result
     return query_sql<std::string>(sql, extract_string);
