@@ -111,7 +111,8 @@ std::vector<std::string> FileManager::get_files_from_folder(const std::string& f
 
     std::vector<std::string> file_paths;
     for (const auto& file : filesystem::directory_iterator(folder_path)) {
-        if (filesystem::is_regular_file(file)) {
+        // check if regular file & doesn't start with '.' (hidden file)
+        if (filesystem::is_regular_file(file) && file.path().filename().string()[0] != '.') {
             file_paths.push_back(file.path().string());
         }
     }

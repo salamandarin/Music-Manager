@@ -7,6 +7,7 @@
 #include "date.h"
 #include <string>
 #include <sqlite3.h>
+#include <iostream>
 
 class DatabaseManager {
 public:
@@ -27,8 +28,17 @@ public:
 
     // check if object exists
     bool track_exists(int track_id);
+    bool album_exists(int album_id);
+    bool artist_exists(int artist_id);
+    bool person_exists(int person_id);
 
     // ------------------------- GET DATA -------------------------
+    // get entire tables
+    std::vector<Track> get_all_tracks();
+    std::vector<Album> get_all_albums();
+    std::vector<Artist> get_all_artists();
+    std::vector<std::string> get_all_people();
+
     // get data for entire objects
     std::optional<Track> get_track(int track_id);
     std::optional<Album> get_album(int album_id);
@@ -42,6 +52,7 @@ public:
     std::optional<std::string> get_track_title(int track_id);
     std::optional<Artist> get_track_artist(int track_id);
     std::optional<Album> get_track_album(int track_id);
+    std::optional<Duration> get_track_duration(int track_id);
     std::optional<Date> get_track_date(int track_id);
     std::optional<int> get_track_tracklist_num(int track_id);
     std::optional<std::string> get_track_file_path(int track_id);
@@ -98,12 +109,12 @@ private:
     // execute sql queries
     void execute_sql(sqlite3_stmt* sql); // queries with no return
     template<typename T> // queries with return
-    std::optional<T> query_sql(sqlite3_stmt* sql, T (*result_extractor)(sqlite3_stmt*));
+    std::optional<T> query_sql(sqlite3_stmt* sql, T (*result_extractor)(sqlite3_stmt*, int), int column=0);
 
     // type extractors
-    static std::string extract_string(sqlite3_stmt* sql);
-    static int extract_int(sqlite3_stmt* sql);
-    static bool extract_bool(sqlite3_stmt* sql);
+    static std::string extract_string(sqlite3_stmt* sql, int column=0);
+    static int extract_int(sqlite3_stmt* sql, int column=0);
+    static bool extract_bool(sqlite3_stmt* sql, int column=0);
 
     // get id by name
     std::optional<int> get_id_by_name(const std::string& id_label,
@@ -119,7 +130,6 @@ private:
     // check if data exists
     bool object_exists(const std::string& id_label, const std::string& table, int id);
 
-        
     // data
     sqlite3* database;
 };
@@ -127,15 +137,21 @@ private:
 
 // execute sql queries that do return stuff
 template<typename T>
-    std::optional<T> DatabaseManager::query_sql(sqlite3_stmt* sql, T (*result_extractor)(sqlite3_stmt*)) {
-    // if result is found, return data
-    if (sqlite3_step(sql) == SQLITE_ROW) {
-        T extracted_value = result_extractor(sql);
+    std::optional<T> DatabaseManager::query_sql(sqlite3_stmt* sql, T (*result_extractor)(sqlite3_stmt*, int), int column) {
+    // if result is found & result isn't null, return data
+    if (sqlite3_step(sql) == SQLITE_ROW && sqlite3_column_type(sql, column) != SQLITE_NULL) {
+        T extracted_value = result_extractor(sql, column);
+
+        std::cout << "Data found: " << extracted_value << "\n";
+
         sqlite3_finalize(sql); // clean up sql statement
         return extracted_value;
     }
     // if result is NOT found, return null
     else {
+        std::cout << "Data not found\n";
+
+
         sqlite3_finalize(sql); // clean up sql statement
         return std::nullopt;
     }

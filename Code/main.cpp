@@ -37,12 +37,33 @@ int main() {
 
         Core core;
 
-        int track_id = 30;
-        DatabaseManager database;
-        std::optional<std::string> possible_file_path = database.get_track_file_path(track_id);
-        std::cout << "FILE PATH MAIN: " << *possible_file_path << "\n";
+//        int track_id = 30;
+//        DatabaseManager database;
+//        std::optional<std::string> possible_file_path = database.get_track_file_path(track_id);
+//        std::cout << "FILE PATH MAIN: " << *possible_file_path << "\n";
 
-        core.remove_track(track_id);
+//        core.remove_track(track_id);
+
+//        Track empty_track;
+//        empty_track.album = "";
+//        empty_track.artist = "";
+//        empty_track.title = "";
+//        empty_track.file_path = "";
+//        empty_track.tracklist_num = 0;
+//
+        DatabaseManager db;
+//        db.add_track(empty_track);
+
+
+        std::optional<Artist> returned_data = db.get_artist(1);
+        std::cout << *returned_data;
+//
+//        std::optional<Artist> returned_data = db.get_track_artist(35);
+//        std::cout << *returned_data;
+
+//        std::optional<Track> returned_track = db.get_track(35);
+//        std::cout << *returned_track;
+
         // choose_test_demo(core, file_names);
     }
     catch (std::runtime_error& error) {
