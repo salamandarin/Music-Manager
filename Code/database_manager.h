@@ -129,6 +129,11 @@ private:
     // check if data exists
     bool object_exists(const std::string& id_label, const std::string& table, int id);
 
+    // get entire object rows
+    Track get_track_row(sqlite3_stmt* sql);
+    Album get_album_row(sqlite3_stmt* sql);
+    Artist get_artist_row(sqlite3_stmt* sql);
+
     // data
     sqlite3* database;
 };
