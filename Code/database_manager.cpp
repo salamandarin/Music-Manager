@@ -17,7 +17,6 @@ DatabaseManager::DatabaseManager() {
     std::string file_name = "../Database/tables.sql";
     std::ifstream file{file_name};
     if (!file) {
-        std::cout << "here";
         throw std::runtime_error("Could not open " + file_name + "\n");
     }
     std::string tables_sql{std::istreambuf_iterator<char>{file}, {}};
