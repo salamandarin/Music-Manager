@@ -308,75 +308,109 @@ std::vector<std::string> DatabaseManager::get_all_people() {
 //                                  GET ENTIRE OBJECTS
 //--------------------------------------------------------------------------------
 std::optional<Track> DatabaseManager::get_track(int track_id) {
+    // prep & bind sql
+    sqlite3_stmt* sql = prepare_sql(R"(
+        SELECT tracks.title, 
+                artists.name AS artist, 
+                albums.title AS album,
+                tracks.duration,
+                tracks.date,
+                tracks.tracklist_num,
+                tracks.file_path,
+                tracks.image_path
+        FROM tracks
+        LEFT JOIN artists ON tracks.artist_id = artists.artist_id
+        LEFT JOIN albums ON tracks.album_id = albums.album_id
+        WHERE tracks.track_id = ?
+    )");
+    bind_input_to_sql(sql, 1, track_id);
+
     // if track exists in db
-    if (track_exists(track_id)) {
-        // prep & bind sql
-        sqlite3_stmt* sql = prepare_sql(R"(
-            SELECT tracks.title, 
-                    artists.name AS artist, 
-                    albums.title AS album,
-                    tracks.duration,
-                    tracks.date,
-                    tracks.tracklist_num,
-                    tracks.file_path,
-                    tracks.image_path
-            FROM tracks
-            LEFT JOIN artists ON tracks.artist_id = artists.artist_id
-            LEFT JOIN albums ON tracks.album_id = albums.album_id
-            WHERE tracks.track_id = ?
-        )");
-        bind_input_to_sql(sql, 1, track_id);
+    if (sqlite3_step(sql) == SQLITE_ROW) { // execute
+        Track track;
 
-        // execute
-        if (sqlite3_step(sql) == SQLITE_ROW) {
-            Track track;
+        track.id = track_id; // id
+        track.title = extract_string(sql, 0).value_or(""); // title - 0
+        track.artist = extract_string(sql, 1).value_or(""); // artist (NAME) - 1
+        track.album = extract_string(sql, 2).value_or(""); // album (TITLE) - 2
+        // track.duration = extract_string(sql, 3).value_or(""); // duration - 3 // TODO: HANDLE STRING/INT -> DURATION
+        // track.date = extract_string(sql, 4).value_or(""); // date - 4 // TODO: HANDLE STRING -> DATE
+        track.tracklist_num = extract_int(sql, 5).value_or(0); // tracklist_num - 5
+        track.file_path = extract_string(sql, 6).value_or(""); // file_path - 6
+        track.image_path= extract_string(sql, 7).value_or(""); // image_path - 7
 
-            track.id = track_id; // id
-            track.title = extract_string(sql, 0).value_or(""); // title - 0
-            track.artist = extract_string(sql, 1).value_or(""); // artist NAME - 1
-            track.album = extract_string(sql, 2).value_or(""); // album TITLE - 2
-            // track.duration = extract_string(sql, 3).value_or(""); // duration - 3 // TODO: HANDLE STRING/INT -> DURATION
-            // track.date = extract_string(sql, 4).value_or(""); // date - 4 // TODO: HANDLE STRING -> DATE
-            track.tracklist_num = extract_int(sql, 5).value_or(0); // tracklist_num - 5
-            track.file_path = extract_string(sql, 6).value_or(""); // file_path - 6
-            track.image_path= extract_string(sql, 7).value_or(""); // image_path - 7
-
-            sqlite3_finalize(sql);
-            return track;
-        }
-        // if track NOT found, return null
-        else {
-            sqlite3_finalize(sql); // clean up sql statement
-            return std::nullopt;
-        }
+        sqlite3_finalize(sql);
+        return track;
+    }
+    // if track NOT in db, return null
+    else {
+        sqlite3_finalize(sql); // clean up sql statement
+        return std::nullopt;
     }
 }
 
 std::optional<Album> DatabaseManager::get_album(int album_id) {
-    if (album_exists(album_id)) { // make sure it's in db
+    // prep & bind sql
+    sqlite3_stmt* sql = prepare_sql(R"(
+        SELECT albums.title,
+                artists.name AS artist,
+                albums.date,
+                album_types.name AS type,
+                albums.image_path
+        FROM albums
+        LEFT JOIN artists ON albums.artist_id = artists.artist_id
+        LEFT JOIN album_types ON albums.type_id = album_types.album_type_id
+        WHERE albums.album_id = ?
+    )");
+    bind_input_to_sql(sql, 1, album_id);
+
+    // if album exists in db
+    if (sqlite3_step(sql) == SQLITE_ROW) { // execute
         Album album;
-        album.id = album_id;
 
-        // TODO: FINISH!!!!
+        album.id = album_id; // id
+        album.title = extract_string(sql, 0).value_or(""); // title - 0
+        album.artist = extract_string(sql, 1).value_or(""); // artist (NAME) - 1
+        // album.date = extract_string(sql, 2).value_or(""); // date - 2 // TODO: HANDLE STRING -> DATE
+        album.type = extract_string(sql, 3).value_or(""); // type (NAME) - 3
+        album.image_path= extract_string(sql, 4).value_or(""); // image_path - 4
 
+        sqlite3_finalize(sql);
         return album;
     }
-    // return null if not found
+    // if album NOT in db, return null
     else {
+        sqlite3_finalize(sql); // clean up sql statement
         return std::nullopt;
     }
 }
 std::optional<Artist> DatabaseManager::get_artist(int artist_id) {
-    if (artist_exists(artist_id)) { // make sure it's in db
+    // prep & bind sql
+    sqlite3_stmt* sql = prepare_sql(R"(
+        SELECT artists.name,
+                people.name AS person_behind,
+                artists.image_path
+        FROM artists
+        LEFT JOIN people ON artists.person_behind_id = people.person_id
+        WHERE artists.artist_id = ?
+    )");
+    bind_input_to_sql(sql, 1, artist_id);
+
+    // if artist exists in db
+    if (sqlite3_step(sql) == SQLITE_ROW) { // execute
         Artist artist;
+
         artist.id = artist_id; // id
+        artist.name = extract_string(sql, 0).value_or(""); // name - 0
+        artist.person_behind = extract_string(sql, 1).value_or(""); // person_behind (NAME) - 1
+        artist.image_path = extract_string(sql, 2).value_or(""); // image_path - 2
 
-        // TODO: FINISH!!!!
-
+        sqlite3_finalize(sql);
         return artist;
     }
-    // return null if not found
+    // if artist NOT in db, return null
     else {
+        sqlite3_finalize(sql); // clean up sql statement
         return std::nullopt;
     }
 }
