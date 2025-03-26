@@ -7,7 +7,6 @@
 #include "date.h"
 #include <string>
 #include <sqlite3.h>
-#include <iostream>
 
 class DatabaseManager {
 public:
@@ -109,12 +108,12 @@ private:
     // execute sql queries
     void execute_sql(sqlite3_stmt* sql); // queries with no return
     template<typename T> // queries with return
-    std::optional<T> query_sql(sqlite3_stmt* sql, T (*result_extractor)(sqlite3_stmt*, int), int column=0);
+    std::optional<T> query_sql(sqlite3_stmt* sql, std::optional<T> (*result_extractor)(sqlite3_stmt*, int), int column=0);
 
     // type extractors
-    static std::string extract_string(sqlite3_stmt* sql, int column=0);
-    static int extract_int(sqlite3_stmt* sql, int column=0);
-    static bool extract_bool(sqlite3_stmt* sql, int column=0);
+    static std::optional<std::string> extract_string(sqlite3_stmt* sql, int column=0);
+    static std::optional<int> extract_int(sqlite3_stmt* sql, int column=0);
+    static std::optional<bool> extract_bool(sqlite3_stmt* sql, int column=0);
 
     // get id by name
     std::optional<int> get_id_by_name(const std::string& id_label,
@@ -135,23 +134,17 @@ private:
 };
 
 
-// execute sql queries that do return stuff
+// execute sql queries that return 1 thing
 template<typename T>
-    std::optional<T> DatabaseManager::query_sql(sqlite3_stmt* sql, T (*result_extractor)(sqlite3_stmt*, int), int column) {
-    // if result is found & result isn't null, return data
-    if (sqlite3_step(sql) == SQLITE_ROW && sqlite3_column_type(sql, column) != SQLITE_NULL) {
-        T extracted_value = result_extractor(sql, column);
-
-        std::cout << "Data found: " << extracted_value << "\n";
-
+    std::optional<T> DatabaseManager::query_sql(sqlite3_stmt* sql, std::optional<T> (*result_extractor)(sqlite3_stmt*, int), int column) {
+    // if result exists, return data
+    if (sqlite3_step(sql) == SQLITE_ROW) {
+        std::optional<T> extracted_value = result_extractor(sql, column); // extractor handles if data is null
         sqlite3_finalize(sql); // clean up sql statement
         return extracted_value;
     }
-    // if result is NOT found, return null
+    // if result NOT found, return null
     else {
-        std::cout << "Data not found\n";
-
-
         sqlite3_finalize(sql); // clean up sql statement
         return std::nullopt;
     }

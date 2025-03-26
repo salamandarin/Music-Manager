@@ -61,8 +61,8 @@ int main() {
 //        std::optional<Artist> returned_data = db.get_track_artist(35);
 //        std::cout << *returned_data;
 
-//        std::optional<Track> returned_track = db.get_track(35);
-//        std::cout << *returned_track;
+        std::optional<Track> returned_track = db.get_track(35);
+        std::cout << *returned_track;
 
         // choose_test_demo(core, file_names);
     }

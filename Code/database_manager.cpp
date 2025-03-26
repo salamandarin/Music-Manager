@@ -228,8 +228,8 @@ std::vector<Track> DatabaseManager::get_all_tracks() {
     while (sqlite3_step(sql) == SQLITE_ROW) {
         Track track;
         
-        track.id = extract_int(sql, 0); // track_id (0)
-        track.title = extract_string(sql, 1); // title (1)
+        // track.id = extract_int(sql, 0); // track_id (0)
+        // track.title = extract_string(sql, 1); // title (1)
 
         // int artist_id = sqlite3_column_int(sql, 2); // artist_id (2)
         // if (artist_id) {
@@ -308,53 +308,47 @@ std::vector<std::string> DatabaseManager::get_all_people() {
 //                                  GET ENTIRE OBJECTS
 //--------------------------------------------------------------------------------
 std::optional<Track> DatabaseManager::get_track(int track_id) {
-    if (track_exists(track_id)) { // make sure it's in db
-        Track track;
-        track.id = track_id; // id
+    // if track exists in db
+    if (track_exists(track_id)) {
+        // prep & bind sql
+        sqlite3_stmt* sql = prepare_sql(R"(
+            SELECT tracks.title, 
+                    artists.name AS artist, 
+                    albums.title AS album,
+                    tracks.duration,
+                    tracks.date,
+                    tracks.tracklist_num,
+                    tracks.file_path,
+                    tracks.image_path
+            FROM tracks
+            LEFT JOIN artists ON tracks.artist_id = artists.artist_id
+            LEFT JOIN albums ON tracks.album_id = albums.album_id
+            WHERE tracks.track_id = ?
+        )");
+        bind_input_to_sql(sql, 1, track_id);
 
-        // title
-        std::optional<std::string> title = get_track_title(track_id);
-        if (title) {
-            track.title = *title;
-        }
-        // artist
-        std::optional<Artist> artist = get_track_artist(track_id);
-        if (artist) {
-            track.artist = artist->name;
-        }
-        // album
-        std::optional<Album> album = get_track_album(track_id);
-        if (album) {
-            track.album = album->title;
-        }
-        // duration
-        std::optional<Duration> duration = get_track_duration(track_id);
-        if (duration) {
-            track.duration = *duration;
-        }
-        // date
-        std::optional<Date> date = get_track_date(track_id);
-        if (date) {
-            track.date = *date;
-        }
-        // tracklist num
-        std::optional<int> tracklist_num = get_track_tracklist_num(track_id);
-        if (tracklist_num) {
-            track.tracklist_num = *tracklist_num;
-        }
-        // // file path (?)
-        // // TODO: should file_path be included by core/file_manager (along with other metadata) for accuracy??
-        // image path
-        std::optional<std::string> image_path = get_track_image_path(track_id);
-        if (image_path) {
-            track.image_path = *image_path;
-        }
+        // execute
+        if (sqlite3_step(sql) == SQLITE_ROW) {
+            Track track;
 
-        return track;
-    }
-    // return null if not found
-    else {
-        return std::nullopt;
+            track.id = track_id; // id
+            track.title = extract_string(sql, 0).value_or(""); // title - 0
+            track.artist = extract_string(sql, 1).value_or(""); // artist NAME - 1
+            track.album = extract_string(sql, 2).value_or(""); // album TITLE - 2
+            // track.duration = extract_string(sql, 3).value_or(""); // duration - 3 // TODO: HANDLE STRING/INT -> DURATION
+            // track.date = extract_string(sql, 4).value_or(""); // date - 4 // TODO: HANDLE STRING -> DATE
+            track.tracklist_num = extract_int(sql, 5).value_or(0); // tracklist_num - 5
+            track.file_path = extract_string(sql, 6).value_or(""); // file_path - 6
+            track.image_path= extract_string(sql, 7).value_or(""); // image_path - 7
+
+            sqlite3_finalize(sql);
+            return track;
+        }
+        // if track NOT found, return null
+        else {
+            sqlite3_finalize(sql); // clean up sql statement
+            return std::nullopt;
+        }
     }
 }
 
@@ -375,7 +369,7 @@ std::optional<Album> DatabaseManager::get_album(int album_id) {
 std::optional<Artist> DatabaseManager::get_artist(int artist_id) {
     if (artist_exists(artist_id)) { // make sure it's in db
         Artist artist;
-        artist.id = artist_id;
+        artist.id = artist_id; // id
 
         // TODO: FINISH!!!!
 
@@ -717,13 +711,13 @@ std::optional<int> DatabaseManager::get_id_by_name(const std::string& id_label,
     sqlite3_stmt* sql = prepare_sql("SELECT " + id_label + " FROM " + table + " WHERE " + name_label + " = ?");
     bind_input_to_sql(sql, 1, name_to_search);
 
-    // if result is found & result isn't null, return id
-    if (sqlite3_step(sql) == SQLITE_ROW && sqlite3_column_type(sql, 0) != SQLITE_NULL) {
-        int id = sqlite3_column_int(sql, 0);
+    // if result exists, return data
+    if (sqlite3_step(sql) == SQLITE_ROW) {
+        std::optional<int> id = extract_int(sql); // extract handles if null
         sqlite3_finalize(sql); // clean up sql statement
         return id;
     }
-    // if result is NOT found, return null
+    // if result NOT found, return null
     else {
         sqlite3_finalize(sql); // clean up sql statement
         return std::nullopt;
@@ -773,13 +767,28 @@ bool DatabaseManager::object_exists(const std::string& id_label, const std::stri
 //--------------------------------------------------------------------------------
 //                      PRIVATE FUNCTIONS - EXTRACT TYPES
 //--------------------------------------------------------------------------------
-std::string DatabaseManager::extract_string(sqlite3_stmt* sql, int column) {
+std::optional<std::string> DatabaseManager::extract_string(sqlite3_stmt* sql, int column) {
+    // return nullopt if null
+    if (sqlite3_column_type(sql, column) == SQLITE_NULL) {
+        return std::nullopt;
+    }
+    // extract data
     const unsigned char* text = sqlite3_column_text(sql, column);
-    return reinterpret_cast<const char*>(text);
+    return reinterpret_cast<const char*>(text);   
 }
-int DatabaseManager::extract_int(sqlite3_stmt* sql, int column) {
-    return sqlite3_column_int(sql, column);
+std::optional<int> DatabaseManager::extract_int(sqlite3_stmt* sql, int column) {
+    // return nullopt if null
+    if (sqlite3_column_type(sql, column) == SQLITE_NULL) {
+        return std::nullopt;
+    }
+    // extract data
+    return sqlite3_column_int(sql, column); 
 }
-bool DatabaseManager::extract_bool(sqlite3_stmt* sql, int column) {
+std::optional<bool> DatabaseManager::extract_bool(sqlite3_stmt* sql, int column) {
+    // return nullopt if null
+    if (sqlite3_column_type(sql, column) == SQLITE_NULL) {
+        return std::nullopt;
+    }
+    // extract data
     return sqlite3_column_int(sql, column) != 0;
 }
