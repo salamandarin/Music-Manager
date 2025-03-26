@@ -57,12 +57,29 @@ int main() {
 
         std::optional<Artist> returned_data = db.get_artist(1);
         std::cout << *returned_data;
-//
-//        std::optional<Artist> returned_data = db.get_track_artist(35);
-//        std::cout << *returned_data;
 
         std::optional<Track> returned_track = db.get_track(35);
         std::cout << *returned_track;
+
+        std::vector<Track> tracks = db.get_all_tracks();
+        for (Track track : tracks) {
+            std::cout << track;
+        }
+
+        std::vector<Album> albums = db.get_all_albums();
+        for (Album album : albums) {
+            std::cout << album;
+        }
+
+        std::vector<Artist> artists = db.get_all_artists();
+        for (Artist artist : artists) {
+            std::cout << artist;
+        }
+
+        std::vector<std::string> people = db.get_all_people();
+        for (std::string person : people) {
+            std::cout << "\nPerson Name: " << person << "\n";
+        }
 
         // choose_test_demo(core, file_names);
     }

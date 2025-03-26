@@ -221,42 +221,93 @@ bool DatabaseManager::person_exists(int person_id) {
 //--------------------------------------------------------------------------------
 std::vector<Track> DatabaseManager::get_all_tracks() {
     std::vector<Track> tracks; // make vector
-
+    
     // prep sql
-    sqlite3_stmt* sql = prepare_sql("SELECT track_id, title, artist_id, album_id, duration, date, tracklist_num, file_path, image_path FROM tracks");
+    sqlite3_stmt* sql = prepare_sql(R"(
+        SELECT tracks.track_id,
+                tracks.title, 
+                artists.name AS artist, 
+                albums.title AS album,
+                tracks.duration,
+                tracks.date,
+                tracks.tracklist_num,
+                tracks.file_path,
+                tracks.image_path
+        FROM tracks
+        LEFT JOIN artists ON tracks.artist_id = artists.artist_id
+        LEFT JOIN albums ON tracks.album_id = albums.album_id
+    )");
 
     // execute & grab all data for each row
     while (sqlite3_step(sql) == SQLITE_ROW) {
-        Track track;
-        
-        
-
+        Track track = get_track_row(sql);
         tracks.push_back(track); // add to vector
     }
-
 
     sqlite3_finalize(sql); // clean up sql statement
     return tracks;
 }
+
 std::vector<Album> DatabaseManager::get_all_albums() {
-    std::vector<Album> albums;
+    std::vector<Album> albums; // make vector
+    
+    // prep sql
+    sqlite3_stmt* sql = prepare_sql(R"(
+        SELECT albums.album_id,
+                albums.title,
+                artists.name AS artist,
+                albums.date,
+                album_types.name AS type,
+                albums.image_path
+        FROM albums
+        LEFT JOIN artists ON albums.artist_id = artists.artist_id
+        LEFT JOIN album_types ON albums.type_id = album_types.album_type_id
+    )");
 
-    // TODO: CODE
+    // execute & grab all data for each row
+    while (sqlite3_step(sql) == SQLITE_ROW) {
+        Album album = get_album_row(sql);
+        albums.push_back(album); // add to vector
+    }
 
+    sqlite3_finalize(sql); // clean up sql statement
     return albums;
 }
 std::vector<Artist> DatabaseManager::get_all_artists() {
-    std::vector<Artist> artists;
+    std::vector<Artist> artists; // make vector
+    
+    // prep sql
+    sqlite3_stmt* sql = prepare_sql(R"(
+        SELECT artists.artist_id,
+                artists.name,
+                people.name AS person_behind,
+                artists.image_path
+        FROM artists
+        LEFT JOIN people ON artists.person_behind_id = people.person_id
+    )");
 
-    // TODO: CODE
+    // execute & grab all data for each row
+    while (sqlite3_step(sql) == SQLITE_ROW) {
+        Artist artist = get_artist_row(sql);
+        artists.push_back(artist); // add to vector
+    }
 
+    sqlite3_finalize(sql); // clean up sql statement
     return artists;
 }
 std::vector<std::string> DatabaseManager::get_all_people() {
-    std::vector<std::string> people;
+    std::vector<std::string> people; // make vector
+    
+    // prep sql
+    sqlite3_stmt* sql = prepare_sql("SELECT people.name FROM people");
 
-    // TODO: CODE
+    // execute & grab all data for each row
+    while (sqlite3_step(sql) == SQLITE_ROW) {
+        std::string person_name = extract_string(sql).value_or("");
+        people.push_back(person_name); // add to vector
+    }
 
+    sqlite3_finalize(sql); // clean up sql statement
     return people;
 }
 
