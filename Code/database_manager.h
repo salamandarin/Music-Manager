@@ -32,18 +32,18 @@ public:
     bool person_exists(int person_id);
 
     // ------------------------- GET DATA -------------------------
-    // get entire tables
+    // get ALL objects in table
     std::vector<Track> get_all_tracks();
     std::vector<Album> get_all_albums();
     std::vector<Artist> get_all_artists();
     std::vector<std::string> get_all_people();
 
-    // get data for entire objects
-    std::optional<Track> get_track(int track_id);
-    std::optional<Album> get_album(int album_id);
-    std::optional<Artist> get_artist(int artist_id);
+    // get whole objects
+    Track get_track(int track_id);
+    Album get_album(int album_id);
+    Artist get_artist(int artist_id);
 
-    // get entire objects by name (not id)
+    // get whole objects by name (not id)
     std::optional<Album> get_album(const std::string& album_title);
     std::optional<Artist> get_artist(const std::string& artist_name);
 

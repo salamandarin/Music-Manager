@@ -313,7 +313,7 @@ std::vector<std::string> DatabaseManager::get_all_people() {
 //--------------------------------------------------------------------------------
 //                                  GET ENTIRE OBJECTS
 //--------------------------------------------------------------------------------
-std::optional<Track> DatabaseManager::get_track(int track_id) {
+Track DatabaseManager::get_track(int track_id) {
     // prep & bind sql
     sqlite3_stmt* sql = prepare_sql(R"(
         SELECT tracks.track_id,
@@ -332,20 +332,20 @@ std::optional<Track> DatabaseManager::get_track(int track_id) {
     )");
     bind_input_to_sql(sql, 1, track_id);
 
-    // if track exists in db
+    // make sure track exists in db
     if (sqlite3_step(sql) == SQLITE_ROW) { // execute
         Track track = get_track_row(sql);
         sqlite3_finalize(sql); // clean up sql statement
         return track;
     }
-    // if track NOT in db, return null
+    // if track NOT in db, throw error
     else {
-        sqlite3_finalize(sql); // clean up sql statement
-        return std::nullopt;
+        sqlite3_finalize(sql); // clean up if failed
+        throw std::runtime_error(sqlite3_errmsg(database));
     }
 }
 
-std::optional<Album> DatabaseManager::get_album(int album_id) {
+Album DatabaseManager::get_album(int album_id) {
     // prep & bind sql
     sqlite3_stmt* sql = prepare_sql(R"(
         SELECT albums.album_id,
@@ -361,19 +361,20 @@ std::optional<Album> DatabaseManager::get_album(int album_id) {
     )");
     bind_input_to_sql(sql, 1, album_id);
 
-    // if album exists in db
+    // make sure album exists in db
     if (sqlite3_step(sql) == SQLITE_ROW) { // execute
         Album album = get_album_row(sql);
         sqlite3_finalize(sql);  // clean up sql statement
         return album;
     }
-    // if album NOT in db, return null
+    // if album NOT in db, throw error
     else {
-        sqlite3_finalize(sql); // clean up sql statement
-        return std::nullopt;
+        sqlite3_finalize(sql); // clean up if failed
+        throw std::runtime_error(sqlite3_errmsg(database));
     }
 }
-std::optional<Artist> DatabaseManager::get_artist(int artist_id) {
+
+Artist DatabaseManager::get_artist(int artist_id) {
     // prep & bind sql
     sqlite3_stmt* sql = prepare_sql(R"(
         SELECT artists.artist_id,
@@ -386,16 +387,16 @@ std::optional<Artist> DatabaseManager::get_artist(int artist_id) {
     )");
     bind_input_to_sql(sql, 1, artist_id);
 
-    // if artist exists in db
+    // make sure artist exists in db
     if (sqlite3_step(sql) == SQLITE_ROW) { // execute
         Artist artist = get_artist_row(sql);
         sqlite3_finalize(sql); // clean up sql statement
         return artist;
     }
-    // if artist NOT in db, return null
+    // if artist NOT in db, throw error
     else {
-        sqlite3_finalize(sql); // clean up sql statement
-        return std::nullopt;
+        sqlite3_finalize(sql); // clean up if failed
+        throw std::runtime_error(sqlite3_errmsg(database));
     }
 }
 
