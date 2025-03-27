@@ -14,7 +14,7 @@ void Core::add_track(const std::string& file_path) {
     Track track_data = metadata_manager.get_data();
 
     // 2. move file to correct location
-    std::string new_file_path = file_manager.create_new_path(file_path, track_data);
+    std::string new_file_path = file_manager.add_new_file(file_path, track_data);
     track_data.file_path = new_file_path; // update track_data with new file path
 
     // 3. log info to database
@@ -103,8 +103,8 @@ void Core::set_track_title(int track_id, const std::string& new_track_title) {
     std::optional<std::string> possible_file_path = database.get_track_file_path(track_id);
     if (possible_file_path) { // check if file exists
         // update in metadata
-        MetadataManager file_metadata{*possible_file_path};
-        file_metadata.set_track_title(new_track_title);
+        MetadataManager metadata{*possible_file_path};
+        metadata.set_track_title(new_track_title);
 
         // update file name to match
         file_manager.rename_file(*possible_file_path, new_track_title);
@@ -128,8 +128,8 @@ void Core::set_track_artist(int track_id, const std::string& new_artist_name) {
     std::optional<std::string> possible_file_path = database.get_track_file_path(track_id);
     if (possible_file_path) { // check if file exists
         // update in metadata
-        MetadataManager file_metadata{*possible_file_path};
-        file_metadata.set_artist(new_artist_name);
+        MetadataManager metadata{*possible_file_path};
+        metadata.set_artist(new_artist_name);
 
         // TODO: UPDATE FILE PATH, MOVE TO NEW FOLDER!!!!!!!!!!
         // TODO: Update file path in db to, OR make priv function that does all??
@@ -153,8 +153,8 @@ void Core::set_track_album(int track_id, const std::string& new_album_title) {
     std::optional<std::string> possible_file_path = database.get_track_file_path(track_id);
     if (possible_file_path) { // check if file exists
         // update in metadata
-        MetadataManager file_metadata{*possible_file_path};
-        file_metadata.set_album(new_album_title);
+        MetadataManager metadata{*possible_file_path};
+        metadata.set_album(new_album_title);
 
         // TODO: UPDATE FILE PATH
         // TODO: Update file path in db to, OR make priv function that does all??
@@ -192,8 +192,8 @@ void Core::set_track_tracklist_num(int track_id, int new_tracklist_num) {
     std::optional<std::string> possible_file_path = database.get_track_file_path(track_id);
     if (possible_file_path) { // check if file exists
         // update in metadata
-        MetadataManager file_metadata{*possible_file_path};
-        file_metadata.set_tracklist_num(new_tracklist_num);
+        MetadataManager metadata{*possible_file_path};
+        metadata.set_tracklist_num(new_tracklist_num);
     }
 }
 

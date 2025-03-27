@@ -37,6 +37,8 @@ int main() {
 
         Core core;
 
+        core.add_track("../../Hitch Party.mp3");
+
 //        int track_id = 30;
 //        DatabaseManager database;
 //        std::optional<std::string> possible_file_path = database.get_track_file_path(track_id);

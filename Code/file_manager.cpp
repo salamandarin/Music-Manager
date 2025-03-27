@@ -11,8 +11,19 @@ namespace filesystem = std::filesystem;
 //--------------------------------------------------------------------------------
 //                              FILE FUNCTIONS
 //--------------------------------------------------------------------------------
-std::string FileManager::create_new_path(const std::string& file_path, const Track& track_data) {
-    filesystem::path path = file_path;
+std::string FileManager::add_new_file(const std::string& file_path, const Track& track_data) {
+    // figure out new file path
+    std::string new_path = create_new_path(file_path, track_data);
+
+    // move file to new location
+    move_file(file_path, new_path);
+
+    // return new file path
+    return new_path;
+}
+
+std::string FileManager::create_new_path(const std::string& current_path, const Track& track_data) {
+    filesystem::path path = current_path;
     std::string file_name = path.filename().string(); // get file name
 
     std::string new_path = "../../Music_Files/"; // base path for music files
@@ -43,14 +54,11 @@ std::string FileManager::create_new_path(const std::string& file_path, const Tra
     }
     // if no album info, add "Album Unknown" to path
     else {
-        new_path += "Album_Unknown/";
+        new_path += "Album_Unknown/"; 
     }
 
     // add file name to path
     new_path += file_name;
-
-    // move file to new directory
-    move_file(file_path, new_path);
 
     // return new file_path
     return new_path;
@@ -73,7 +81,7 @@ void FileManager::move_file(const std::string& current_path, const std::string& 
     delete_empty_parent_folders(parent_folder_path.string());
 }
 
-void FileManager::rename_file(const std::string& file_path, const std::string& new_file_name) {
+std::string FileManager::rename_file(const std::string& file_path, const std::string& new_file_name) {
     // check if file doesn't exist or isn't a regular file
     if (!filesystem::exists(file_path) || !filesystem::is_regular_file(file_path)) {
         throw std::runtime_error("Tried to rename file that doesn't exist or isn't a regular file");
@@ -85,6 +93,9 @@ void FileManager::rename_file(const std::string& file_path, const std::string& n
 
     // rename file
     filesystem::rename(file_path, new_path); 
+
+    // return new path
+    return new_path;
 }
 
 void FileManager::delete_file(const std::string& file_path) {
