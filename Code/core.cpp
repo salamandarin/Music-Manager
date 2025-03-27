@@ -198,16 +198,57 @@ void Core::set_track_tracklist_num(int track_id, int new_tracklist_num) {
 }
 
 //--------------------------------------------------------------------------------
-//                                  GET TRACK DATA
+//                                  GET OBJECTS
 //--------------------------------------------------------------------------------
-Track Core::get_track_data(int track_id) {
-    // TODO: CODE
+Track Core::get_track(int track_id) {
+    // get database info
+    Track track = database.get_track(track_id);
 
-    // info to fetch from DB
+    // TODO: info to fetch from file metadata (IF exists) OR JUST HAVE EVERYTHING IN DB ??
 
-    // info to fetch from file metadata (IF exists) OR JUST HAVE EVERYTHING IN DB
-
-    // return track
+    return track;
+}
+Album Core::get_album(int album_id) {
+    // get database info
+    Album album = database.get_album(album_id);
+    return album;
+}
+Artist Core::get_artist(int artist_id) {
+    // get database info
+    Artist artist = database.get_artist(artist_id);
+    return artist;
 }
 
+//--------------------------------------------------------------------------------
+//                                  GET -ALL- OBJECTS
+//--------------------------------------------------------------------------------
+std::vector<Track> Core::get_all_tracks() {
+    // get database info
+    std::vector<Track> tracks = database.get_all_tracks();
+
+    // TODO: figure out if need file info, & possibly use Core::get_track() for that ???
+
+    return tracks;
+}
+std::vector<Album> Core::get_all_albums() {
+    // get database info
+    std::vector<Album> albums = database.get_all_albums();
+    return albums;
+}
+std::vector<Artist> Core::get_all_artists() {
+    // get database info
+    std::vector<Artist> artists = database.get_all_artists();
+    return artists;
+}
+
+//--------------------------------------------------------------------------------
+//                              PRIVATE FUNCTIONS
+//--------------------------------------------------------------------------------
+void move_file(int track_id, const std::string new_file_path) {
+    
+    // TODO: CODE
+
+    // TODO: actually move file, + update in db
+    // TODO: use THIS function everywhere (including core::add_track())
+}
 

@@ -35,10 +35,19 @@ public:
     void set_track_date(int track_id, const Date& new_date);
     void set_track_tracklist_num(int track_id, int new_tracklist_num);
 
-    // get track data
-    Track get_track_data(int track_id);
+    // get objects
+    Track get_track(int track_id);
+    Album get_album(int track_id);
+    Artist get_artist(int track_id);
+
+    // get ALL objects
+    std::vector<Track> get_all_tracks();
+    std::vector<Album> get_all_albums();
+    std::vector<Artist> get_all_artists();
 
 private:
+    void move_file(int track_id, const std::string new_file_path);
+
     DatabaseManager database;
     FileManager file_manager;
 };
