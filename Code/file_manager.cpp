@@ -119,14 +119,23 @@ std::vector<std::string> FileManager::get_files_from_folder(const std::string& f
     if (!filesystem::exists(folder_path) || !filesystem::is_directory(folder_path)) {
         throw std::runtime_error("Tried adding files from invalid folder path");
     }
-
+    
     std::vector<std::string> file_paths;
     for (const auto& file : filesystem::directory_iterator(folder_path)) {
-        // check if regular file & doesn't start with '.' (hidden file)
+        // check if it's a regular file & doesn't start with '.' (hidden file)
         if (filesystem::is_regular_file(file) && file.path().filename().string()[0] != '.') {
+            // add file path to vector
             file_paths.push_back(file.path().string());
         }
+
+        // check if it's a folder (to grab nested files)
+        if (filesystem::is_directory(file)) {
+            // grab all files in that folder, append to vector
+            std::vector<std::string> new_files = get_files_from_folder(file.path().string());
+            file_paths.insert(file_paths.end(), new_files.begin(), new_files.end());
+        }
     }
+
     return file_paths;
 }
 
