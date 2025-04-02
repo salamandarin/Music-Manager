@@ -1,5 +1,6 @@
 // Samuel Sutton - 2025
 #include "metadata_manager.h"
+#include "file_manager.h"
 #include <taglib/tag.h>
 #include <filesystem>
 
@@ -14,7 +15,14 @@ MetadataManager::MetadataManager(const std::string& file_path)
         throw std::runtime_error("Could not access tags from file: " + file_path);
     }
 
+    // make track title = file name if no track title
+    if (get_track_title().empty()) {
+        set_track_title(FileManager::get_file_name(file_path));
+    }
+
     //TODO: CHECK FOR OTHER FILE / MIME TYPES !!!
+
+    // TODO: save cover art to a file (it if has any)
 }
 
 //--------------------------------------------------------------------------------
@@ -62,8 +70,13 @@ int MetadataManager::get_tracklist_num() {
 // ---------- Complex Data Getters ----------
 // TODO: Possibly do data type conversions before returning??? (depending on data types using)
 Duration MetadataManager::get_duration() {
-    // TODO: CODE
-    Duration duration;
+    // return default duration if no audio properties
+    if (!file.audioProperties()) {
+        return Duration{};
+    }
+    
+    // return duration
+    Duration duration = file.audioProperties()->length();
     return duration;
 }
 std::string MetadataManager::get_cover_art() { // include alts if id3v2 // TODO: RETURN TYPE?????

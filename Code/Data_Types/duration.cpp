@@ -40,7 +40,7 @@ int Duration::get_seconds() const {
 }
 
 std::string Duration::to_string() const {
-    std::string duration_string = minutes + ":" + seconds;
+    std::string duration_string = std::to_string(minutes) + ":" + std::to_string(seconds);
     return duration_string;
 }
 

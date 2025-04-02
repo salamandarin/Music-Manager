@@ -152,8 +152,8 @@ void Core::set_track_artist(int track_id, const std::string& new_artist_name) {
 
         // update file path
         Track track_data = get_track(track_id); // TODO: should this call core or db get track??
-        std::string new_path = file_manager.create_new_path(file_path, track_data, is_nested);
-        file_manager.move_file(file_path, new_path);
+        std::string new_path = file_manager.create_new_path(*possible_file_path, track_data, is_nested);
+        file_manager.move_file(*possible_file_path, new_path);
 
         // update file path in database
         database.set_track_file_path(track_id, new_path);
@@ -182,8 +182,8 @@ void Core::set_track_album(int track_id, const std::string& new_album_title) {
 
         // update file path
         Track track_data = get_track(track_id); // TODO: should this call core or db get track??
-        std::string new_path = file_manager.create_new_path(file_path, track_data, is_nested);
-        file_manager.move_file(file_path, new_path);
+        std::string new_path = file_manager.create_new_path(*possible_file_path, track_data, is_nested);
+        file_manager.move_file(*possible_file_path, new_path);
 
         // update file path in database
         database.set_track_file_path(track_id, new_path);

@@ -51,7 +51,7 @@ int main() {
 //        empty_track.file_path = "";
 //        empty_track.tracklist_num = 0;
 //
-        DatabaseManager db;
+        // DatabaseManager db;
 //        db.add_track(empty_track);
 
 //        std::optional<Artist> returned_data = db.get_artist(1);
@@ -80,12 +80,16 @@ int main() {
 //            std::cout << "\nPerson Name: " << person << "\n";
 //        }
 
-        core.add_tracks_from_folder("../../music");
+        // core.add_tracks_from_folder("../../music");
 
-        std::cout << "Nested was: " << core.get_is_nested() << "\n";
-        core.toggled_nested();
-//        core.toggled_nested();
-        std::cout << "Nested is now: " << core.get_is_nested() << "\n";
+        // core.toggled_nested();
+        // core.toggled_nested();
+
+        MetadataManager data{"../../Music_Files/Givenchy FW22 Score.mp3"};
+        Duration duration = data.get_duration();
+        std::cout << "Duration: " << duration << "\n";
+        std::cout << "Minutes: " << duration.get_minutes() << "\n";
+        std::cout << "Seconds: " << duration.get_seconds() << "\n";
 
         // choose_test_demo(core, file_names);
     }

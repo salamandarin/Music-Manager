@@ -99,6 +99,17 @@ std::string FileManager::rename_file(const std::string& file_path, const std::st
     return new_path;
 }
 
+// get just file name (without full path)
+std::string FileManager::get_file_name(const std::string& file_path) {
+    // check if file doesn't exist or isn't a regular file
+    if (!filesystem::exists(file_path) || !filesystem::is_regular_file(file_path)) {
+        throw std::runtime_error("Tried to get name of file that doesn't exist or isn't a regular file: " + file_path);
+    }
+
+    // return file name
+    return filesystem::path(file_path).filename().string();
+}
+
 void FileManager::delete_file(const std::string& file_path) {
     // check if file doesn't exist or isn't a regular file
     if (!filesystem::exists(file_path) || !filesystem::is_regular_file(file_path)) {
