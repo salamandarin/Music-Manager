@@ -117,7 +117,7 @@ void Core::set_track_title(int track_id, const std::string& new_track_title) {
     // update in database
     database.set_track_title(track_id, new_track_title);
 
-    // update in metadata + file name + path (if there is file)
+    // if file exists: update metadata + file name + database file path
     std::optional<std::string> possible_file_path = database.get_track_file_path(track_id);
     if (possible_file_path) { // check if file exists
         // update in metadata
@@ -125,9 +125,10 @@ void Core::set_track_title(int track_id, const std::string& new_track_title) {
         metadata.set_track_title(new_track_title);
 
         // update file name to match
-        file_manager.rename_file(*possible_file_path, new_track_title);
+        std::string new_path = file_manager.rename_file(*possible_file_path, new_track_title);
 
-        // TODO: Update file path in db to, OR make priv function that does all??
+        // update file path in database
+        database.set_track_file_path(track_id, new_path);
     }
 }
 void Core::set_track_artist(int track_id, const std::string& new_artist_name) {
@@ -142,15 +143,20 @@ void Core::set_track_artist(int track_id, const std::string& new_artist_name) {
     // update in database
     database.set_track_artist(track_id, new_artist_name);
 
-    // update in metadata + file path (if there is file)
+    // if file exists: update metadata + file name + database file path
     std::optional<std::string> possible_file_path = database.get_track_file_path(track_id);
     if (possible_file_path) { // check if file exists
         // update in metadata
         MetadataManager metadata{*possible_file_path};
         metadata.set_artist(new_artist_name);
 
-        // TODO: UPDATE FILE PATH, MOVE TO NEW FOLDER!!!!!!!!!!
-        // TODO: Update file path in db to, OR make priv function that does all??
+        // update file path
+        Track track_data = get_track(track_id); // TODO: should this call core or db get track??
+        std::string new_path = file_manager.create_new_path(file_path, track_data, is_nested);
+        file_manager.move_file(file_path, new_path);
+
+        // update file path in database
+        database.set_track_file_path(track_id, new_path);
     }
 
     // TODO: possibly overload to also take in Artist type too, use that to set person?
@@ -174,8 +180,13 @@ void Core::set_track_album(int track_id, const std::string& new_album_title) {
         MetadataManager metadata{*possible_file_path};
         metadata.set_album(new_album_title);
 
-        // TODO: UPDATE FILE PATH
-        // TODO: Update file path in db to, OR make priv function that does all??
+        // update file path
+        Track track_data = get_track(track_id); // TODO: should this call core or db get track??
+        std::string new_path = file_manager.create_new_path(file_path, track_data, is_nested);
+        file_manager.move_file(file_path, new_path);
+
+        // update file path in database
+        database.set_track_file_path(track_id, new_path);
     }
 
     // TODO: possibly overload to also take in Album type too, use that info too?
