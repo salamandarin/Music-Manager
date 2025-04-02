@@ -37,8 +37,6 @@ int main() {
 
         Core core;
 
-        core.add_track("../../Hitch Party.mp3");
-
 //        int track_id = 30;
 //        DatabaseManager database;
 //        std::optional<std::string> possible_file_path = database.get_track_file_path(track_id);
@@ -56,32 +54,38 @@ int main() {
         DatabaseManager db;
 //        db.add_track(empty_track);
 
+//        std::optional<Artist> returned_data = db.get_artist(1);
+//        std::cout << *returned_data;
+//
+//        std::optional<Track> returned_track = db.get_track(35);
+//        std::cout << *returned_track;
+//
+//        std::vector<Track> tracks = db.get_all_tracks();
+//        for (Track track : tracks) {
+//            std::cout << track;
+//        }
+//
+//        std::vector<Album> albums = db.get_all_albums();
+//        for (Album album : albums) {
+//            std::cout << album;
+//        }
+//
+//        std::vector<Artist> artists = db.get_all_artists();
+//        for (Artist artist : artists) {
+//            std::cout << artist;
+//        }
+//
+//        std::vector<std::string> people = db.get_all_people();
+//        for (std::string person : people) {
+//            std::cout << "\nPerson Name: " << person << "\n";
+//        }
 
-        std::optional<Artist> returned_data = db.get_artist(1);
-        std::cout << *returned_data;
+        core.add_tracks_from_folder("../../music");
 
-        std::optional<Track> returned_track = db.get_track(35);
-        std::cout << *returned_track;
-
-        std::vector<Track> tracks = db.get_all_tracks();
-        for (Track track : tracks) {
-            std::cout << track;
-        }
-
-        std::vector<Album> albums = db.get_all_albums();
-        for (Album album : albums) {
-            std::cout << album;
-        }
-
-        std::vector<Artist> artists = db.get_all_artists();
-        for (Artist artist : artists) {
-            std::cout << artist;
-        }
-
-        std::vector<std::string> people = db.get_all_people();
-        for (std::string person : people) {
-            std::cout << "\nPerson Name: " << person << "\n";
-        }
+        std::cout << "Nested was: " << core.get_is_nested() << "\n";
+        core.toggled_nested();
+//        core.toggled_nested();
+        std::cout << "Nested is now: " << core.get_is_nested() << "\n";
 
         // choose_test_demo(core, file_names);
     }

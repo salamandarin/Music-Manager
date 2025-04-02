@@ -4,6 +4,23 @@
 #include "file_manager.h"
 
 //--------------------------------------------------------------------------------
+//                                  CONSTRUCTOR
+//--------------------------------------------------------------------------------
+Core::Core(bool is_nested)
+    :database{}, file_manager{}, is_nested{is_nested} {}
+
+//--------------------------------------------------------------------------------
+//                                  HANDLE SETTINGS
+//--------------------------------------------------------------------------------
+bool Core::get_is_nested() {
+    return is_nested;
+}
+void Core::toggled_nested() {
+    is_nested = !is_nested;
+    update_file_structure();
+}
+
+//--------------------------------------------------------------------------------
 //                                  ADD TRACKS
 //--------------------------------------------------------------------------------
 
@@ -14,8 +31,9 @@ void Core::add_track(const std::string& file_path) {
     Track track_data = metadata_manager.get_data();
 
     // 2. move file to correct location
-    std::string new_file_path = file_manager.add_new_file(file_path, track_data);
-    track_data.file_path = new_file_path; // update track_data with new file path
+    std::string new_path = file_manager.create_new_path(file_path, track_data, is_nested);
+    file_manager.move_file(file_path, new_path);
+    track_data.file_path = new_path; // update track_data with new file path
 
     // 3. log info to database
     database.add_track(track_data);
@@ -242,13 +260,19 @@ std::vector<Artist> Core::get_all_artists() {
 }
 
 //--------------------------------------------------------------------------------
-//                              PRIVATE FUNCTIONS
+//                                 PRIVATE HELPER FUNCTIONS
 //--------------------------------------------------------------------------------
-void move_file(int track_id, const std::string new_file_path) {
-    
-    // TODO: CODE
+void Core::update_file_structure() {
+    // grab all tracks with file paths from database
+    std::vector<Track> tracks = get_all_tracks();
+    for (Track& track : tracks) {
+        if (track.file_path != "") {
+            // move file to new path
+            std::string new_path = file_manager.create_new_path(track.file_path, track, is_nested);
+            file_manager.move_file(track.file_path, new_path);
 
-    // TODO: actually move file, + update in db
-    // TODO: use THIS function everywhere (including core::add_track())
+            // update path in database
+            database.set_track_file_path(track.id, new_path);
+        }
+    }
 }
-

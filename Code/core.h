@@ -10,7 +10,11 @@
 
 class Core {
 public:
-    Core() = default;
+    Core(bool is_nested=true); // constructor
+
+    // handle settings
+    bool get_is_nested();
+    void toggled_nested();
 
     // add tracks
     void add_track(const std::string& file_path); // track w/ file
@@ -46,8 +50,11 @@ public:
     std::vector<Artist> get_all_artists();
 
 private:
-    void move_file(int track_id, const std::string new_file_path);
+    void update_file_structure();
 
     DatabaseManager database;
     FileManager file_manager;
+
+    // settings
+    bool is_nested;
 };

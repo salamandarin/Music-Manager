@@ -70,6 +70,9 @@ public:
     std::optional<int> get_artist_id(const std::string& artist_name);
     std::optional<int> get_person_id(const std::string& person_name);
 
+    // get id from other values
+    std::optional<int> get_track_id_from_file(const std::string& file_path);
+
     // ------------------------- SET DATA -------------------------
     // set track data
     void set_track_title(int track_id, const std::string& title);
@@ -115,11 +118,6 @@ private:
     static std::optional<int> extract_int(sqlite3_stmt* sql, int column=0);
     static std::optional<bool> extract_bool(sqlite3_stmt* sql, int column=0);
 
-    // get id by name
-    std::optional<int> get_id_by_name(const std::string& id_label,
-                                     const std::string& table,
-                                     const std::string& name_label,
-                                     const std::string& name_to_search);
     // set object value by id
     void set_object_value(const std::string& table,
                                           const std::string& value_label,
