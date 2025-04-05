@@ -10,7 +10,7 @@ namespace filesystem = std::filesystem;
 //--------------------------------------------------------------------------------
 //                              FILE FUNCTIONS
 //--------------------------------------------------------------------------------
-std::string FileManager::create_new_path(const std::string& current_path, const Track& track, bool is_nested) {
+std::string FileManager::make_music_file_path(const std::string& current_path, const Track& track, bool is_nested) {
     filesystem::path old_path = current_path;
     std::string new_path = "../../Music_Files/"; // base path for music files
 
@@ -56,11 +56,27 @@ std::string FileManager::create_new_path(const std::string& current_path, const 
         file_name = old_path.filename().string();
     }
 
+    // TODO: handle duplicates?
+
     // add file name to path
     new_path += file_name;
 
     // return new file path
     return new_path;
+}
+
+std::string FileManager::make_image_file_path(const std::string& name, const std::string& image_extension) {
+    // create folder if needed
+    std::string directory = "../../Images";
+    if (!std::filesystem::exists(directory)) {
+        std::filesystem::create_directory(directory);
+    }
+
+    // TODO: handle duplicates?
+
+    // make & return image path
+    std::string image_path = directory + "/" + name + image_extension;
+    return image_path;
 }
 
 void FileManager::move_file(const std::string& current_path, const std::string& new_path) {

@@ -31,7 +31,7 @@ void Core::add_track(const std::string& file_path) {
     Track track_data = metadata_manager.get_data();
 
     // 2. move file to correct location
-    std::string new_path = file_manager.create_new_path(file_path, track_data, is_nested);
+    std::string new_path = file_manager.make_music_file_path(file_path, track_data, is_nested);
     file_manager.move_file(file_path, new_path);
     track_data.file_path = new_path; // update track_data with new file path
 
@@ -152,7 +152,7 @@ void Core::set_track_artist(int track_id, const std::string& new_artist_name) {
 
         // update file path
         Track track_data = get_track(track_id); // TODO: should this call core or db get track??
-        std::string new_path = file_manager.create_new_path(*possible_file_path, track_data, is_nested);
+        std::string new_path = file_manager.make_music_file_path(*possible_file_path, track_data, is_nested);
         file_manager.move_file(*possible_file_path, new_path);
 
         // update file path in database
@@ -182,7 +182,7 @@ void Core::set_track_album(int track_id, const std::string& new_album_title) {
 
         // update file path
         Track track_data = get_track(track_id); // TODO: should this call core or db get track??
-        std::string new_path = file_manager.create_new_path(*possible_file_path, track_data, is_nested);
+        std::string new_path = file_manager.make_music_file_path(*possible_file_path, track_data, is_nested);
         file_manager.move_file(*possible_file_path, new_path);
 
         // update file path in database
@@ -279,7 +279,7 @@ void Core::update_file_structure() {
     for (Track& track : tracks) {
         if (track.file_path != "") {
             // move file to new path
-            std::string new_path = file_manager.create_new_path(track.file_path, track, is_nested);
+            std::string new_path = file_manager.make_music_file_path(track.file_path, track, is_nested);
             file_manager.move_file(track.file_path, new_path);
 
             // update path in database
