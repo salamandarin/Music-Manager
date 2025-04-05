@@ -12,10 +12,14 @@ public:
     // file functions
     std::string create_new_path(const std::string& current_path, const Track& track_data, bool is_nested); // returns new path
     void move_file(const std::string& current_path, const std::string& new_path);
-    std::string rename_file(const std::string& file_path, const std::string& new_file_name); // returns new path
-    static std::string get_file_name(const std::string& file_path); // get just file name (without full path)
+    static std::string rename_file(const std::string& file_path, const std::string& new_file_name); // returns new path
     void delete_file(const std::string& file_path);
-    
+
+    // helper functions
+    static std::string get_file_name(const std::string& file_path); // get just file name (without full path or extension)
+    static std::string get_extension(const std::string& file_path);
+    static std::string get_parent_path(const std::string& file_path); // get parent path (without "/" at end)
+
     // folder functions
     std::vector<std::string> get_files_from_folder(const std::string& folder_path);
     bool is_folder_empty(const std::string& folder_path);

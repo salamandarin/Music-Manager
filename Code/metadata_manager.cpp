@@ -6,12 +6,13 @@
 
 MetadataManager::MetadataManager(const std::string& file_path)
     // save file path, open file with TagLib
-    :file_path{file_path}, file(this->file_path.c_str()), tag{file.tag()} {
+    :file_path{file_path}, file_ref{this->file_path.c_str()} {
+    
     // check for errors opening file
-    if (file.isNull()) {
+    if (file_ref.isNull()) {
         throw std::runtime_error("Could not find/open file: " + file_path);
     }
-    if (!file.tag()) {
+    if (!file_ref.tag()) {
         throw std::runtime_error("Could not access tags from file: " + file_path);
     }
 
@@ -37,46 +38,42 @@ Track MetadataManager::get_data() {
     track.tracklist_num = get_tracklist_num();
     track.duration = get_duration();
     // file doesn't hold date - must be manually added to DB
-    track.file_path = file_path; // TODO: either keep same, or use tag->complexProperties->GENERALOBJECT->fileName
+    track.file_path = file_path; // TODO: either keep same, or use file_ref.tag()->complexProperties->GENERALOBJECT->fileName
+    track.image_path = get_cover_art();
 
-    //TODO: add more fields?
+    // TODO: add more fields?
 
     return track;
 }
 
-
-
 // ---------- Simple Data Getters ----------
 std::string MetadataManager::get_track_title() {
-    std::string title_string = tag->title().to8Bit();
+    std::string title_string = file_ref.tag()->title().to8Bit();
     return title_string;
 }
 std::string MetadataManager::get_artist() {
-    std::string artist_string = tag->artist().to8Bit();
+    std::string artist_string = file_ref.tag()->artist().to8Bit();
     return artist_string;
 }
 std::string MetadataManager::get_album() {
-    std::string album_string = tag->album().to8Bit();
+    std::string album_string = file_ref.tag()->album().to8Bit();
     return album_string;
 }
 int MetadataManager::get_tracklist_num() {
-    if (tag->track() > INT_MAX) {
-        throw std::out_of_range("Tried to get unsigned int value of tracklist number that exceeds INT_MAX");
+    // make sure not too big when converting from unsigned int -> int
+    if (file_ref.tag()->track() > INT_MAX) {
+        throw std::out_of_range("Tried to get tracklist num that is too big for a (signed) int");
     }
-    return static_cast<int>(tag->track());
+    return static_cast<int>(file_ref.tag()->track());
 }
-
-
-// ---------- Complex Data Getters ----------
-// TODO: Possibly do data type conversions before returning??? (depending on data types using)
 Duration MetadataManager::get_duration() {
     // return default duration if no audio properties
-    if (!file.audioProperties()) {
+    if (!file_ref.audioProperties()) {
         return Duration{};
     }
     
     // return duration
-    Duration duration = file.audioProperties()->length();
+    Duration duration = file_ref.audioProperties()->lengthInSeconds();
     return duration;
 }
 std::string MetadataManager::get_cover_art() { // include alts if id3v2 // TODO: RETURN TYPE?????
@@ -93,20 +90,20 @@ std::string MetadataManager::get_cover_art() { // include alts if id3v2 // TODO:
 //                                  SET DATA
 //--------------------------------------------------------------------------------
 void MetadataManager::set_track_title(TagLib::String new_track_title) {
-    tag->setTitle(new_track_title);
-    file.save();
+    file_ref.tag()->setTitle(new_track_title);
+    file_ref.save();
 }
 void MetadataManager::set_artist(TagLib::String new_artist) {
-    tag->setArtist(new_artist);
-    file.save();
+    file_ref.tag()->setArtist(new_artist);
+    file_ref.save();
 }
 void MetadataManager::set_album(TagLib::String new_album) {
-    tag->setAlbum(new_album);
-    file.save();
+    file_ref.tag()->setAlbum(new_album);
+    file_ref.save();
 }
 void MetadataManager::set_tracklist_num(unsigned int new_tracklist_num) {
-    tag->setTrack(new_tracklist_num);
-    file.save();
+    file_ref.tag()->setTrack(new_tracklist_num);
+    file_ref.save();
 }
 
 

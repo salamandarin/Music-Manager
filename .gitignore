@@ -41,11 +41,16 @@
 build
 cmake-build-debug
 
-# Music Files
+# Media
 Music_Files/*
+Images/*
 *.mp3
 *.wav
 *.m4a
+*.flac
+*.aiff
+*.aif
+*.mp4
 
 # Database
 *.db

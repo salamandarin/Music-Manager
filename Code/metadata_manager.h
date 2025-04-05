@@ -17,9 +17,9 @@ public:
     std::string get_artist();
     std::string get_album();
     int get_tracklist_num();
-
-    // complex getters
     Duration get_duration();
+
+    // get cover art
     std::string get_cover_art(); // include alts if id3v2 // TODO: RETURN TYPE?????
 
     // super complex getters
@@ -44,6 +44,5 @@ public:
 
 private:
     const std::string file_path;
-    TagLib::FileRef file;
-    TagLib::Tag *tag;
+    TagLib::FileRef file_ref;
 };

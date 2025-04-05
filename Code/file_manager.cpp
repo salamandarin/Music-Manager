@@ -89,25 +89,15 @@ std::string FileManager::rename_file(const std::string& file_path, const std::st
     }
     
     // construct new path
-    std::string new_path = filesystem::path(file_path).parent_path().string(); // get parent path
-    new_path += "/" + new_file_name; // append new file name to parent path
+    std::string parent_path = get_parent_path(file_path);
+    std::string extension = get_extension(file_path);
+    std::string new_path = parent_path + "/" + new_file_name + extension; // construct path
 
     // rename file
     filesystem::rename(file_path, new_path); 
 
     // return new path
     return new_path;
-}
-
-// get just file name (without full path)
-std::string FileManager::get_file_name(const std::string& file_path) {
-    // check if file doesn't exist or isn't a regular file
-    if (!filesystem::exists(file_path) || !filesystem::is_regular_file(file_path)) {
-        throw std::runtime_error("Tried to get name of file that doesn't exist or isn't a regular file: " + file_path);
-    }
-
-    // return file name
-    return filesystem::path(file_path).filename().string();
 }
 
 void FileManager::delete_file(const std::string& file_path) {
@@ -121,6 +111,23 @@ void FileManager::delete_file(const std::string& file_path) {
 
     // delete folders that might be empty now
     delete_empty_parent_folders(filesystem::path(file_path).parent_path());
+}
+
+
+//--------------------------------------------------------------------------------
+//                              HELPER FUNCTIONS
+//--------------------------------------------------------------------------------
+// get just file name (without full path or extension)
+std::string FileManager::get_file_name(const std::string& file_path) {
+    return filesystem::path(file_path).stem().string();
+}
+// get file extension
+std::string FileManager::get_extension(const std::string& file_path) {
+    return filesystem::path(file_path).extension().string();
+}
+// get parent path (without "/" at end)
+std::string FileManager::get_parent_path(const std::string& file_path) {
+    return filesystem::path(file_path).parent_path().string();
 }
 
 //--------------------------------------------------------------------------------
