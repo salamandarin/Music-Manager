@@ -41,7 +41,7 @@ void Core::add_track(const std::string& original_file_path) {
 
     // move music file to correct location
     std::string new_path = file_manager.make_music_file_path(track.file_path, track, is_nested);
-    file_manager.move_file(track.file_path, new_path);
+    file_manager.move_music_file(track.file_path, new_path);
     track.file_path = new_path; // update data with new file path
 
     // log info to database
@@ -86,7 +86,7 @@ void Core::remove_track(int track_id) {
     // delete file (if exists)
     std::optional<std::string> possible_file_path = database.get_track_file_path(track_id);
     if (possible_file_path) { // check if file exists
-        file_manager.delete_file(*possible_file_path); // delete file
+        file_manager.delete_music_file(*possible_file_path); // delete file
     }
 
     // remove in database (must do last or else can't get file path)
@@ -162,7 +162,7 @@ void Core::set_track_artist(int track_id, const std::string& new_artist_name) {
         // update file path
         Track track_data = get_track(track_id); // TODO: should this call core or db get track??
         std::string new_path = file_manager.make_music_file_path(*possible_file_path, track_data, is_nested);
-        file_manager.move_file(*possible_file_path, new_path);
+        file_manager.move_music_file(*possible_file_path, new_path);
 
         // update file path in database
         database.set_track_file_path(track_id, new_path);
@@ -192,7 +192,7 @@ void Core::set_track_album(int track_id, const std::string& new_album_title) {
         // update file path
         Track track_data = get_track(track_id); // TODO: should this call core or db get track??
         std::string new_path = file_manager.make_music_file_path(*possible_file_path, track_data, is_nested);
-        file_manager.move_file(*possible_file_path, new_path);
+        file_manager.move_music_file(*possible_file_path, new_path);
 
         // update file path in database
         database.set_track_file_path(track_id, new_path);
@@ -274,7 +274,7 @@ Artist Core::get_artist(int artist_id) {
 }
 
 //--------------------------------------------------------------------------------
-//                                  GET -ALL- OBJECTS
+//                               GET -ALL- OBJECTS
 //--------------------------------------------------------------------------------
 std::vector<Track> Core::get_all_tracks() {
     // get database info
@@ -305,7 +305,7 @@ void Core::update_file_structure() {
         if (track.file_path != "") {
             // move file to new path
             std::string new_path = file_manager.make_music_file_path(track.file_path, track, is_nested);
-            file_manager.move_file(track.file_path, new_path);
+            file_manager.move_music_file(track.file_path, new_path);
 
             // update path in database
             database.set_track_file_path(track.id, new_path);

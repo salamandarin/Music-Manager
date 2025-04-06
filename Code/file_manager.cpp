@@ -8,8 +8,22 @@
 namespace filesystem = std::filesystem;
 
 //--------------------------------------------------------------------------------
-//                              FILE FUNCTIONS
+//                               GENERATE FILE PATHS
 //--------------------------------------------------------------------------------
+std::string FileManager::make_image_file_path(const std::string& name, const std::string& image_extension) {
+    // create folder if needed
+    std::string directory = "../../Images";
+    if (!std::filesystem::exists(directory)) {
+        std::filesystem::create_directory(directory);
+    }
+
+    // TODO: handle duplicates?
+
+    // make & return image path
+    std::string image_path = directory + "/" + name + image_extension;
+    return image_path;
+}
+
 std::string FileManager::make_music_file_path(const std::string& current_path, const Track& track, bool is_nested) {
     filesystem::path old_path = current_path;
     std::string new_path = "../../Music_Files/"; // base path for music files
@@ -65,25 +79,15 @@ std::string FileManager::make_music_file_path(const std::string& current_path, c
     return new_path;
 }
 
-std::string FileManager::make_image_file_path(const std::string& name, const std::string& image_extension) {
-    // create folder if needed
-    std::string directory = "../../Images";
-    if (!std::filesystem::exists(directory)) {
-        std::filesystem::create_directory(directory);
-    }
-
-    // TODO: handle duplicates?
-
-    // make & return image path
-    std::string image_path = directory + "/" + name + image_extension;
-    return image_path;
-}
-
-void FileManager::move_file(const std::string& current_path, const std::string& new_path) {
+//--------------------------------------------------------------------------------
+//                              OTHER FILE OPERATIONS
+//--------------------------------------------------------------------------------
+// move music file (& clean up empty parent folders up to "Music_Files")
+void FileManager::move_music_file(const std::string& old_path, const std::string& new_path) {
     // check if file doesn't exist or isn't a regular file
-    if (!filesystem::exists(current_path) || !filesystem::is_regular_file(current_path)) {
+    if (!filesystem::exists(old_path) || !filesystem::is_regular_file(old_path)) {
         std::string error_message = "Tried to move file that doesn't exist or isn't a regular file";
-        error_message += "\nTried to move '" + current_path + "' to '" + new_path + "'";
+        error_message += "\nTried to move '" + old_path + "' to '" + new_path + "'";
         throw std::runtime_error(error_message);
     }
 
@@ -91,11 +95,25 @@ void FileManager::move_file(const std::string& current_path, const std::string& 
     filesystem::path parent_folder_path = filesystem::path(new_path).parent_path();
     filesystem::create_directories(parent_folder_path); // make folders (if needed)
 
-    // move file from current path -> new path
-    filesystem::rename(current_path, new_path);
+    // move file from old path -> new path
+    filesystem::rename(old_path, new_path);
 
-    // delete folders (from old path) that might be empty now
-    delete_empty_parent_folders(current_path);
+    // cleanup: delete parent folders that might be empty now
+    delete_empty_parent_folders(old_path, "../../Music_Files"); // stop at Music_Files folder
+}
+
+// delete music file (& delete empty parent folders up to "Music_Files")
+void FileManager::delete_music_file(const std::string& file_path) {
+    // check if file doesn't exist or isn't a regular file
+    if (!filesystem::exists(file_path) || !filesystem::is_regular_file(file_path)) {
+        throw std::runtime_error("Tried to delete file that doesn't exist or isn't a regular file: " + file_path);
+    }
+
+    // delete file
+    filesystem::remove(file_path);
+
+    // cleanup: delete parent folders that might be empty now
+    delete_empty_parent_folders(filesystem::path(file_path).parent_path(), "../../Music_Files"); // stop at Music_Files folder
 }
 
 std::string FileManager::rename_file(const std::string& file_path, const std::string& new_file_name) {
@@ -116,20 +134,6 @@ std::string FileManager::rename_file(const std::string& file_path, const std::st
     return new_path;
 }
 
-void FileManager::delete_file(const std::string& file_path) {
-    // check if file doesn't exist or isn't a regular file
-    if (!filesystem::exists(file_path) || !filesystem::is_regular_file(file_path)) {
-        throw std::runtime_error("Tried to delete file that doesn't exist or isn't a regular file: " + file_path);
-    }
-
-    // delete file
-    filesystem::remove(file_path);
-
-    // delete folders that might be empty now
-    delete_empty_parent_folders(filesystem::path(file_path).parent_path());
-}
-
-
 //--------------------------------------------------------------------------------
 //                              HELPER FUNCTIONS
 //--------------------------------------------------------------------------------
@@ -147,7 +151,7 @@ std::string FileManager::get_parent_path(const std::string& file_path) {
 }
 
 //--------------------------------------------------------------------------------
-//                              FOLDER FUNCTIONS
+//                              GET FILES FROM FOLDER
 //--------------------------------------------------------------------------------
 std::vector<std::string> FileManager::get_files_from_folder(const std::string& folder_path) {
     // check if folder doesn't exist or isn't a folder
@@ -184,22 +188,40 @@ bool FileManager::is_folder_empty(const std::string& folder_path) {
     return filesystem::directory_iterator(folder_path) == filesystem::directory_iterator();
 }
 
-void FileManager::delete_empty_parent_folders(filesystem::path starting_path) {
-    // get parent folder if it's a file or doesn't exist (meaning it was deleted)
-    if (filesystem::is_regular_file(starting_path) || !filesystem::exists(starting_path)) {
-        starting_path = starting_path.parent_path();
+//--------------------------------------------------------------------------------
+//                          DELETE EMPTY PARENT FOLDERS
+//--------------------------------------------------------------------------------
+// delete empty parent folders UNTIL hitting boundary_folder
+void FileManager::delete_empty_parent_folders(filesystem::path current_path, const filesystem::path& boundary_folder) {
+    // make sure boundary_folder exists
+    if (!filesystem::exists(boundary_folder)) { // throw error is boundary_folder doesn't exist
+        std::string error_message = "Need valid boundary folder path to safely call delete_empty_parent_folders";
+        error_message += "\nBoundary path doesn't exist: " + boundary_folder.string();
+        throw std::runtime_error(error_message);
+    }
+
+    // use parent folder if it's a file or doesn't exist (meaning it was deleted)
+    if (filesystem::is_regular_file(current_path) || !filesystem::exists(current_path)) {
+        current_path = current_path.parent_path(); // current_path isn't const reference cuz of this 
     }
     
+    // recursively check & delete empty parent folders (now that everything is validated)
+    recursive_delete_empty_parent_folders(current_path, boundary_folder);
+}
+// private backend of delete_empty_parent_folders()
+void FileManager::recursive_delete_empty_parent_folders(const filesystem::path& current_path, const filesystem::path& boundary_folder) {    
+    // stop if hit the boundary
+    if (filesystem::equivalent(current_path, boundary_folder)) {
+        return;
+    }
+
     // check if folder is empty
-    if (is_folder_empty(starting_path)) {
+    if (is_folder_empty(current_path)) {
         // delete folder
-        filesystem::remove(starting_path);
+        filesystem::remove(current_path);
 
         // recursively check & delete empty parent folders
-        // stop when reaching "Music_Files" folder
-        filesystem::path parent_path = filesystem::path(starting_path).parent_path();
-        if (!filesystem::equivalent(parent_path, filesystem::path("../../Music_Files"))) {
-            delete_empty_parent_folders(parent_path); // call this function on parent path
-        }
+        filesystem::path parent_path = filesystem::path(current_path).parent_path();
+        recursive_delete_empty_parent_folders(parent_path, boundary_folder); // call this function on parent path
     }
 }
