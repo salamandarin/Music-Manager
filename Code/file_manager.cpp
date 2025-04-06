@@ -150,6 +150,27 @@ std::string FileManager::get_parent_path(const std::string& file_path) {
     return filesystem::path(file_path).parent_path().string();
 }
 
+// delete anything (file or folder), without any empty folder cleanup
+void FileManager::plain_delete(const filesystem::path& path) {
+    // check if path doesn't exist
+    if (!filesystem::exists(path)) {
+        throw std::runtime_error("Tried to delete something that doesn't exist: " + path.string());
+    }
+
+    // delete with remove_all if folder
+    if (filesystem::is_directory(path)) {
+        if (!filesystem::remove_all(path)) {  // make sure actually deleted
+            throw std::runtime_error("Failed to delete folder: " + path.string());
+        }
+        return; // return since deletion is done
+    }
+
+    // delete singular file
+    if (!filesystem::remove(path)) {  // make sure actually deleted
+        throw std::runtime_error("Failed to delete file: " + path.string());
+    }
+}
+
 //--------------------------------------------------------------------------------
 //                              GET FILES FROM FOLDER
 //--------------------------------------------------------------------------------

@@ -80,10 +80,9 @@ int main() {
 //            std::cout << "\nPerson Name: " << person << "\n";
 //        }
 
-//         core.add_tracks_from_folder("../../music");
-        core.add_tracks_from_folder("../../other_file_types copy");
-         core.toggled_nested();
-        // core.toggled_nested();
+            core.add_tracks_from_folder("../../other_file_types copy");
+            core.toggled_nested();
+//            core.delete_entire_library("../../other_file_types copy");
 
 //        MetadataManager data{"../../Music_Files/Conductor.mp3"};
 //        Duration duration = data.get_duration();

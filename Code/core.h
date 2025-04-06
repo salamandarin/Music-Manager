@@ -50,6 +50,10 @@ public:
     std::vector<Album> get_all_albums();
     std::vector<Artist> get_all_artists();
 
+    // ---------- WARNING: EXTREMELY DANGEROUS!!! ----------
+    // DELETE all music files, images, entire database file, and another folder too if provided
+    void delete_entire_library(const std::string& extra_folder_to_delete=""); // WARNING: EXTREMELY DANGEROUS!!!
+
 private:
     void update_file_structure();
     std::string set_file_title(const std::string& file_path); // make track title & file name match

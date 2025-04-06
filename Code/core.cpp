@@ -274,6 +274,30 @@ Artist Core::get_artist(int artist_id) {
 }
 
 //--------------------------------------------------------------------------------
+//                            DELETE ENTIRE LIBRARY
+//--------------------------------------------------------------------------------
+// DELETE all music files, images, entire database file, and another folder too if provided
+void Core::delete_entire_library(const std::string& extra_folder_to_delete) {
+    // ---------- WARNING: EXTREMELY DANGEROUS!!! ----------
+
+    // TODO: PUT EXTRA STEPS IN PLACE TO ENSURE SAFETY WHEN CALLING !!!
+
+    // delete entire "Music_Files" folder
+    FileManager::plain_delete("../../Music_Files");
+
+    // delete entire "Images" folder
+    FileManager::plain_delete("../../Images");
+
+    // delete entire database file
+    FileManager::plain_delete("../Database/music_manager.db"); // match path in database_manager.h
+
+    // delete other file or folder (if passed in)
+    if (!extra_folder_to_delete.empty()) { // check if there is extra_folder_to_delete
+        FileManager::plain_delete(extra_folder_to_delete);
+    }
+}
+
+//--------------------------------------------------------------------------------
 //                               GET -ALL- OBJECTS
 //--------------------------------------------------------------------------------
 std::vector<Track> Core::get_all_tracks() {
