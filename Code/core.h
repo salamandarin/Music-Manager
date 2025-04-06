@@ -38,6 +38,7 @@ public:
     void set_track_album(int track_id, const std::string& new_album_title);
     void set_track_date(int track_id, const Date& new_date);
     void set_track_tracklist_num(int track_id, int new_tracklist_num);
+    void set_track_image(int track_id, const std::string& new_image_path);
 
     // get objects
     Track get_track(int track_id);

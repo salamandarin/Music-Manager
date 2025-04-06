@@ -25,18 +25,36 @@ void Core::toggled_nested() {
 //--------------------------------------------------------------------------------
 
 // ---------- Add Track w/ File ----------
-void Core::add_track(const std::string& file_path) {
-    // 1. gather metadata from track
-    MetadataManager metadata_manager{file_path};
-    Track track_data = metadata_manager.get_data();
+void Core::add_track(const std::string& original_file_path) {
+    // gather metadata from track
+    MetadataManager metadata_manager{original_file_path};
+    Track track = metadata_manager.get_data();
 
-    // 2. move file to correct location
-    std::string new_path = file_manager.make_music_file_path(file_path, track_data, is_nested);
-    file_manager.move_file(file_path, new_path);
-    track_data.file_path = new_path; // update track_data with new file path
+    // TODO: MAKE GET / EXTRACT INFO FROM FILE FUNCTION (that gets file info too)
 
-    // 3. log info to database
-    database.add_track(track_data);
+    // // make track title & file name match
+    // if (track.title.empty()) { // if no track title
+    //     // make track title = file name
+    //     std::string file_name = FileManager::get_file_name(track.file_path);
+    //     metadata_manager.set_track_title(file_name);
+    //     track.title = file_name; // TODO: change order so don't manually update????
+    // }
+    // else { // if there is track title
+    //     // make file name = track title
+    //     track.file_path = FileManager::rename_file(track.file_path, track.title);
+    // }
+
+    // save cover art image file (if exists)
+    std::string image_path = metadata_manager.save_cover_art();
+    track.image_path = image_path; // update data with image path
+
+    // move music file to correct location
+    std::string new_path = file_manager.make_music_file_path(track.file_path, track, is_nested);
+    file_manager.move_file(track.file_path, new_path);
+    track.file_path = new_path; // update data with new file path
+
+    // log info to database
+    database.add_track(track);
 }
 
 // ---------- Add Track w/ or w/o File ----------
@@ -224,6 +242,22 @@ void Core::set_track_tracklist_num(int track_id, int new_tracklist_num) {
         MetadataManager metadata{*possible_file_path};
         metadata.set_tracklist_num(new_tracklist_num);
     }
+}
+
+void Core::set_track_image(int track_id, const std::string& new_image_path) {
+
+    // TODO: CODE - IF HAS FILE
+        // TODO: get file_path from id, error if no file (or make this function take in file path directly)
+
+        // TODO: call MetadataManager with file_path (returns image_path)
+
+        // TODO: put returned image_path into database
+
+    // TODO: CODE - IF NO FILE
+        // TODO: move image directly to correct folder, return image_path
+        
+
+    // TODO: put returned image_path into database
 }
 
 //--------------------------------------------------------------------------------

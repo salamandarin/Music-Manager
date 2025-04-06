@@ -2,7 +2,17 @@
 #include "metadata_manager.h"
 #include "file_manager.h"
 #include <taglib/tag.h>
+// TODO: FIGURE OUT WHAT'S NEEDED
 #include <filesystem>
+#include <taglib/fileref.h>
+#include <taglib/id3v2tag.h>
+#include <taglib/mpegfile.h>
+#include <taglib/attachedpictureframe.h>
+#include <taglib/flacfile.h>
+#include <taglib/aifffile.h>
+#include <taglib/wavfile.h>
+#include <taglib/mp4file.h>
+#include <fstream>
 
 MetadataManager::MetadataManager(const std::string& file_path)
     // save file path, open file with TagLib
@@ -15,15 +25,6 @@ MetadataManager::MetadataManager(const std::string& file_path)
     if (!file_ref.tag()) {
         throw std::runtime_error("Could not access tags from file: " + file_path);
     }
-
-    // make track title = file name if no track title
-    if (get_track_title().empty()) {
-        set_track_title(FileManager::get_file_name(file_path));
-    }
-
-    //TODO: CHECK FOR OTHER FILE / MIME TYPES !!!
-
-    // TODO: save cover art to a file (it if has any)
 }
 
 //--------------------------------------------------------------------------------
@@ -37,9 +38,8 @@ Track MetadataManager::get_data() {
     track.album = get_album();
     track.tracklist_num = get_tracklist_num();
     track.duration = get_duration();
-    // file doesn't hold date - must be manually added to DB
+    // metadata doesn't hold date
     track.file_path = file_path; // TODO: either keep same, or use file_ref.tag()->complexProperties->GENERALOBJECT->fileName
-    track.image_path = get_cover_art();
 
     // TODO: add more fields?
 
@@ -76,14 +76,79 @@ Duration MetadataManager::get_duration() {
     Duration duration = file_ref.audioProperties()->lengthInSeconds();
     return duration;
 }
-std::string MetadataManager::get_cover_art() { // include alts if id3v2 // TODO: RETURN TYPE?????
-    // TODO: CODE
-    return ".......cover art path placeholder..........";
-} 
 
+// ---------- Get Cover Art ----------
+std::string MetadataManager::save_cover_art() {
+    // MP3 files (w/ ID3 tag))
+    if (TagLib::MPEG::File* mp3_file = dynamic_cast<TagLib::MPEG::File*>(file_ref.file())) {
+        if (mp3_file->hasID3v2Tag()) {
+            return save_id3_cover_art(mp3_file->ID3v2Tag());
+        }
+    } 
+    // WAV files (w/ ID3 tag)
+    else if (TagLib::RIFF::WAV::File* wav_file = dynamic_cast<TagLib::RIFF::WAV::File*>(file_ref.file())) {
+        if (wav_file->hasID3v2Tag()) {
+            return save_id3_cover_art(wav_file->ID3v2Tag());
+        }
+    }
+    // AIFF files (w/ ID3 tag)
+    else if (TagLib::RIFF::AIFF::File* aiff_file = dynamic_cast<TagLib::RIFF::AIFF::File*>(file_ref.file())) {
+        if (aiff_file->hasID3v2Tag()) {
+            return save_id3_cover_art(aiff_file->tag()); // tag() for AIFF returns ID3v2 tag
+        }
+    }
 
-// ---------- File Info ----------
+    // FLAC files
+    else if (TagLib::FLAC::File* flac_file = dynamic_cast<TagLib::FLAC::File*>(file_ref.file())) {
+        const TagLib::List<TagLib::FLAC::Picture*>& picture_list = flac_file->pictureList();
+        if (!picture_list.isEmpty()) {
+            TagLib::FLAC::Picture* picture = picture_list[0];
 
+            // get image file type & extension
+            std::string mime_type = picture->mimeType().to8Bit();
+            std::string extension = get_image_extension(mime_type);
+
+            // save image to file, return path
+            return write_image_to_file(picture->data(), extension);
+        }
+    }
+
+    // Files in MP4 containers (ALAC & AAC)
+    else if (TagLib::MP4::File* mp4_file = dynamic_cast<TagLib::MP4::File*>(file_ref.file())) {
+        if (TagLib::MP4::Tag* mp4_tag = mp4_file->tag()) {
+            if (mp4_tag->itemMap().contains("covr")) {
+                TagLib::MP4::CoverArtList cover_art_list= mp4_tag->itemMap()["covr"].toCoverArtList();
+                if (!cover_art_list.isEmpty()) {
+
+                    // get image file type & extension
+                    std::string extension; // mp4 format is incompatible with mime -> extension function :(
+                    TagLib::MP4::CoverArt::Format format = cover_art_list[0].format();
+                    if (format == TagLib::MP4::CoverArt::JPEG) {
+                        extension = ".jpg";
+                    }
+                    else if (format == TagLib::MP4::CoverArt::PNG) {
+                        extension = ".png";
+                    }
+                    else if (format == TagLib::MP4::CoverArt::GIF) {
+                        extension = ".gif"; // rare
+                    }
+                    else if (format == TagLib::MP4::CoverArt::BMP) {
+                        extension = ".bmp"; // ultra rare
+                    }
+                    else { // default to jpg if unknown
+                        extension = ".jpg";
+                    }
+                    
+                    // save image to file, return path
+                    return write_image_to_file(cover_art_list[0].data(), extension);
+                }
+            }
+        }
+    }
+
+    // return empty path if not found // TODO: make std::optional<> ?
+    return "";
+}
 
 
 //--------------------------------------------------------------------------------
@@ -106,13 +171,75 @@ void MetadataManager::set_tracklist_num(unsigned int new_tracklist_num) {
     file_ref.save();
 }
 
+// ---------- Set Cover Art ----------
+std::string MetadataManager::set_cover_art(const std::string& image_path) {
+    // TODO: CODE - SET COVER ART
 
+    // TODO: save new cover art to file
 
+    // TODO: return new image path
+}
 
+//--------------------------------------------------------------------------------
+//                         PRIVATE HELPER FUNCTIONS
+//--------------------------------------------------------------------------------
 
+std::string MetadataManager::save_id3_cover_art(TagLib::ID3v2::Tag* id3v2_tag) {
+    TagLib::ID3v2::FrameList frames = id3v2_tag->frameList("APIC");
+    if (!frames.isEmpty()) {
+        // get AttachedPictureFrame (APIC)
+        TagLib::ID3v2::AttachedPictureFrame* picture_frame =
+            dynamic_cast<TagLib::ID3v2::AttachedPictureFrame*>(frames.front());
+        if (!picture_frame) { // TODO: do something WITHOUT cout for this error
+            std::cout << "Invalid APIC frame with no Attached Picture Frame ";
+            std::cout << "found in this file: " << file_path << "\n";
+        }
 
+        // get image file type & extension
+        std::string mime_type = picture_frame->mimeType().to8Bit();
+        std::string extension = get_image_extension(mime_type);
 
+        // save image to file, return path
+        return write_image_to_file(picture_frame->picture(), extension);
+    }
+    else {
+        // return empty path if not found // TODO: make std::optional<> ?
+        return "";
+    }
+}
 
+// determine image extension from mime type
+std::string MetadataManager::get_image_extension(const std::string& mime_type) {
+    if (mime_type.find("jpeg") != std::string::npos || mime_type.find("jpg") != std::string::npos) {
+        return ".jpg";
+    }
+    else if (mime_type.find("png") != std::string::npos) {
+        return ".png";
+    }
+    else if (mime_type.find("gif") != std::string::npos) {
+        return ".gif"; // rare
+    }
+    else if (mime_type.find("bmp") != std::string::npos) {
+        return ".bmp"; // ultra rare
+    }
+    
+    // default to jpg if unknown
+    return ".jpg";
+}
 
+std::string MetadataManager::write_image_to_file(const TagLib::ByteVector& image_data, const std::string& extension) {
+    // construct image file path (naming it after music file)
+    std::string music_file_name = FileManager::get_file_name(file_path);
+    std::string image_path = FileManager::make_image_file_path(music_file_name, extension);
 
+    // write to file
+    std::ofstream output(image_path, std::ios::binary);
+    if (!output) { // TODO: maybe handle in better instead of throwing error??
+        throw std::runtime_error("Error trying to save cover art for this music file: " + file_path);
+    }
+    output.write(image_data.data(), image_data.size());
+    output.close();
 
+    // return image path
+    return image_path;
+}

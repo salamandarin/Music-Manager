@@ -80,16 +80,19 @@ int main() {
 //            std::cout << "\nPerson Name: " << person << "\n";
 //        }
 
-        // core.add_tracks_from_folder("../../music");
-
+//         core.add_tracks_from_folder("../../music");
+        core.add_tracks_from_folder("../../other_file_types copy");
+         core.toggled_nested();
         // core.toggled_nested();
-        // core.toggled_nested();
 
-        MetadataManager data{"../../Music_Files/Givenchy FW22 Score.mp3"};
-        Duration duration = data.get_duration();
-        std::cout << "Duration: " << duration << "\n";
-        std::cout << "Minutes: " << duration.get_minutes() << "\n";
-        std::cout << "Seconds: " << duration.get_seconds() << "\n";
+//        MetadataManager data{"../../Music_Files/Conductor.mp3"};
+//        Duration duration = data.get_duration();
+//        std::cout << "Duration: " << duration << "\n";
+//        std::cout << "Minutes: " << duration.get_minutes() << "\n";
+//        std::cout << "Seconds: " << duration.get_seconds() << "\n";
+//
+//        std::string cover_art = data.save_cover_art();
+//        std::cout << "Cover art: " << cover_art << "\n";
 
         // choose_test_demo(core, file_names);
     }
