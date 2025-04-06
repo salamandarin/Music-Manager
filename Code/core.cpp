@@ -26,23 +26,14 @@ void Core::toggled_nested() {
 
 // ---------- Add Track w/ File ----------
 void Core::add_track(const std::string& original_file_path) {
-    // gather metadata from track
-    MetadataManager metadata_manager{original_file_path};
+    // make track title & file name match
+    std::string file_path = set_file_title(original_file_path);
+
+    // gather metadata from track 
+    MetadataManager metadata_manager{file_path};
     Track track = metadata_manager.get_data();
-
-    // TODO: MAKE GET / EXTRACT INFO FROM FILE FUNCTION (that gets file info too)
-
-    // // make track title & file name match
-    // if (track.title.empty()) { // if no track title
-    //     // make track title = file name
-    //     std::string file_name = FileManager::get_file_name(track.file_path);
-    //     metadata_manager.set_track_title(file_name);
-    //     track.title = file_name; // TODO: change order so don't manually update????
-    // }
-    // else { // if there is track title
-    //     // make file name = track title
-    //     track.file_path = FileManager::rename_file(track.file_path, track.title);
-    // }
+    
+    // TODO: MAKE GET / EXTRACT INFO FROM FILE FUNCTION (that gets file info too) (+ maybe calls save cover art)
 
     // save cover art image file (if exists)
     std::string image_path = metadata_manager.save_cover_art();
@@ -319,5 +310,22 @@ void Core::update_file_structure() {
             // update path in database
             database.set_track_file_path(track.id, new_path);
         }
+    }
+}
+
+// make track title & file name match
+std::string Core::set_file_title(const std::string& file_path) {
+    MetadataManager metadata_manager{file_path};
+    std::string track_title = metadata_manager.get_track_title();
+
+    // make title = file name
+    if (track_title.empty()) { // if no track title
+        std::string file_name = FileManager::get_file_name(file_path);
+        metadata_manager.set_track_title(file_name);
+        return file_path; // return unchanged file path
+    }
+    // make file name = title
+    else { // if there is track title
+        return FileManager::rename_file(file_path, track_title); // rename + return new path
     }
 }

@@ -52,6 +52,7 @@ public:
 
 private:
     void update_file_structure();
+    std::string set_file_title(const std::string& file_path); // make track title & file name match
 
     DatabaseManager database;
     FileManager file_manager;
