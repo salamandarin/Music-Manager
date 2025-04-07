@@ -176,7 +176,7 @@ int Date::get_year() const {
     return year;
 }
 std::string Date::to_string() const {
-    std::string date_string = month.name + "/" + std::to_string(day) + "/" + std::to_string(year);
+    std::string date_string = std::to_string(month.number) + "/" + std::to_string(day) + "/" + std::to_string(year);
     return date_string;
 }
 
@@ -349,8 +349,8 @@ bool Date::Month::operator>(const std::string& rhs) const {
 
 // Other
 std::string to_lowercase(std::string string) {
-    for (char& c : string) {
-        c = std::tolower(c);
+    for (char& character : string) {
+        character = std::tolower(character);
     }
     return string;
 }
