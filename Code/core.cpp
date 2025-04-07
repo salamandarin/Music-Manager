@@ -15,7 +15,7 @@ Core::Core(bool is_nested)
 bool Core::get_is_nested() {
     return is_nested;
 }
-void Core::toggled_nested() {
+void Core::toggle_nested() {
     is_nested = !is_nested;
     update_file_structure();
 }

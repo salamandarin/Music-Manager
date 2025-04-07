@@ -14,7 +14,7 @@ public:
 
     // handle settings
     bool get_is_nested();
-    void toggled_nested();
+    void toggle_nested();
 
     // add tracks
     void add_track(const std::string& file_path); // track w/ file
