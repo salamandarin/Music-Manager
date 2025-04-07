@@ -25,7 +25,6 @@ std::string FileManager::make_image_file_path(const std::string& name, const std
 }
 
 std::string FileManager::make_music_file_path(const std::string& current_path, const Track& track, bool is_nested) {
-    filesystem::path old_path = current_path;
     std::string new_path = "../../Music_Files/"; // base path for music files
 
     // IF NESTED: add artist/album to file path
@@ -49,8 +48,8 @@ std::string FileManager::make_music_file_path(const std::string& current_path, c
 
     // TODO: handle duplicates?
 
-    // add file name
-    new_path += file_name;
+    // add file name + extension
+    new_path += get_file_name(current_path) + get_extension(current_path);
 
     return new_path; // return new path
 }
