@@ -176,6 +176,12 @@ int Date::get_year() const {
     return year;
 }
 std::string Date::to_string() const {
+    // Return empty string if null / invalid date
+    if (year == 0 || month.number == 0 || day == 0) {
+        return "";
+    }
+
+    // Date -> string (MM/DD/YYYY format)
     std::string date_string = std::to_string(month.number) + "/" + std::to_string(day) + "/" + std::to_string(year);
     return date_string;
 }
