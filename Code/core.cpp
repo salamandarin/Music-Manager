@@ -289,8 +289,11 @@ void Core::delete_entire_library(const std::string& extra_folder_to_delete) {
     FileManager::plain_delete("../../../Images");
 
     // delete entire database file
-    FileManager::plain_delete("../../Database/music_manager.db"); // match path in database_manager.h
+    FileManager::plain_delete("../../Database/music_manager.db"); // must match path in database_manager.h
 
+    // remake database file
+    database = DatabaseManager{};
+    
     // delete other file or folder (if passed in)
     if (!extra_folder_to_delete.empty()) { // check if there is extra_folder_to_delete
         FileManager::plain_delete(extra_folder_to_delete);
