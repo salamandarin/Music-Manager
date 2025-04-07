@@ -47,7 +47,7 @@ std::string FileManager::make_music_file_path(const std::string& current_path, c
         }
         // if no artist info, add "Artist Unknown" to path
         else {
-            new_path += "Artist_Unknown/";
+            new_path += "Person_Unknown/Artist_Unknown/";
         }
 
         // add album name to path (if exists)
