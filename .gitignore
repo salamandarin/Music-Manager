@@ -55,3 +55,6 @@ Images/*
 # Database
 *.db
 *.sqlite
+
+# Qt
+CMakeLists.txt.user

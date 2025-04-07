@@ -8,13 +8,13 @@
 //--------------------------------------------------------------------------------
 DatabaseManager::DatabaseManager() {
     // open database
-    int return_code = sqlite3_open("../Database/music_manager.db", &database);
+    int return_code = sqlite3_open("../../Database/music_manager.db", &database);
     if (return_code){
         throw std::runtime_error(sqlite3_errmsg(database));
     }
 
     // initialize tables from .sql file
-    std::string file_name = "../Database/tables.sql";
+    std::string file_name = "../../Database/tables.sql";
     std::ifstream file{file_name};
     if (!file) {
         throw std::runtime_error("Could not open " + file_name + "\n");
@@ -615,7 +615,7 @@ void DatabaseManager::set_track_date(int track_id, const Date& date) {
     set_object_value("tracks", "date", date.to_string(), "track_id", track_id);
 }
 // set track tracklist number
-void DatabaseManager::set_track_tracklist_num(int track_id, int tracklist_num) {
+void DatabaseManager::set_track_tracklist_num(int track_id, int tracklist_num) { // TODO: maybe don't make string??
     set_object_value("tracks", "tracklist_num", std::to_string(tracklist_num), "track_id", track_id);
 }
 // set track file path

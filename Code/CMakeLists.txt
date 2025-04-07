@@ -1,5 +1,10 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.16)
 project(music)
+
+# Qt
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
 
 add_executable(music
         main.cpp
@@ -7,6 +12,7 @@ add_executable(music
         file_manager.cpp
         database_manager.cpp
         core.cpp
+        main_window.cpp
 )
 target_compile_options(music PUBLIC -std=c++17)
 set(CMAKE_CXX_STANDARD 17)
@@ -27,6 +33,10 @@ target_link_libraries(music PRIVATE ${TAGLIB_LIBRARIES})
 find_package(SQLite3 REQUIRED)
 target_link_libraries(music PRIVATE SQLite::SQLite3)
 
+# Qt
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+target_link_libraries(music PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
 
 # ---------------------- TEST EXECUTABLE ----------------------

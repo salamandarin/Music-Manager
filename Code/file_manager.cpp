@@ -12,7 +12,7 @@ namespace filesystem = std::filesystem;
 //--------------------------------------------------------------------------------
 std::string FileManager::make_image_file_path(const std::string& name, const std::string& image_extension) {
     // create folder if needed
-    std::string directory = "../../Images";
+    std::string directory = "../../../Images";
     if (!std::filesystem::exists(directory)) {
         std::filesystem::create_directory(directory);
     }
@@ -25,7 +25,7 @@ std::string FileManager::make_image_file_path(const std::string& name, const std
 }
 
 std::string FileManager::make_music_file_path(const std::string& current_path, const Track& track, bool is_nested) {
-    std::string new_path = "../../Music_Files/"; // base path for music files
+    std::string new_path = "../../../Music_Files/"; // base path for music files
 
     // IF NESTED: add artist/album to file path
     if (is_nested) {
@@ -74,7 +74,7 @@ void FileManager::move_music_file(const std::string& old_path, const std::string
     filesystem::rename(old_path, new_path);
 
     // cleanup: delete parent folders that might be empty now
-    delete_empty_parent_folders(old_path, "../../Music_Files"); // stop at Music_Files folder
+    delete_empty_parent_folders(old_path, "../../../Music_Files"); // stop at Music_Files folder
 }
 
 // delete music file (& delete empty parent folders up to "Music_Files")
@@ -88,7 +88,7 @@ void FileManager::delete_music_file(const std::string& file_path) {
     filesystem::remove(file_path);
 
     // cleanup: delete parent folders that might be empty now
-    delete_empty_parent_folders(filesystem::path(file_path).parent_path(), "../../Music_Files"); // stop at Music_Files folder
+    delete_empty_parent_folders(filesystem::path(file_path).parent_path(), "../../../Music_Files"); // stop at Music_Files folder
 }
 
 std::string FileManager::rename_file(const std::string& file_path, const std::string& new_file_name) {
