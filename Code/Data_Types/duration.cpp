@@ -40,7 +40,14 @@ int Duration::get_seconds() const {
 }
 
 std::string Duration::to_string() const {
-    std::string duration_string = std::to_string(minutes) + ":" + std::to_string(seconds);
+    // add leading 0 if < 10 seconds
+    std::string seconds_string = std::to_string(seconds);
+    if (seconds < 10) {
+        seconds_string = "0" + seconds_string; // add leading 0
+    }
+
+    // put string together
+    std::string duration_string = std::to_string(minutes) + ":" + seconds_string;
     return duration_string;
 }
 
