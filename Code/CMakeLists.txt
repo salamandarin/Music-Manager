@@ -23,6 +23,7 @@ target_include_directories(music PRIVATE ${TAGLIB_INCLUDE_DIRS})
 target_link_directories(music PRIVATE ${TAGLIB_LIBRARY_DIRS})
 target_link_libraries(music PRIVATE ${TAGLIB_LIBRARIES})
 
+# SQLite3
 find_package(SQLite3 REQUIRED)
 target_link_libraries(music PRIVATE SQLite::SQLite3)
 
@@ -32,6 +33,8 @@ target_link_libraries(music PRIVATE SQLite::SQLite3)
 add_executable(metadata_tests
         metadata_tests.cpp
         metadata_manager.cpp
+        file_manager.cpp
+        database_manager.cpp
 )
 
 # doctest
@@ -51,3 +54,7 @@ target_link_libraries(metadata_tests PUBLIC Data_Types)
 target_include_directories(metadata_tests PRIVATE ${TAGLIB_INCLUDE_DIRS})
 target_link_directories(metadata_tests PRIVATE ${TAGLIB_LIBRARY_DIRS})
 target_link_libraries(metadata_tests PRIVATE ${TAGLIB_LIBRARIES})
+
+# SQLite3
+find_package(SQLite3 REQUIRED)
+target_link_libraries(metadata_tests PRIVATE SQLite::SQLite3)
