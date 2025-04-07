@@ -28,45 +28,31 @@ std::string FileManager::make_music_file_path(const std::string& current_path, c
     filesystem::path old_path = current_path;
     std::string new_path = "../../Music_Files/"; // base path for music files
 
-    // IF NESTED: add person/artist/album to file path
+    // IF NESTED: add artist/album to file path
     if (is_nested) {
-        // gather artist real name to add that + artist name to path
-        if (!track.artist.empty()) { // if there is artist info
-            DatabaseManager database_manager;
-            std::optional<Artist> possible_artist = database_manager.get_artist(track.artist);
-            Artist artist;
-            if (possible_artist) { // if artist is in database already
-                artist = *possible_artist; 
-            } // TODO: possibly add file to db first so person is always known??? or not
-            else { // if artist isn't in database already (therefore person behind isn't known)
-                artist.name = track.artist;
-                artist.person_behind = track.artist; // just use artist name as person name
-            }
-            // add person_behind + artist to path
-            new_path += (artist.person_behind + "/" + artist.name + "/");
+        // add artist
+        if (!track.artist.empty()) { // add artist name to path (if given)
+            new_path += track.artist + "/";
         }
-        // if no artist info, add "Artist Unknown" to path
-        else {
-            new_path += "Person_Unknown/Artist_Unknown/";
+        else {// if no artist info, add "Artist Unknown" to path
+            new_path += "Artist_Unknown/";
         }
 
-        // add album name to path (if exists)
-        if (!track.album.empty()) {
+        // add album
+        if (!track.album.empty()) { // add album name to path (if given)
             new_path += (track.album + "/");
         }
-        // if no album info, add "Album Unknown" to path
-        else {
+        else { // if no album info, add "Album Unknown" to path
             new_path += "Album_Unknown/"; 
         }
     }
 
     // TODO: handle duplicates?
 
-    // add file name to path
+    // add file name
     new_path += file_name;
 
-    // return new file path
-    return new_path;
+    return new_path; // return new path
 }
 
 //--------------------------------------------------------------------------------
