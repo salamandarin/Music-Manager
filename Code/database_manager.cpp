@@ -4,7 +4,7 @@
 #include <iostream> //TODO: DELETE
 
 //--------------------------------------------------------------------------------
-//                                  CONSTRUCTOR & DESTRUCTOR
+//                                   BIG FIVE
 //--------------------------------------------------------------------------------
 DatabaseManager::DatabaseManager() {
     // open database
@@ -33,6 +33,19 @@ DatabaseManager::DatabaseManager() {
 DatabaseManager::~DatabaseManager() {
     sqlite3_close(database); // close database
 }
+
+// move constructor
+DatabaseManager::DatabaseManager(DatabaseManager&& other) noexcept
+    :database{other.database} {
+        other.database = nullptr;
+}
+
+// move assignment
+DatabaseManager& DatabaseManager::operator=(DatabaseManager&& other) noexcept {
+    std::swap(database, other.database);
+    return *this;
+}
+
 
 //--------------------------------------------------------------------------------
 //                                  ADD OBJECTS

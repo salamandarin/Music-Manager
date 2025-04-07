@@ -10,9 +10,19 @@
 
 class DatabaseManager {
 public:
-    DatabaseManager();
-    ~DatabaseManager();
+    // ------------------------- BIG FIVE -------------------------
+    DatabaseManager(); // constructor
+    ~DatabaseManager(); // destructor
 
+    // disable copying (cuz can't copy database connections)
+    DatabaseManager(const DatabaseManager&) = delete; // delete copy constructor
+    DatabaseManager& operator=(const DatabaseManager&) = delete; // delete copy assignment
+    
+    // allow moving
+    DatabaseManager(DatabaseManager&& other) noexcept; // move constructor
+    DatabaseManager& operator=(DatabaseManager&& other) noexcept; // move assignment
+
+    // ------------------------- ADD / REMOVE OBJECTS -------------------------
     // add new objects to DB
     void add_track(const Track& track);
     void add_album(const Album& album);
@@ -97,6 +107,7 @@ public:
     // set person data
     void set_person_name(int person_id, const std::string& name);
 
+
 private:
     sqlite3_stmt* prepare_sql(const std::string& sql_to_prepare);
 
@@ -106,8 +117,7 @@ private:
     void bind_input_to_sql(sqlite3_stmt* sql, int index, const std::string& input_value); // string
     void bind_input_to_sql(sqlite3_stmt* sql, int index, int input_value); // int
 
-    // ---------- backend of other functions ---------- 
-
+    // --------------- backend of other functions ---------------
     // execute sql queries
     void execute_sql(sqlite3_stmt* sql); // queries with no return
     template<typename T> // queries with return
