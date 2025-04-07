@@ -60,16 +60,6 @@ std::string FileManager::make_music_file_path(const std::string& current_path, c
         }
     }
 
-    std::string file_name;
-    // make file name = track title (if has title)
-    if (!track.title.empty()) {
-        file_name = track.title + old_path.extension().string();
-    }
-    // OR keep file name
-    else {
-        file_name = old_path.filename().string();
-    }
-
     // TODO: handle duplicates?
 
     // add file name to path
