@@ -69,7 +69,7 @@ void DatabaseManager::add_track(const Track& track) {
     bind_input_to_sql(sql, 1, track.title);
     bind_input_to_sql(sql, 2, artist_id); // int fk artist_id
     bind_input_to_sql(sql, 3, album_id); // int fk album_id
-    bind_input_to_sql(sql, 4, track.duration.to_string());
+    bind_input_to_sql(sql, 4, track.duration.get_duration_in_seconds());
     bind_input_to_sql(sql, 5, track.date.to_string());
     bind_input_to_sql(sql, 6, track.tracklist_num);
     bind_input_to_sql(sql, 7, track.file_path);
@@ -832,7 +832,7 @@ Track DatabaseManager::get_track_row(sqlite3_stmt* sql) {
     track.title = extract_string(sql, 1).value_or(""); // title - 1
     track.artist = extract_string(sql, 2).value_or(""); // artist (NAME) - 2
     track.album = extract_string(sql, 3).value_or(""); // album (TITLE) - 3
-    // track.duration = extract_string(sql, 4).value_or(""); // duration - 4 // TODO: HANDLE STRING/INT -> DURATION
+    track.duration = Duration{extract_int(sql, 4).value_or(0)}; // duration - 4
     // track.date = extract_string(sql, 5).value_or(""); // date - 5 // TODO: HANDLE STRING -> DATE
     track.tracklist_num = extract_int(sql, 6).value_or(0); // tracklist_num - 6
     track.file_path = extract_string(sql, 7).value_or(""); // file_path - 7
