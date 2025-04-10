@@ -9,6 +9,9 @@ class MainWindow : public QMainWindow {
 public:
     MainWindow(Core& core, QWidget* parent=nullptr);
 
+private slots:
+    void open_track_popup(int row, int column);
+
 private:
     void setup_gui();
     void load_tracks();

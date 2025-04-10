@@ -13,6 +13,7 @@ add_executable(music
         database_manager.cpp
         core.cpp
         main_window.cpp
+        track_popup.cpp track_popup.ui
 )
 target_compile_options(music PUBLIC -std=c++17)
 set(CMAKE_CXX_STANDARD 17)

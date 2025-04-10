@@ -2,10 +2,7 @@
 #include "core.h"
 #include "main_window.h"
 #include <QApplication>
-#include <QWidget>
-// TODO: DELETE
 #include <iostream>
-#include <vector>
 
 int main(int argc, char *argv[]) {
     try {

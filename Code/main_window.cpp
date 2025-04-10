@@ -1,5 +1,6 @@
 // Samuel Sutton - 2025
 #include "main_window.h"
+#include "track_popup.h"
 #include <QHeaderView>
 #include <QHBoxLayout>
 #include <QPixmap>
@@ -9,7 +10,7 @@
 #include <QLineEdit>
 
 MainWindow::MainWindow(Core& core, QWidget* parent)
-    :QMainWindow{parent}, core(core) {
+    :core{core}, QMainWindow{parent} {
     setup_gui();
     load_tracks();
 }
@@ -21,6 +22,7 @@ void MainWindow::setup_gui() {
     // add layout to central_widget
     central_widget->setLayout(layout);
     setCentralWidget(central_widget);
+
 
     // -------------------- TABLE --------------------
     // create tracks table
@@ -34,6 +36,9 @@ void MainWindow::setup_gui() {
     tracks_table->setSelectionBehavior(QAbstractItemView::SelectRows); // select only rows
     tracks_table->setSelectionMode(QAbstractItemView::ExtendedSelection); // multi-selection with shift/command
     tracks_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+    // connect double click signal to open TrackPopup
+    connect(tracks_table, &QTableWidget::cellDoubleClicked, this, &MainWindow::open_track_popup);
 
 
     // -------------------- BUTTONS --------------------
@@ -76,15 +81,15 @@ void MainWindow::setup_gui() {
     });
     button_layout->addWidget(edit_title_demo); // add to layout
 
+    // make DELETE_LIBRARY button (FOR TESTING ONLY)
+    QPushButton* delete_library_button = new QPushButton("DELETE ENTIRE LIBRARY", this);
+    QObject::connect(delete_library_button, &QPushButton::clicked, this, [this](){ // connect button to delete_entire_library
+        this->core.delete_entire_library("../../../TEST_MUSIC copy"); // TODO: MAKE IT TAKE INPUT - NOT HARDCODED PATH
+        load_tracks(); // refresh GUI
+    });
+    button_layout->addWidget(delete_library_button); // add to layout
 
-    // // make DELETE_LIBRARY button (FOR TESTING ONLY)
-    // QPushButton* delete_library_button = new QPushButton("DELETE ENTIRE LIBRARY", this);
-    // QObject::connect(delete_library_button, &QPushButton::clicked, this, [this](){ // connect button to delete_entire_library
-    //     this->core.delete_entire_library("../../../TEST_MUSIC copy"); // TODO: MAKE IT TAKE INPUT - NOT HARDCODED PATH
-    //     load_tracks(); // refresh GUI
-    // });
-    // button_layout->addWidget(delete_library_button); // add to layout
-
+    
     // set window properties
     setWindowTitle("Music Manager"); // window title
     resize(1280, 720); // window size
@@ -134,4 +139,18 @@ void MainWindow::load_tracks() {
     // resize rows & columns to fit content
     tracks_table->resizeColumnsToContents();
     tracks_table->resizeRowsToContents();
+}
+
+
+void MainWindow::open_track_popup(int row, int column) {
+    // grab the track id from column 1
+    QTableWidgetItem* id_item = tracks_table->item(row, 1);
+    if (id_item) {
+        int track_id = id_item->text().toInt();
+        TrackPopup* popup = new TrackPopup(core, track_id, this);
+        popup->exec();
+    }
+    else {
+        // TODO: THROW ERROR
+    }
 }
