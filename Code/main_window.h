@@ -11,11 +11,18 @@ public:
 
 private slots:
     void open_track_popup(int row, int column);
+    void update_track(int track_id); 
 
 private:
     void setup_gui();
-    void load_tracks();
+    void update_table();
+    void update_row(int row, int track_id);
+    
+    // helper functions
+    int get_track_row(int track_id);
+    int get_track_id(int row);
 
+    // data
     Core& core;
     QTableWidget* tracks_table;
 };

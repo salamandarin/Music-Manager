@@ -4,7 +4,7 @@
 #include <QApplication>
 #include <iostream>
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
     try {
         QApplication application(argc, argv); // starts Qt program
         Core core;

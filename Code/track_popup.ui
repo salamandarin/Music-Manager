@@ -29,7 +29,7 @@
     <enum>Qt::Orientation::Horizontal</enum>
    </property>
    <property name="standardButtons">
-    <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
+    <set>QDialogButtonBox::StandardButton::Close</set>
    </property>
   </widget>
   <widget class="QLabel" name="cover_art">
@@ -46,6 +46,9 @@
    </property>
    <property name="pixmap">
     <pixmap>Default_Images/default_track.jpg</pixmap>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
    </property>
   </widget>
   <widget class="QLabel" name="title">
@@ -135,10 +138,10 @@
     <set>Qt::AlignmentFlag::AlignCenter</set>
    </property>
   </widget>
-  <widget class="QTabWidget" name="edit_tab">
+  <widget class="QTabWidget" name="tabs">
    <property name="geometry">
     <rect>
-     <x>29</x>
+     <x>30</x>
      <y>170</y>
      <width>751</width>
      <height>251</height>
@@ -151,16 +154,16 @@
     <enum>QTabWidget::TabShape::Rounded</enum>
    </property>
    <property name="currentIndex">
-    <number>2</number>
+    <number>0</number>
    </property>
    <property name="tabsClosable">
     <bool>false</bool>
    </property>
    <property name="movable">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="tabBarAutoHide">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <widget class="QWidget" name="info_tab">
     <attribute name="title">
@@ -175,7 +178,7 @@
        <height>71</height>
       </rect>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
+     <layout class="QHBoxLayout" name="album_info_layout">
       <item>
        <widget class="QLabel" name="album_image">
         <property name="maximumSize">
@@ -189,6 +192,9 @@
         </property>
         <property name="pixmap">
          <pixmap>Default_Images/default_track.jpg</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -248,7 +254,7 @@
        <height>71</height>
       </rect>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <layout class="QHBoxLayout" name="artist_info_layout">
       <item>
        <widget class="QLabel" name="artist_image">
         <property name="maximumSize">
@@ -262,6 +268,9 @@
         </property>
         <property name="pixmap">
          <pixmap>Default_Images/default_track.jpg</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -306,9 +315,9 @@
        <height>71</height>
       </rect>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <layout class="QHBoxLayout" name="track_info_layout">
       <item>
-       <widget class="QLabel" name="date_2">
+       <widget class="QLabel" name="date">
         <property name="font">
          <font>
           <pointsize>14</pointsize>
@@ -316,6 +325,9 @@
         </property>
         <property name="text">
          <string>date</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignCenter</set>
         </property>
        </widget>
       </item>
@@ -329,6 +341,9 @@
         <property name="text">
          <string>duration_smaller</string>
         </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignCenter</set>
+        </property>
        </widget>
       </item>
       <item>
@@ -340,6 +355,9 @@
         </property>
         <property name="text">
          <string>category</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignCenter</set>
         </property>
        </widget>
       </item>
@@ -353,6 +371,206 @@
         <property name="text">
          <string>description</string>
         </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="file_info_tab">
+    <attribute name="title">
+     <string>File Info</string>
+    </attribute>
+    <widget class="QWidget" name="formLayoutWidget_2">
+     <property name="geometry">
+      <rect>
+       <x>19</x>
+       <y>9</y>
+       <width>361</width>
+       <height>201</height>
+      </rect>
+     </property>
+     <layout class="QFormLayout" name="file_info_layout_left">
+      <item row="0" column="0">
+       <widget class="QLabel" name="file_type_label">
+        <property name="text">
+         <string>File Type:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="file_type">
+        <property name="text">
+         <string>file_type</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="file_path_label">
+        <property name="text">
+         <string>File Path:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLabel" name="file_path">
+        <property name="text">
+         <string>file_path</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="image_path_label">
+        <property name="text">
+         <string>Image Path (MULTI???):</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLabel" name="image_path">
+        <property name="text">
+         <string>image_path</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="file_size_label">
+        <property name="text">
+         <string>File Size:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QLabel" name="file_size">
+        <property name="text">
+         <string>file_size</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="bit_rate_label">
+        <property name="text">
+         <string>Bit Rate:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QLabel" name="bit_rate">
+        <property name="text">
+         <string>bit_rate</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QLabel" name="sample_rate_label">
+        <property name="text">
+         <string>Sample Rate:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QLabel" name="sample_rate">
+        <property name="text">
+         <string>sample_rate</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0">
+       <widget class="QLabel" name="channels_label">
+        <property name="text">
+         <string>Audio Channels:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="1">
+       <widget class="QLabel" name="channels">
+        <property name="text">
+         <string>channels</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="0">
+       <widget class="QLabel" name="bit_rate_label_4">
+        <property name="text">
+         <string>Bit Rate:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="1">
+       <widget class="QLabel" name="bit_rate_4">
+        <property name="text">
+         <string>bit_rate</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QWidget" name="formLayoutWidget_3">
+     <property name="geometry">
+      <rect>
+       <x>380</x>
+       <y>10</y>
+       <width>351</width>
+       <height>201</height>
+      </rect>
+     </property>
+     <layout class="QFormLayout" name="file_info_layout_right">
+      <item row="0" column="0">
+       <widget class="QLabel" name="date_added_label">
+        <property name="text">
+         <string>Date Added:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="date_added">
+        <property name="text">
+         <string>date_added</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="date_modified_label">
+        <property name="text">
+         <string>Date Last Modified:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLabel" name="date_modified">
+        <property name="text">
+         <string>date_modified</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="date_opened_label">
+        <property name="text">
+         <string>Date Last Opened</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLabel" name="date_opened">
+        <property name="text">
+         <string>date_opened</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="downloaded_from_label">
+        <property name="text">
+         <string>Downloaded From:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QLabel" name="downloaded_from">
+        <property name="text">
+         <string>downloaded_from</string>
+        </property>
        </widget>
       </item>
      </layout>
@@ -362,11 +580,124 @@
     <attribute name="title">
      <string>Notes</string>
     </attribute>
+    <widget class="QTextEdit" name="notes_input">
+     <property name="geometry">
+      <rect>
+       <x>23</x>
+       <y>13</y>
+       <width>701</width>
+       <height>191</height>
+      </rect>
+     </property>
+    </widget>
    </widget>
    <widget class="QWidget" name="edit_tab">
     <attribute name="title">
      <string>Edit</string>
     </attribute>
+    <widget class="QWidget" name="formLayoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>19</x>
+       <y>9</y>
+       <width>351</width>
+       <height>201</height>
+      </rect>
+     </property>
+     <layout class="QFormLayout" name="edit_form_layout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="edit_title_label">
+        <property name="text">
+         <string>Title</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="edit_title_input"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="edit_artist_label">
+        <property name="text">
+         <string>Artist</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="edit_artist_input"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="edit_album_label">
+        <property name="text">
+         <string>Album</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="edit_album_input"/>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="edit_date_label">
+        <property name="text">
+         <string>Date</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QDateEdit" name="edit_date_input">
+        <property name="currentSection">
+         <enum>QDateTimeEdit::Section::MonthSection</enum>
+        </property>
+        <property name="displayFormat">
+         <string>MM/dd/yyyy</string>
+        </property>
+        <property name="calendarPopup">
+         <bool>true</bool>
+        </property>
+        <property name="currentSectionIndex">
+         <number>0</number>
+        </property>
+        <property name="date">
+         <date>
+          <year>2025</year>
+          <month>1</month>
+          <day>1</day>
+         </date>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="edit_tracklist_num_label">
+        <property name="text">
+         <string>Tracklist #</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QLineEdit" name="edit_tracklist_num_input"/>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QLabel" name="edit_tracklist_num_label_2">
+     <property name="geometry">
+      <rect>
+       <x>470</x>
+       <y>30</y>
+       <width>171</width>
+       <height>71</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>18</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Edit Cover Art</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
    </widget>
   </widget>
  </widget>

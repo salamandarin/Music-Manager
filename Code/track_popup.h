@@ -14,8 +14,14 @@ public:
     TrackPopup(Core& core, int track_id, QWidget* parent=nullptr);
     ~TrackPopup();
 
+signals:  
+    void track_updated(int track_id);
+
+private slots:
+    void edit_title();
+
 private:
-    void set_labels();
+    void update_data();
 
     Ui::TrackPopup* ui;
     Core& core;
