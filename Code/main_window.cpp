@@ -73,7 +73,7 @@ void MainWindow::setup_gui() {
     // make add_folder button (HARDCODED FOR TESTING ONLY)
     QPushButton* add_from_folder_button = new QPushButton("DEMO: Add 'Test_Music' Folder", this);
     connect(add_from_folder_button, &QPushButton::clicked, this, [this](){ // connect button to delete_entire_library
-        this->core.add_tracks_from_folder("../../../TEST_MUSIC copy"); // TODO: MAKE IT TAKE INPUT - NOT HARDCODED PATH
+        this->core.add_tracks_from_folder("TEST_MUSIC copy"); // TODO: MAKE IT TAKE INPUT - NOT HARDCODED PATH
         update_table(); // refresh table GUI
     });
     button_layout->addWidget(add_from_folder_button); // add to layout
@@ -100,7 +100,7 @@ void MainWindow::setup_gui() {
     QPushButton* delete_library_button = new QPushButton("DELETE ENTIRE LIBRARY", this);
     connect(delete_library_button, &QPushButton::clicked, this, [this](){
         // connect button to delete_entire_library
-        this->core.delete_entire_library("../../../TEST_MUSIC copy"); // TODO: MAKE IT TAKE INPUT - NOT HARDCODED PATH
+        this->core.delete_entire_library("TEST_MUSIC copy"); // TODO: MAKE IT TAKE INPUT - NOT HARDCODED PATH
         update_table(); // refresh table GUI
     });
     button_layout->addWidget(delete_library_button); // add to layout
@@ -128,7 +128,7 @@ void MainWindow::update_table() {
         // add image
         QTableWidgetItem* image_item = new QTableWidgetItem();
         // set either default image, or real image
-        std::string image_path = "../../Default_Images/default_track.jpg"; // default image
+        std::string image_path = "Code/Default_Images/default_track.jpg"; // default image
         if (!tracks[i].image_path.empty()) { // if has image
             image_path = tracks[i].image_path; // replace default image with real one
         }

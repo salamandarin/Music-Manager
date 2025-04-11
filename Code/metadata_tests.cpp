@@ -3,7 +3,7 @@
 #include <doctest.h>
 #include "metadata_manager.h"
 
-const std::string TEST_FILE_PATH = "../../../Music_Files/dust bowl (demo).mp3";
+const std::string TEST_FILE_PATH = "Music_Files/dust bowl (demo).mp3";
 
 TEST_CASE("metadata constructor testing") {
     CHECK_NOTHROW(MetadataManager metadata_manager{TEST_FILE_PATH});
