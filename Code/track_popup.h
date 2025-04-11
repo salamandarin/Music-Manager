@@ -19,6 +19,10 @@ signals:
 
 private slots:
     void edit_title();
+    void edit_artist();
+    void edit_album();
+    void edit_date();
+    void edit_tracklist_num();
 
 private:
     void update_data();

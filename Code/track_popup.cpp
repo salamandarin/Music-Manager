@@ -15,8 +15,14 @@ TrackPopup::TrackPopup(Core& core, int track_id, QWidget* parent)
     // connect signals to functions 
     connect(ui->edit_title_input, &QLineEdit::editingFinished,
                             this, &TrackPopup::edit_title);
-    
-    
+    connect(ui->edit_artist_input, &QLineEdit::editingFinished,
+                            this, &TrackPopup::edit_artist);
+    connect(ui->edit_album_input, &QLineEdit::editingFinished,
+                            this, &TrackPopup::edit_album);
+    connect(ui->edit_date_input, &QDateEdit::editingFinished,
+                            this, &TrackPopup::edit_date);
+    connect(ui->edit_tracklist_num_input, &QLineEdit::editingFinished,
+                            this, &TrackPopup::edit_tracklist_num);
 }
 
 TrackPopup::~TrackPopup() {
@@ -56,11 +62,57 @@ void TrackPopup::update_data() {
 }
 
 void TrackPopup::edit_title() {
-    // grab new title
+    // grab new data
     std::string new_title = ui->edit_title_input->text().trimmed().toStdString(); // trim to remove extra whitespace
 
-    // set new title
+    // set new data
     core.set_track_title(track_id, new_title);
+
+    // update gui
+    update_data(); // update this popup
+    emit track_updated(track_id); // emit signal so main table can refresh
+}
+void TrackPopup::edit_artist() {
+    // grab new data
+    std::string new_artist = ui->edit_artist_input->text().trimmed().toStdString(); // trim to remove extra whitespace
+
+    // set new data
+    core.set_track_artist(track_id, new_artist);
+
+    // update gui
+    update_data(); // update this popup
+    emit track_updated(track_id); // emit signal so main table can refresh
+}
+void TrackPopup::edit_album() {
+    // grab new data
+    std::string new_album = ui->edit_album_input->text().trimmed().toStdString(); // trim to remove extra whitespace
+
+    // set new data
+    core.set_track_album(track_id, new_album);
+
+    // update gui
+    update_data(); // update this popup
+    emit track_updated(track_id); // emit signal so main table can refresh
+}
+void TrackPopup::edit_date() {
+    // grab new data
+    QDate qt_date = ui->edit_date_input->date();
+    Date new_date{qt_date.month(), qt_date.day(), qt_date.year()};
+
+    // set new data
+    core.set_track_date(track_id, new_date);
+
+    // update gui
+    update_data(); // update this popup
+    emit track_updated(track_id); // emit signal so main table can refresh
+}
+void TrackPopup::edit_tracklist_num() {
+    // grab new data
+    int new_tracklist_num = ui->edit_tracklist_num_input->text().trimmed().toInt(); // trim to remove extra whitespace
+    // TODO: handle non-int input (or leave be cuz just sets to 0)
+
+    // set new data
+    core.set_track_tracklist_num(track_id, new_tracklist_num);
 
     // update gui
     update_data(); // update this popup

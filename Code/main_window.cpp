@@ -139,7 +139,7 @@ void MainWindow::update_table() {
         // put image in a QLabel for scaling
         QLabel* image_label = new QLabel();
         image_label->setPixmap(image_pixmap);
-        image_label->setFixedSize(200, 200); // set size
+        image_label->setFixedSize(50, 50); // set size
         image_label->setScaledContents(true); // let QLabel scale it
         // put image (inside QLabel) into row
         tracks_table->setCellWidget(i, IMAGE_COLUMN, image_label);
