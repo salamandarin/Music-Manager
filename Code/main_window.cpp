@@ -8,6 +8,7 @@
 // TODO: DELETE EXTRA
 #include <QInputDialog>
 #include <QLineEdit>
+#include <Qlabel>
 
 enum Columns {
     IMAGE_COLUMN = 0,
@@ -40,7 +41,7 @@ void MainWindow::setup_gui() {
     // create tracks table
     tracks_table = new QTableWidget(this);
     tracks_table->setColumnCount(NUM_COLUMNS);
-    tracks_table->setHorizontalHeaderLabels({"", "ID", "Title", "Artist", "Album", "Duration", "Date", "Tracklist #"});
+    tracks_table->setHorizontalHeaderLabels({"", "Title", "Artist", "Album", "Duration", "Date", "Tracklist #"});
     layout->addWidget(tracks_table); // add table to layout
     
     // make table fill all available space
@@ -124,23 +125,27 @@ void MainWindow::update_table() {
     
     // fill in table
     for (int i = 0; i < tracks.size(); ++i) {   
-
-        // add image
-        QTableWidgetItem* image_item = new QTableWidgetItem();
-        // set either default image, or real image
+        // -------------------- IMAGE --------------------
+        // get either default or actual image path
         std::string image_path = "Code/Default_Images/default_track.jpg"; // default image
         if (!tracks[i].image_path.empty()) { // if has image
             image_path = tracks[i].image_path; // replace default image with real one
         }
         // set image
-        QPixmap pixmap(QString::fromStdString(image_path));
-        if (!pixmap.isNull()) {
-            QIcon icon(pixmap); // make icon
-            tracks_table->setIconSize(QSize(50, 50)); // icon / image size
-            image_item->setIcon(icon);
+        QPixmap image_pixmap(QString::fromStdString(image_path));
+        if (image_pixmap.isNull()) { // throw error if image failed to load
+            throw std::runtime_error("Failed to load image from " + image_path);
         }
-        tracks_table->setItem(i, IMAGE_COLUMN, image_item); // set image
+        // put image in a QLabel for scaling
+        QLabel* image_label = new QLabel();
+        image_label->setPixmap(image_pixmap);
+        image_label->setFixedSize(200, 200); // set size
+        image_label->setScaledContents(true); // let QLabel scale it
+        // put image (inside QLabel) into row
+        tracks_table->setCellWidget(i, IMAGE_COLUMN, image_label);
 
+
+        // -------------------- OTHER COLUMNS --------------------
         // set title + store id (in title column)
         QTableWidgetItem* title_item = new QTableWidgetItem(QString::fromStdString(tracks[i].title));
         title_item->setData(Qt::UserRole, tracks[i].id); // store id in title column

@@ -28,14 +28,30 @@ void TrackPopup::update_data() {
     // get track info
     Track track = core.get_track(track_id);
 
-    // set header info
-    setWindowTitle(QString::fromStdString(track.title));
-    // TODO: SET IMAGE
+    // -------------------- COVER ART --------------------
+    // get image path (either actual image, or default)
+    std::string image_path = "Code/Default_Images/default_track.jpg"; // default image
+    if (!track.image_path.empty()) { // if has image
+        image_path = track.image_path; // replace default image with real one
+    }
+    // set image
+    QPixmap image(QString::fromStdString(image_path));
+    if (image.isNull()) { // throw error if image failed to load
+        throw std::runtime_error("Failed to load image from " + image_path);
+    }
+    ui->cover_art->setScaledContents(true); // let QLabel scale it
+    ui->cover_art->setPixmap(image); // set cover art
+    
+
+    // -------------------- MAIN INFO --------------------
+    setWindowTitle(QString::fromStdString(track.title)); // window title
     ui->title->setText(QString::fromStdString(track.title));
     ui->artist_name->setText(QString::fromStdString(track.artist));
     ui->album_title->setText(QString::fromStdString(track.album));
     ui->duration->setText(QString::fromStdString(track.duration.to_string()));
 
+
+    // -------------------- TABS --------------------
     // TODO: SET TAB INFO
 }
 
