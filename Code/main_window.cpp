@@ -42,6 +42,7 @@ void MainWindow::setup_gui() {
     tracks_table = new QTableWidget(this);
     tracks_table->setColumnCount(NUM_COLUMNS);
     tracks_table->setHorizontalHeaderLabels({"", "Title", "Artist", "Album", "Duration", "Date", "Tracklist #"});
+    tracks_table->verticalHeader()->setDefaultAlignment(Qt::AlignCenter); // center row nums
     layout->addWidget(tracks_table); // add table to layout
     
     // make table fill all available space
