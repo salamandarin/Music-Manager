@@ -293,6 +293,7 @@
        <widget class="QLabel" name="artist_person_behind">
         <property name="font">
          <font>
+          <family>.AppleSystemUIFont</family>
           <pointsize>14</pointsize>
          </font>
         </property>

@@ -1,0 +1,19 @@
+#pragma once
+#include <QWidget>
+
+namespace Ui {
+    class ArtistsPage;
+}
+class Core;
+
+class ArtistsPage : public QWidget {
+    Q_OBJECT
+
+public:
+    ArtistsPage(Core& core, QWidget* parent=nullptr);
+    ~ArtistsPage();
+
+private:
+    Ui::ArtistsPage* ui;
+    Core& core;
+};

@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
 project(music)
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+
 # Qt
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -12,8 +14,13 @@ add_executable(music
         file_manager.cpp
         database_manager.cpp
         core.cpp
-        main_window.cpp
+        main_window.cpp # TODO: DELETE ?
+        new_main_window.cpp new_main_window.ui # TODO: DELETE ?
         track_popup.cpp track_popup.ui
+        settings_popup.cpp settings_popup.ui
+        albums_page.cpp albums_page.ui
+        tracks_page.cpp tracks_page.ui
+        artists_page.cpp artists_page.ui
 )
 target_compile_options(music PUBLIC -std=c++17)
 set(CMAKE_CXX_STANDARD 17)

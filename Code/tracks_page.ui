@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>TracksPage</class>
+ <widget class="QWidget" name="TracksPage">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1080</width>
+    <height>670</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QPushButton" name="add_track_button">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>10</y>
+     <width>170</width>
+     <height>40</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Add New Track</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="add_from_folder_button">
+   <property name="geometry">
+    <rect>
+     <x>200</x>
+     <y>10</y>
+     <width>170</width>
+     <height>40</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Add Tracks from Folder</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="delete_library_button">
+   <property name="geometry">
+    <rect>
+     <x>380</x>
+     <y>10</y>
+     <width>170</width>
+     <height>40</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>DELETE ENTIRE LIBRARY</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="delete_track_button">
+   <property name="geometry">
+    <rect>
+     <x>560</x>
+     <y>10</y>
+     <width>170</width>
+     <height>40</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Delete Track</string>
+   </property>
+  </widget>
+  <widget class="QTableWidget" name="tracks_table">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>60</y>
+     <width>1031</width>
+     <height>601</height>
+    </rect>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
