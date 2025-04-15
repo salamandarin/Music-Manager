@@ -62,8 +62,11 @@ bool Date::operator>=(const Date& rhs) const {
 
 // Assignment operator
 Date& Date::operator=(const Date& rhs) {
+    if (this == &rhs) {
+        return *this;
+    }
     year = rhs.get_year();
-    month.set_month(rhs.get_month_num());
+    month = rhs.get_month_num();
     day = rhs.get_day();
     return *this;
 }
@@ -329,6 +332,16 @@ bool Date::Month::operator==(int rhs) const {
 }
 bool Date::Month::operator==(const std::string& rhs) const {
     return to_lowercase(name) == to_lowercase(rhs);
+}
+
+// Assignment operator
+Date::Month& Date::Month::operator=(const Month& rhs) {
+    if (this == &rhs) {
+        return *this;
+    }
+    number = rhs.number;
+    name = rhs.name;
+    return *this;
 }
 
 // <

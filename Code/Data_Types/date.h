@@ -60,6 +60,8 @@ private:
         bool operator==(int rhs) const;
         bool operator==(const std::string& rhs) const;
 
+        Month& operator=(const Month& rhs); // Assignment operator
+
         bool operator<(const Month& rhs) const;
         bool operator<(int rhs) const;
         bool operator<(const std::string& rhs) const;
