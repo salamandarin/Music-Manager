@@ -1,3 +1,4 @@
+// Samuel Sutton - 2025
 #include "albums_page.h"
 #include "ui_albums_page.h"
 #include "core.h"

@@ -14,8 +14,7 @@ add_executable(music
         file_manager.cpp
         database_manager.cpp
         core.cpp
-        main_window.cpp # TODO: DELETE ?
-        new_main_window.cpp new_main_window.ui # TODO: DELETE ?
+        main_window.cpp main_window.ui
         track_popup.cpp track_popup.ui
         settings_popup.cpp settings_popup.ui
         albums_page.cpp albums_page.ui

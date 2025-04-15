@@ -1,3 +1,4 @@
+// Samuel Sutton - 2025
 #include "settings_popup.h"
 #include "ui_settings_popup.h"
 #include "core.h"

@@ -1,3 +1,4 @@
+// Samuel Sutton - 2025
 #pragma once
 #include <QWidget>
 
