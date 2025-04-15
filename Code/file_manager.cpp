@@ -129,7 +129,7 @@ std::string FileManager::get_parent_path(const std::string& file_path) {
 void FileManager::plain_delete(const filesystem::path& path) {
     // check if path doesn't exist
     if (!filesystem::exists(path)) {
-        throw std::runtime_error("Tried to delete something that doesn't exist: " + path.string());
+        return; // return since doesn't exist
     }
 
     // delete with remove_all if folder

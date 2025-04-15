@@ -20,6 +20,7 @@ add_executable(music
         albums_page.cpp albums_page.ui
         tracks_page.cpp tracks_page.ui
         artists_page.cpp artists_page.ui
+        add_track_popup.cpp add_track_popup.ui
 )
 target_compile_options(music PUBLIC -std=c++17)
 set(CMAKE_CXX_STANDARD 17)

@@ -3,10 +3,9 @@
 #include "ui_tracks_page.h"
 #include "core.h"
 #include "track_popup.h"
+#include "add_track_popup.h"
 #include <QLabel>
-// TODO: DELETE EXTRA
 #include <QInputDialog>
-#include <QLineEdit>
 
 enum Columns {
     IMAGE_COLUMN = 0,
@@ -47,45 +46,47 @@ TracksPage::~TracksPage() {
 //                                    BUTTONS SLOTS
 //--------------------------------------------------------------------------------
 void TracksPage::add_track() {
-    Track track;
+    AddTrackPopup* add_track_popup = new AddTrackPopup(core, this);
 
-    // gather input
-    bool is_value_entered; // whether they clicked OK or not (or hit enter)
-    track.title = QInputDialog::getText(this,
-                                         tr("Add Track"), // window label
-                                         tr("Title:"), // text box label
-                                         QLineEdit::Normal,
-                                         "", // default text (empty)
-                                         &is_value_entered).toStdString();
-
-    // TODO: GET OTHER FIELDS!!!
-
-    // add track
-    if (is_value_entered && !track.title.empty()) {
-        core.add_track(track); // add tracks from folder
-        update_table(); // refresh table GUI
-    }
+    // update table GUI if tracks were added
+    connect(add_track_popup, &AddTrackPopup::tracks_added,  
+                        this, &TracksPage::update_table);
+    
+    add_track_popup->exec();
 }
 void TracksPage::add_from_folder() {
     // gather input for folder path
     bool is_value_entered; // whether they clicked OK or not (or hit enter)
-    QString folder_path = QInputDialog::getText(this,
+    std::string folder_path = QInputDialog::getText(this,
                                          tr("Add Tracks from Folder"), // window label
                                          tr("Enter folder path (relative to 'Music_Manager'):"), // text box label
                                          QLineEdit::Normal,
                                          "", // default text (empty)
-                                         &is_value_entered);
+                                         &is_value_entered).toStdString();
 
     // add tracks from folder                                    
-    if (is_value_entered && !folder_path.isEmpty()) {
-        core.add_tracks_from_folder(folder_path.toStdString()); // add tracks from folder
+    if (is_value_entered && !folder_path.empty()) {
+        core.add_tracks_from_folder(folder_path); // add tracks from folder
+
+        // TODO: HANDLE INCORRECT PATHS WITHOUT CRASHING!!! LET THEM TRY AGAIN!!
+
         update_table(); // refresh table GUI
     }
-
-    // TODO: HANDLE INCORRECT PATHS WITHOUT CRASHING!!! LET THEM TRY AGAIN!!
 }
 void TracksPage::delete_library() { // TODO: DELETE THIS ENTIRE BUTTON
-    core.delete_entire_library("TEST_MUSIC copy"); // TODO: MAKE IT TAKE INPUT - NOT HARDCODED PATH
+    // gather input for possible additional path to delete
+    bool is_value_entered; // whether they clicked OK or not (or hit enter)
+    std::string additional_path = QInputDialog::getText(this,
+                                            tr("DELETE LIBRARY"), // window label
+                                            tr("Optional extra deletion path (relative to 'Music_Manager'):"), // text box label
+                                            QLineEdit::Normal,
+                                            "", // default text (empty)
+                                            &is_value_entered).toStdString();
+
+
+    // delete libary + possible additional path
+    core.delete_entire_library(additional_path);
+    
     update_table(); // refresh table GUI
 }
 
