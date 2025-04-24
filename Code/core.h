@@ -18,7 +18,7 @@ public:
 
     // add tracks
     void add_track(const std::string& file_path); // track w/ file
-    void add_track(const Track& track); // track w/ or w/o file
+    void add_track(Track& track); // track w/ or w/o file
     void add_tracks_from_folder(const std::string& folder_path);
 
     // add other objects
@@ -59,7 +59,6 @@ private:
     std::string set_file_title(const std::string& file_path); // make track title & file name match
 
     DatabaseManager database;
-    FileManager file_manager;
 
     // settings
     bool is_nested;

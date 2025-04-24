@@ -6,23 +6,45 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
+    <width>568</width>
     <height>300</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <widget class="QWidget" name="formLayoutWidget">
+  <widget class="QDialogButtonBox" name="button_box">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="geometry">
     <rect>
-     <x>19</x>
+     <x>390</x>
+     <y>260</y>
+     <width>161</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="standardButtons">
+    <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Save</set>
+   </property>
+  </widget>
+  <widget class="QWidget" name="formLayoutWidget_2">
+   <property name="geometry">
+    <rect>
+     <x>339</x>
      <y>19</y>
-     <width>361</width>
+     <width>211</width>
      <height>241</height>
     </rect>
    </property>
-   <layout class="QFormLayout" name="formLayout">
+   <layout class="QFormLayout" name="formLayout_2">
+    <property name="labelAlignment">
+     <set>Qt::AlignmentFlag::AlignJustify|Qt::AlignmentFlag::AlignVCenter</set>
+    </property>
+    <property name="formAlignment">
+     <set>Qt::AlignmentFlag::AlignCenter</set>
+    </property>
     <item row="0" column="0">
      <widget class="QLabel" name="file_label">
       <property name="text">
@@ -30,10 +52,48 @@
       </property>
      </widget>
     </item>
+    <item row="0" column="1">
+     <widget class="QPushButton" name="choose_music_file_button">
+      <property name="maximumSize">
+       <size>
+        <width>125</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Select Music File</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="formLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>20</y>
+     <width>331</width>
+     <height>251</height>
+    </rect>
+   </property>
+   <layout class="QFormLayout" name="formLayout_4">
     <item row="1" column="0">
      <widget class="QLabel" name="image_label">
       <property name="text">
        <string>Image:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QPushButton" name="choose_image_file_button">
+      <property name="maximumSize">
+       <size>
+        <width>125</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Select Image File</string>
       </property>
      </widget>
     </item>
@@ -101,64 +161,14 @@
     <item row="6" column="1">
      <widget class="QLineEdit" name="tracklist_num_input"/>
     </item>
-    <item row="1" column="1">
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QPushButton" name="choose_image_file_button">
-        <property name="maximumSize">
-         <size>
-          <width>125</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Select Image File</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="image_path">
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
     <item row="0" column="1">
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <item>
-       <widget class="QPushButton" name="choose_music_file_button">
-        <property name="maximumSize">
-         <size>
-          <width>125</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Select Music File</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
+     <widget class="QLabel" name="image_path">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
     </item>
    </layout>
-  </widget>
-  <widget class="QDialogButtonBox" name="button_box">
-   <property name="enabled">
-    <bool>true</bool>
-   </property>
-   <property name="geometry">
-    <rect>
-     <x>21</x>
-     <y>240</y>
-     <width>351</width>
-     <height>32</height>
-    </rect>
-   </property>
-   <property name="standardButtons">
-    <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Save</set>
-   </property>
   </widget>
  </widget>
  <resources/>
