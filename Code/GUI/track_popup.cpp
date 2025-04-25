@@ -37,7 +37,7 @@ void TrackPopup::update_data() {
 
     // -------------------- COVER ART --------------------
     // get image path (either actual image, or default)
-    std::string image_path = "Code/Default_Images/default_track.jpg"; // default image
+    std::string image_path = "Code/GUI/Default_Images/default_track.jpg"; // default image
     if (!track.image_path.empty()) { // if has image
         image_path = track.image_path; // replace default image with real one
     }

@@ -8,13 +8,13 @@
 //--------------------------------------------------------------------------------
 DatabaseManager::DatabaseManager() {
     // open database
-    int return_code = sqlite3_open("Code/Database/music_manager.db", &database);
+    int return_code = sqlite3_open("Code/Core/Database/music_manager.db", &database);
     if (return_code){
         throw std::runtime_error(sqlite3_errmsg(database));
     }
 
     // initialize tables from .sql file
-    std::string file_name = "Code/Database/tables.sql";
+    std::string file_name = "Code/Core/Database/tables.sql";
     std::ifstream file{file_name};
     if (!file) {
         throw std::runtime_error("Could not open " + file_name + "\n");

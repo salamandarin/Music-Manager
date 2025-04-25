@@ -116,7 +116,7 @@ void TracksPage::update_table() {
     for (int i = 0; i < tracks.size(); ++i) {   
         // -------------------- IMAGE --------------------
         // get either default or actual image path
-        std::string image_path = "Code/Default_Images/default_track.jpg"; // default image
+        std::string image_path = "Code/GUI/Default_Images/default_track.jpg"; // default image
         if (!tracks[i].image_path.empty()) { // if has image
             image_path = tracks[i].image_path; // replace default image with real one
         }
