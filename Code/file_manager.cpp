@@ -97,7 +97,7 @@ void FileManager::move_file(const std::string& old_path, const std::string& new_
     // move file from old path -> new path
     filesystem::rename(old_path, new_path);
 
-    // cleanup: delete parent folders that might be empty now (if boundary folder is given)
+    // cleanup: delete parent folders that might be empty now (IF boundary folder is given)
     if (!boundary_folder.empty()) {
         delete_empty_parent_folders(old_path, boundary_folder); // stop at boundary folder
     }
@@ -113,8 +113,8 @@ void FileManager::delete_file(const std::string& file_path, const std::string& b
     // delete file
     filesystem::remove(file_path);
 
-    // cleanup: delete parent folders that might be empty now (if boundary folder is given)
-    if (!boundary_folder.empty()) { 
+    // cleanup: delete parent folders that might be empty now
+    if (!boundary_folder.empty()) { // only if boundary folder given
         delete_empty_parent_folders(filesystem::path(file_path).parent_path(), boundary_folder); // stop at boundary folder
     }
 }
@@ -153,25 +153,18 @@ std::string FileManager::get_parent_path(const std::string& file_path) {
     return filesystem::path(file_path).parent_path().string();
 }
 
-// delete anything (file or folder), without any empty folder cleanup
-void FileManager::plain_delete(const filesystem::path& path) {
-    // check if path doesn't exist
-    if (!filesystem::exists(path)) {
-        return; // return since doesn't exist
+//--------------------------------------------------------------------------------
+//                              FOLDER FUNCTIONS
+//--------------------------------------------------------------------------------
+// delete folder and all files inside (without any empty folder cleanup)
+void FileManager::delete_folder(const std::string& folder_path) {
+    // check if doesn't exist or isn't a folder
+    if (!filesystem::exists(folder_path) || !filesystem::is_directory(folder_path)) {
+        throw std::runtime_error("Tried to delete folder that doesn't exist or isn't a folder: " + folder_path);
     }
 
-    // if folder: delete with remove_all
-    if (filesystem::is_directory(path)) {
-        if (!filesystem::remove_all(path)) {  // make sure actually deleted
-            throw std::runtime_error("Failed to delete folder: " + path.string());
-        }
-        return; // return since deletion is done
-    }
-
-    // delete singular file
-    if (!filesystem::remove(path)) {  // make sure actually deleted
-        throw std::runtime_error("Failed to delete file: " + path.string());
-    }
+    // delete folder & everything inside
+    filesystem::remove_all(folder_path);
 }
 
 //--------------------------------------------------------------------------------

@@ -31,9 +31,9 @@ public:
     static std::string get_file_name(const std::string& file_path); // get just file name (without full path or extension)
     static std::string get_extension(const std::string& file_path);
     static std::string get_parent_path(const std::string& file_path); // get parent path (without "/" at end)
-    static void plain_delete(const filesystem::path& path); // delete file or folder (without cleanup)
 
     // folder functions
+    static void delete_folder(const std::string& folder_path); // delete folder and all files inside (without any empty folder cleanup)
     static std::vector<std::string> get_files_from_folder(const std::string& folder_path);
     static bool is_folder_empty(const std::string& folder_path);
     static void delete_empty_parent_folders(filesystem::path current_path, const filesystem::path& boundary_folder);
