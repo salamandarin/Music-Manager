@@ -256,6 +256,28 @@ void Core::set_track_image(int track_id, const std::string& new_image_path) {
 }
 
 //--------------------------------------------------------------------------------
+//                               GET -ALL- OBJECTS
+//--------------------------------------------------------------------------------
+std::vector<Track> Core::get_all_tracks() {
+    // get database info
+    std::vector<Track> tracks = database.get_all_tracks();
+
+    // TODO: figure out if need file info, & possibly use Core::get_track() for that ???
+
+    return tracks;
+}
+std::vector<Album> Core::get_all_albums() {
+    // get database info
+    std::vector<Album> albums = database.get_all_albums();
+    return albums;
+}
+std::vector<Artist> Core::get_all_artists() {
+    // get database info
+    std::vector<Artist> artists = database.get_all_artists();
+    return artists;
+}
+
+//--------------------------------------------------------------------------------
 //                                  GET OBJECTS
 //--------------------------------------------------------------------------------
 Track Core::get_track(int track_id) {
@@ -302,28 +324,6 @@ void Core::delete_entire_library(const std::string& extra_folder_to_delete) {
     if (!extra_folder_to_delete.empty()) { // check if there is extra_folder_to_delete
         FileManager::delete_folder(extra_folder_to_delete);
     }
-}
-
-//--------------------------------------------------------------------------------
-//                               GET -ALL- OBJECTS
-//--------------------------------------------------------------------------------
-std::vector<Track> Core::get_all_tracks() {
-    // get database info
-    std::vector<Track> tracks = database.get_all_tracks();
-
-    // TODO: figure out if need file info, & possibly use Core::get_track() for that ???
-
-    return tracks;
-}
-std::vector<Album> Core::get_all_albums() {
-    // get database info
-    std::vector<Album> albums = database.get_all_albums();
-    return albums;
-}
-std::vector<Artist> Core::get_all_artists() {
-    // get database info
-    std::vector<Artist> artists = database.get_all_artists();
-    return artists;
 }
 
 //--------------------------------------------------------------------------------

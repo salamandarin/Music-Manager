@@ -324,6 +324,120 @@ std::vector<std::string> DatabaseManager::get_all_people() {
 }
 
 //--------------------------------------------------------------------------------
+//                            GET OBJECTS BY CATEGORY
+//--------------------------------------------------------------------------------
+std::vector<Track> DatabaseManager::get_album_tracks(int album_id) {
+    std::vector<Track> tracks; // make vector
+
+    // prep & bind sql
+    sqlite3_stmt* sql = prepare_sql(R"(
+        SELECT tracks.track_id,
+                tracks.title, 
+                artists.name AS artist, 
+                albums.title AS album,
+                tracks.duration,
+                tracks.date,
+                tracks.tracklist_num,
+                tracks.file_path,
+                tracks.image_path
+        FROM tracks
+        LEFT JOIN artists ON tracks.artist_id = artists.artist_id
+        LEFT JOIN albums ON tracks.album_id = albums.album_id
+        WHERE tracks.album_id = ?
+    )");
+    bind_input_to_sql(sql, 1, album_id);
+
+    // execute & grab all data for each row
+    while (sqlite3_step(sql) == SQLITE_ROW) {
+        Track track = get_track_row(sql);
+        tracks.push_back(track); // add to vector
+    }
+
+    sqlite3_finalize(sql); // clean up sql statement
+    return tracks;
+}
+std::vector<Track> DatabaseManager::get_artist_tracks(int artist_id) {
+    std::vector<Track> tracks; // make vector
+
+    // prep & bind sql
+    sqlite3_stmt* sql = prepare_sql(R"(
+        SELECT tracks.track_id,
+                tracks.title, 
+                artists.name AS artist, 
+                albums.title AS album,
+                tracks.duration,
+                tracks.date,
+                tracks.tracklist_num,
+                tracks.file_path,
+                tracks.image_path
+        FROM tracks
+        LEFT JOIN artists ON tracks.artist_id = artists.artist_id
+        LEFT JOIN albums ON tracks.album_id = albums.album_id
+        WHERE tracks.artist_id = ?
+    )");
+    bind_input_to_sql(sql, 1, artist_id);
+
+    // execute & grab all data for each row
+    while (sqlite3_step(sql) == SQLITE_ROW) {
+        Track track = get_track_row(sql);
+        tracks.push_back(track); // add to vector
+    }
+
+    sqlite3_finalize(sql); // clean up sql statement
+    return tracks;
+}
+std::vector<Album> DatabaseManager::get_artist_albums(int artist_id) {
+    std::vector<Album> albums; // make vector
+    
+    // prep sql
+    sqlite3_stmt* sql = prepare_sql(R"(
+        SELECT albums.album_id,
+                albums.title,
+                artists.name AS artist,
+                albums.date,
+                album_types.name AS type,
+                albums.image_path
+        FROM albums
+        LEFT JOIN artists ON albums.artist_id = artists.artist_id
+        LEFT JOIN album_types ON albums.type_id = album_types.album_type_id
+        WHERE albums.artist_id = ?
+    )");
+    bind_input_to_sql(sql, 1, artist_id);
+
+    // execute & grab all data for each row
+    while (sqlite3_step(sql) == SQLITE_ROW) {
+        Album album = get_album_row(sql);
+        albums.push_back(album); // add to vector
+    }
+
+    sqlite3_finalize(sql); // clean up sql statement
+    return albums;
+}
+std::vector<Artist> DatabaseManager::get_person_artists(int person_id) {
+    std::vector<Artist> artists; // make vector
+
+    // prep sql
+    sqlite3_stmt* sql = prepare_sql(R"(
+        SELECT artists.artist_id,
+                artists.name,
+                people.name AS person_behind,
+                artists.image_path
+        FROM artists
+        LEFT JOIN people ON artists.person_behind_id = people.person_id
+        WHERE artists.person_behind_id = ?
+    )");
+    bind_input_to_sql(sql, 1, person_id);
+
+    // execute & grab all data for each row
+    while (sqlite3_step(sql) == SQLITE_ROW) {
+        Artist artist = get_artist_row(sql);
+        artists.push_back(artist); // add to vector
+    }
+
+    sqlite3_finalize(sql); // clean up sql statement
+    return artists;
+}
+//--------------------------------------------------------------------------------
 //                                  GET ENTIRE OBJECTS
 //--------------------------------------------------------------------------------
 Track DatabaseManager::get_track(int track_id) {

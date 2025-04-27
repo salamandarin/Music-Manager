@@ -41,12 +41,18 @@ public:
     bool artist_exists(int artist_id);
     bool person_exists(int person_id);
 
-    // ------------------------- GET DATA -------------------------
+    // ------------------------- GET OBJECTS -------------------------
     // get ALL objects in table
     std::vector<Track> get_all_tracks();
     std::vector<Album> get_all_albums();
     std::vector<Artist> get_all_artists();
     std::vector<std::string> get_all_people();
+
+    // get objects by category
+    std::vector<Track> get_album_tracks(int album_id);
+    std::vector<Track> get_artist_tracks(int artist_id);
+    std::vector<Album> get_artist_albums(int artist_id);
+    std::vector<Artist> get_person_artists(int person_id);
 
     // get whole objects
     Track get_track(int track_id);
@@ -57,6 +63,7 @@ public:
     std::optional<Album> get_album(const std::string& album_title);
     std::optional<Artist> get_artist(const std::string& artist_name);
 
+    // ------------------------- GET DATA -------------------------
     // get specific track data
     std::optional<std::string> get_track_title(int track_id);
     std::optional<Artist> get_track_artist(int track_id);
