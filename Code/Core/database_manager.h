@@ -134,6 +134,7 @@ private:
     static std::optional<std::string> extract_string(sqlite3_stmt* sql, int column=0);
     static std::optional<int> extract_int(sqlite3_stmt* sql, int column=0);
     static std::optional<bool> extract_bool(sqlite3_stmt* sql, int column=0);
+    static std::optional<Duration> extract_duration(sqlite3_stmt* sql, int column=0);
 
     // set object value by id
     void set_object_value(const std::string& table,

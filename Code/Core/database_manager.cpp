@@ -438,7 +438,7 @@ std::vector<Artist> DatabaseManager::get_person_artists(int person_id) {
     return artists;
 }
 //--------------------------------------------------------------------------------
-//                               GET ENTIRE OBJECTS
+//                               GET ENTIRE OBJECT
 //--------------------------------------------------------------------------------
 Track DatabaseManager::get_track(int track_id) {
     // prep & bind sql
@@ -601,8 +601,12 @@ std::optional<Album> DatabaseManager::get_track_album(int track_id) {
     }
 }
 std::optional<Duration> DatabaseManager::get_track_duration(int track_id) {
-    // TODO: CONVERT OPTIONAL STRING TO OPTIONAL DURATION (preserve nullopt)
-    return std::nullopt;
+    // prep & bind sql
+    sqlite3_stmt* sql = prepare_sql("SELECT duration FROM tracks WHERE track_id = ?");
+    bind_input_to_sql(sql, 1, track_id); // bind id
+
+    // execute & return result
+    return query_sql<Duration>(sql, extract_duration);
 }
 std::optional<Date> DatabaseManager::get_track_date(int track_id) {
     // TODO: CONVERT OPTIONAL STRING TO OPTIONAL DATE (preserve nullopt)
@@ -947,6 +951,14 @@ std::optional<bool> DatabaseManager::extract_bool(sqlite3_stmt* sql, int column)
     // extract data
     return sqlite3_column_int(sql, column) != 0;
 }
+std::optional<Duration> DatabaseManager::extract_duration(sqlite3_stmt* sql, int column) {
+    // return nullopt if null
+    if (sqlite3_column_type(sql, column) == SQLITE_NULL) {
+        return std::nullopt;
+    }
+    // extract data
+    return Duration{sqlite3_column_int(sql, column)}; 
+}
 
 //--------------------------------------------------------------------------------
 //                      PRIVATE FUNCTIONS - GET ENTIRE OBJECT ROW
@@ -959,7 +971,7 @@ Track DatabaseManager::get_track_row(sqlite3_stmt* sql) {
     track.title = extract_string(sql, 1).value_or(""); // title - 1
     track.artist = extract_string(sql, 2).value_or(""); // artist (NAME) - 2
     track.album = extract_string(sql, 3).value_or(""); // album (TITLE) - 3
-    track.duration = Duration{extract_int(sql, 4).value_or(0)}; // duration - 4
+    track.duration = extract_duration(sql, 4).value_or(0); // duration - 4
     // track.date = extract_string(sql, 5).value_or(""); // date - 5 // TODO: HANDLE STRING -> DATE
     track.tracklist_num = extract_int(sql, 6).value_or(0); // tracklist_num - 6
     track.file_path = extract_string(sql, 7).value_or(""); // file_path - 7

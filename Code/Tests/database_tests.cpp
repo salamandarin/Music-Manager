@@ -82,3 +82,12 @@ TEST_CASE("database get object") {
         std::cout << "ARTIST 1: " << artist << "\n\n";
     }
 }
+
+TEST_CASE("database track info") {
+    SUBCASE("get duration") {
+        std::optional<Duration> duration = database_manager.get_track_duration(1);
+        CHECK(*duration != 0);
+
+        std::cout << "\n\n\nDURATION OF TRACK 1: " << *duration << "\n";
+    }
+}
