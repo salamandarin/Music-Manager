@@ -438,7 +438,7 @@ std::vector<Artist> DatabaseManager::get_person_artists(int person_id) {
     return artists;
 }
 //--------------------------------------------------------------------------------
-//                                  GET ENTIRE OBJECTS
+//                               GET ENTIRE OBJECTS
 //--------------------------------------------------------------------------------
 Track DatabaseManager::get_track(int track_id) {
     // prep & bind sql
@@ -556,7 +556,7 @@ std::optional<Artist> DatabaseManager::get_artist(const std::string& artist_name
 }
 
 //--------------------------------------------------------------------------------
-//                                  GET SPECIFIC TRACK DATA
+//                            GET SPECIFIC TRACK DATA
 //--------------------------------------------------------------------------------
 std::optional<std::string> DatabaseManager::get_track_title(int track_id) {
     // prep & bind sql

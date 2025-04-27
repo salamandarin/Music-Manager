@@ -48,8 +48,14 @@ public:
     std::vector<Track> get_all_tracks();
     std::vector<Album> get_all_albums();
     std::vector<Artist> get_all_artists();
+
+    // get objects by category
+    std::vector<Track> get_album_tracks(int album_id);
+    std::vector<Track> get_artist_tracks(int artist_id);
+    std::vector<Album> get_artist_albums(int artist_id);
+    std::vector<Artist> get_person_artists(int person_id);
     
-    // get objects
+    // get object
     Track get_track(int track_id);
     Album get_album(int track_id);
     Artist get_artist(int track_id);

@@ -267,18 +267,40 @@ std::vector<Track> Core::get_all_tracks() {
     return tracks;
 }
 std::vector<Album> Core::get_all_albums() {
-    // get database info
-    std::vector<Album> albums = database.get_all_albums();
-    return albums;
+    return database.get_all_albums(); // get database info
 }
 std::vector<Artist> Core::get_all_artists() {
-    // get database info
-    std::vector<Artist> artists = database.get_all_artists();
-    return artists;
+    return database.get_all_artists(); // get database info
 }
 
 //--------------------------------------------------------------------------------
-//                                  GET OBJECTS
+//                            GET OBJECTS BY CATEGORY
+//--------------------------------------------------------------------------------
+std::vector<Track> Core::get_album_tracks(int album_id) {
+    // get database info
+    std::vector<Track> tracks = database.get_album_tracks(album_id);
+
+    // TODO: figure out if need file info, & possibly use Core::get_track() for that ???
+
+    return tracks;
+}
+std::vector<Track> Core::get_artist_tracks(int artist_id) {
+    // get database info
+    std::vector<Track> tracks = database.get_artist_tracks(artist_id);
+
+    // TODO: figure out if need file info, & possibly use Core::get_track() for that ???
+
+    return tracks;
+}
+std::vector<Album> Core::get_artist_albums(int artist_id) {
+    return database.get_artist_albums(artist_id); // get database info
+}
+std::vector<Artist> Core::get_person_artists(int person_id) {
+    return database.get_person_artists(person_id); // get database info
+}
+
+//--------------------------------------------------------------------------------
+//                                  GET OBJECT
 //--------------------------------------------------------------------------------
 Track Core::get_track(int track_id) {
     // get database info
