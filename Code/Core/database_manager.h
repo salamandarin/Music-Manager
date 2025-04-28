@@ -123,6 +123,7 @@ private:
     void bind_input_to_sql(sqlite3_stmt* sql, int index, const std::optional<int>& input_value); // optional int
     void bind_input_to_sql(sqlite3_stmt* sql, int index, const std::string& input_value); // string
     void bind_input_to_sql(sqlite3_stmt* sql, int index, int input_value); // int
+    void bind_input_to_sql(sqlite3_stmt* sql, int index, int64_t input_value); // int64_t
 
     // --------------- backend of other functions ---------------
     // execute sql queries
@@ -135,6 +136,7 @@ private:
     static std::optional<int> extract_int(sqlite3_stmt* sql, int column=0);
     static std::optional<bool> extract_bool(sqlite3_stmt* sql, int column=0);
     static std::optional<Duration> extract_duration(sqlite3_stmt* sql, int column=0);
+    static std::optional<Date> extract_date(sqlite3_stmt* sql, int column=0);
 
     // set object value by id
     void set_object_value(const std::string& table,

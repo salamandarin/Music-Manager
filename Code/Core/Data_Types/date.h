@@ -34,7 +34,11 @@ public:
     std::string get_month_name() const;
     int get_day() const;
     int get_year() const;
+
+    // Conversions
     std::string to_string() const;
+    int64_t to_unix() const;
+    static Date from_unix(int64_t unix_time);
 
     // Helper functions
     bool is_leap_year() const;

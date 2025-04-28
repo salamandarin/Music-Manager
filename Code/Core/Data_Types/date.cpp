@@ -2,6 +2,7 @@
 #include "date.h"
 #include <stdexcept>
 #include <cctype>
+#include <ctime>
 
 Date::Date(int month, int day, int year)
     :month{Month{month}}, day{day}, year{year} {
@@ -178,6 +179,8 @@ int Date::get_day() const {
 int Date::get_year() const {
     return year;
 }
+
+// ---------- Conversions ----------
 std::string Date::to_string() const {
     // Return empty string if null / invalid date
     if (year == 0 || month.number == 0 || day == 0) {
@@ -189,7 +192,39 @@ std::string Date::to_string() const {
     return date_string;
 }
 
-/// ---------- Helper Functions ----------
+int64_t Date::to_unix() const {
+    tm time;
+    time.tm_year = year - 1900; // tm is from 1900
+    time.tm_mon = month.number - 1;
+    time.tm_mday = day;
+    time.tm_hour = 0;
+    time.tm_min = 0;
+    time.tm_sec = 0;
+    time.tm_isdst = -1;
+    
+    // convert to unix
+    std::time_t unix_time = mktime(&time); // uses local time
+    if (unix_time == -1) {
+        throw std::runtime_error("Failed trying to convert date to unix time");
+    }
+    return static_cast<int64_t>(unix_time);
+}
+Date Date::from_unix(int64_t unix_time) {
+    // convert int64_t to time_t (check for overflow)
+    if (unix_time < static_cast<int64_t>(std::numeric_limits<std::time_t>::min()) || 
+        unix_time > static_cast<int64_t>(std::numeric_limits<std::time_t>::max())) {
+        throw std::runtime_error("int64_t unix time value is out of range for time_t");
+    }
+    std::time_t unix_converted = static_cast<std::time_t>(unix_time);
+
+    tm time;
+    if (!localtime_r(&unix_converted, &time)) { // converts to local time (thread safe, but not cross-platform)
+        throw std::runtime_error("Failed to convert unix time to date");
+    }
+    return Date{time.tm_mon + 1, time.tm_mday, time.tm_year + 1900};
+}
+
+// ---------- Helper Functions ----------
 bool Date::is_leap_year() const {
     return (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0));
 }

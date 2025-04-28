@@ -1,7 +1,6 @@
 // Samuel Sutton - 2025
 #include "database_manager.h"
 #include <fstream>
-#include <iostream> //TODO: DELETE
 
 //--------------------------------------------------------------------------------
 //                                   BIG FIVE
@@ -83,7 +82,7 @@ void DatabaseManager::add_track(const Track& track) {
     bind_input_to_sql(sql, 2, artist_id); // int fk artist_id
     bind_input_to_sql(sql, 3, album_id); // int fk album_id
     bind_input_to_sql(sql, 4, track.duration.get_duration_in_seconds());
-    bind_input_to_sql(sql, 5, track.date.to_string());
+    bind_input_to_sql(sql, 5, track.date.to_unix());
     bind_input_to_sql(sql, 6, track.tracklist_num);
     bind_input_to_sql(sql, 7, track.file_path);
     bind_input_to_sql(sql, 8, track.image_path);
@@ -116,7 +115,7 @@ void DatabaseManager::add_album(const Album& album) {
     // bind input to sql
     bind_input_to_sql(sql, 1, album.title);
     bind_input_to_sql(sql, 2, artist_id); // int fk artist_id
-    bind_input_to_sql(sql, 3, album.date.to_string());
+    bind_input_to_sql(sql, 3, album.date.to_unix());
     bind_input_to_sql(sql, 4, type_id); // int fk type_id
     bind_input_to_sql(sql, 5, album.image_path);
 
@@ -609,8 +608,12 @@ std::optional<Duration> DatabaseManager::get_track_duration(int track_id) {
     return query_sql<Duration>(sql, extract_duration);
 }
 std::optional<Date> DatabaseManager::get_track_date(int track_id) {
-    // TODO: CONVERT OPTIONAL STRING TO OPTIONAL DATE (preserve nullopt)
-    return std::nullopt;
+    // prep & bind sql
+    sqlite3_stmt* sql = prepare_sql("SELECT date FROM tracks WHERE track_id = ?");
+    bind_input_to_sql(sql, 1, track_id); // bind id
+
+    // execute & return result
+    return query_sql<Date>(sql, extract_date);
 }
 std::optional<int> DatabaseManager::get_track_tracklist_num(int track_id) {
     // prep & bind sql
@@ -743,10 +746,10 @@ void DatabaseManager::set_track_album(int track_id, const std::string& album_tit
 }
 // set track date
 void DatabaseManager::set_track_date(int track_id, const Date& date) {
-    set_object_value("tracks", "date", date.to_string(), "track_id", track_id);
+    set_object_value("tracks", "date", date.to_string(), "track_id", track_id); // TODO: FIX (need to make set_object_value() handle ints, int64_t, also tracklist num todo)
 }
 // set track tracklist number
-void DatabaseManager::set_track_tracklist_num(int track_id, int tracklist_num) { // TODO: maybe don't make string??
+void DatabaseManager::set_track_tracklist_num(int track_id, int tracklist_num) { // TODO: DON'T MAKE STRING
     set_object_value("tracks", "tracklist_num", std::to_string(tracklist_num), "track_id", track_id);
 }
 // set track file path
@@ -773,7 +776,7 @@ void DatabaseManager::set_album_artist(int album_id, const std::string& artist_n
 }
 // set album date
 void DatabaseManager::set_album_date(int album_id, const Date& date) {
-    set_object_value("albums", "date", date.to_string(), "album_id", album_id);
+    set_object_value("albums", "date", date.to_string(), "album_id", album_id); // TODO: FIX (need to make set_object_value() handle ints, int64_t, also tracklist num todo)
 }
 // set album type
 void DatabaseManager::set_album_type(int album_id, const std::string& album_type) {
@@ -869,6 +872,13 @@ void DatabaseManager::bind_input_to_sql(sqlite3_stmt* sql, int index, int input_
         throw std::runtime_error(sqlite3_errmsg(database));
     }
 }
+// int64_t
+void DatabaseManager::bind_input_to_sql(sqlite3_stmt* sql, int index, int64_t input_value) {
+    if (sqlite3_bind_int64(sql, index, input_value) != SQLITE_OK) {
+        sqlite3_finalize(sql);  // clean up if failed
+        throw std::runtime_error(sqlite3_errmsg(database));
+    }
+}
 
 //--------------------------------------------------------------------------------
 //                      PRIVATE FUNCTIONS - QUERY
@@ -959,6 +969,14 @@ std::optional<Duration> DatabaseManager::extract_duration(sqlite3_stmt* sql, int
     // extract data
     return Duration{sqlite3_column_int(sql, column)}; 
 }
+std::optional<Date> DatabaseManager::extract_date(sqlite3_stmt* sql, int column) {
+    // return nullopt if null
+    if (sqlite3_column_type(sql, column) == SQLITE_NULL) {
+        return std::nullopt;
+    }
+    // extract data
+    return Date::from_unix(sqlite3_column_int64(sql, column)); 
+}
 
 //--------------------------------------------------------------------------------
 //                      PRIVATE FUNCTIONS - GET ENTIRE OBJECT ROW
@@ -971,8 +989,8 @@ Track DatabaseManager::get_track_row(sqlite3_stmt* sql) {
     track.title = extract_string(sql, 1).value_or(""); // title - 1
     track.artist = extract_string(sql, 2).value_or(""); // artist (NAME) - 2
     track.album = extract_string(sql, 3).value_or(""); // album (TITLE) - 3
-    track.duration = extract_duration(sql, 4).value_or(0); // duration - 4
-    // track.date = extract_string(sql, 5).value_or(""); // date - 5 // TODO: HANDLE STRING -> DATE
+    track.duration = extract_duration(sql, 4).value_or(Duration{}); // duration - 4
+    track.date = extract_date(sql, 5).value_or(Date{}); // date - 5
     track.tracklist_num = extract_int(sql, 6).value_or(0); // tracklist_num - 6
     track.file_path = extract_string(sql, 7).value_or(""); // file_path - 7
     track.image_path= extract_string(sql, 8).value_or(""); // image_path - 8
@@ -987,7 +1005,7 @@ Album DatabaseManager::get_album_row(sqlite3_stmt* sql) {
     album.id = extract_int(sql, 0).value_or(0); // id - 0
     album.title = extract_string(sql, 1).value_or(""); // title - 1
     album.artist = extract_string(sql, 2).value_or(""); // artist (NAME) - 2
-    // album.date = extract_string(sql, 3).value_or(""); // date - 3 // TODO: HANDLE STRING -> DATE
+    album.date = extract_date(sql, 3).value_or(Date{}); // date - 3
     album.type = extract_string(sql, 4).value_or(""); // type (NAME) - 4
     album.image_path= extract_string(sql, 5).value_or(""); // image_path - 5
 
