@@ -138,12 +138,6 @@ private:
     static std::optional<Duration> extract_duration(sqlite3_stmt* sql, int column=0);
     static std::optional<Date> extract_date(sqlite3_stmt* sql, int column=0);
 
-    // set object value by id
-    void set_object_value(const std::string& table,
-                                          const std::string& value_label,
-                                          const std::string& value,
-                                          const std::string& id_label,
-                                          int id);
     // check if data exists
     bool object_exists(const std::string& id_label, const std::string& table, int id);
 
