@@ -23,11 +23,11 @@ public:
     static std::string make_music_file_path(const std::string& current_path, const Track& track_data, bool is_nested); // returns new file path
 
     // file operations
-    static void move_file(const std::string& old_path, const std::string& new_path, const std::string& boundary_folder=""); // handles folder cleanup too
+    static std::string move_file(const std::string& old_path, std::string new_path, const std::string& boundary_folder=""); // handles folder cleanup too
     static void delete_file(const std::string& file_path, const std::string& boundary_folder=""); // handles folder cleanup too
 
     // helper functions
-    static std::string rename_file(const std::string& file_path, const std::string& new_file_name); // returns new path
+    static std::string rename_file(const std::string& file_path, std::string new_file_name); // returns new path
     static std::string get_file_name(const std::string& file_path); // get just file name (without full path or extension)
     static std::string get_extension(const std::string& file_path);
     static std::string get_parent_path(const std::string& file_path); // get parent path (without "/" at end)
@@ -41,4 +41,8 @@ public:
 private:
     // backend of delete_empty_parent_folders()
     static void recursive_delete_empty_parent_folders(const filesystem::path& current_path, const filesystem::path& boundary_folder);
+
+    // file name helpers
+    static std::string sanitize_file_name(std::string name);
+    static std::string number_duplicate_paths(std::string desired_path);
 };

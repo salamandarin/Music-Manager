@@ -3,7 +3,7 @@
 #include "metadata_manager.h"
 #include "database_manager.h"
 #include "artist.h"
-#include <iostream> //TODO: DELETE
+#include <regex>
 
 namespace filesystem = std::filesystem;
 
@@ -12,23 +12,16 @@ namespace filesystem = std::filesystem;
 //--------------------------------------------------------------------------------
 std::string FileManager::relocate_music_file(const std::string& current_path, const Track& track, bool is_nested) {
     std::string new_path = make_music_file_path(current_path, track, is_nested);
-    move_file(current_path, new_path, MUSIC_FOLDER);
-    // new_path = move_music_file(current_path, new_path, MUSIC_FOLDER); // TODO: update path in case something changed (like if duplicate)
+    new_path = move_file(current_path, new_path, MUSIC_FOLDER);
     return new_path;
 }
 
 std::string FileManager::save_image_file(const std::string& current_path, std::string image_name) {
-    // name it "untitled" if no name given
-    if (image_name.empty()) {
-        image_name = "untitled";
-    }
-
     // make new path (with given name)
     std::string new_path = make_image_file_path(image_name, get_extension(current_path));
 
     // move to images folder 
-    move_file(current_path, new_path, IMAGES_FOLDER);
-    // new_path = move_file(current_path, new_path, IMAGES_FOLDER); // TODO: update path in case something changed (like if duplicate)
+    new_path = move_file(current_path, new_path, IMAGES_FOLDER);
 
     return new_path;
 }
@@ -41,10 +34,8 @@ std::string FileManager::make_image_file_path(const std::string& name, const std
         std::filesystem::create_directory(IMAGES_FOLDER);
     }
 
-    // TODO: handle duplicates?
-
     // make & return image path
-    std::string image_path = IMAGES_FOLDER + "/" + name + image_extension;
+    std::string image_path = IMAGES_FOLDER + "/" + sanitize_file_name(name) + image_extension;
     return image_path;
 }
 
@@ -57,7 +48,7 @@ std::string FileManager::make_music_file_path(const std::string& current_path, c
         if (!track.artist.empty()) { // add artist name to path (if given)
             new_path += track.artist + "/";
         }
-        else {// if no artist info, add "Artist Unknown" to path
+        else { // if no artist info, add "Artist Unknown" to path
             new_path += "Artist_Unknown/";
         }
 
@@ -70,19 +61,19 @@ std::string FileManager::make_music_file_path(const std::string& current_path, c
         }
     }
 
-    // TODO: handle duplicates?
+    // add sanitized file name + extension to path
+    new_path += sanitize_file_name(get_file_name((current_path))) + get_extension(current_path);
 
-    // add file name + extension
-    new_path += get_file_name(current_path) + get_extension(current_path);
-
-    return new_path; // return new path
+    return new_path;
 }
 
 //--------------------------------------------------------------------------------
 //                              OTHER FILE OPERATIONS
 //--------------------------------------------------------------------------------
 // move file (& clean up empty parent folders up to given folder path)
-void FileManager::move_file(const std::string& old_path, const std::string& new_path, const std::string& boundary_folder) {
+std::string FileManager::move_file(const std::string& old_path, std::string new_path, const std::string& boundary_folder) {
+    if (old_path == new_path) return old_path; // don't do anything if paths match
+
     // check if file doesn't exist or isn't a regular file
     if (!filesystem::exists(old_path) || !filesystem::is_regular_file(old_path)) {
         std::string error_message = "Tried to move file that doesn't exist or isn't a regular file";
@@ -95,12 +86,15 @@ void FileManager::move_file(const std::string& old_path, const std::string& new_
     filesystem::create_directories(parent_folder_path); // make folders (if needed)
 
     // move file from old path -> new path
+    new_path = number_duplicate_paths(new_path); // make sure name isn't taken
     filesystem::rename(old_path, new_path);
 
     // cleanup: delete parent folders that might be empty now (IF boundary folder is given)
     if (!boundary_folder.empty()) {
         delete_empty_parent_folders(old_path, boundary_folder); // stop at boundary folder
     }
+
+    return new_path;
 }
 
 // delete file (& delete empty parent folders up to given boundary folder)
@@ -122,21 +116,22 @@ void FileManager::delete_file(const std::string& file_path, const std::string& b
 //--------------------------------------------------------------------------------
 //                              HELPER FUNCTIONS
 //--------------------------------------------------------------------------------
-std::string FileManager::rename_file(const std::string& file_path, const std::string& new_file_name) {
+std::string FileManager::rename_file(const std::string& file_path, std::string new_file_name) {
+    new_file_name = sanitize_file_name(new_file_name); // take out special characters
+    if (get_file_name(file_path) == new_file_name) return file_path; // don't do anything if names match
+
     // check if file doesn't exist or isn't a regular file
     if (!filesystem::exists(file_path) || !filesystem::is_regular_file(file_path)) {
         throw std::runtime_error("Tried to rename file that doesn't exist or isn't a regular file: " + file_path);
     }
     
     // construct new path
-    std::string parent_path = get_parent_path(file_path);
-    std::string extension = get_extension(file_path);
-    std::string new_path = parent_path + "/" + new_file_name + extension; // construct path
+    std::string new_path = get_parent_path(file_path) + "/" + new_file_name + get_extension(file_path);
+    new_path = number_duplicate_paths(new_path); // make sure name isn't taken
 
     // rename file
     filesystem::rename(file_path, new_path); 
 
-    // return new path
     return new_path;
 }
 
@@ -241,4 +236,40 @@ void FileManager::recursive_delete_empty_parent_folders(const filesystem::path& 
         filesystem::path parent_path = filesystem::path(current_path).parent_path();
         recursive_delete_empty_parent_folders(parent_path, boundary_folder); // call this function on parent path
     }
+}
+
+//--------------------------------------------------------------------------------
+//                              FILE NAME HELPERS
+//--------------------------------------------------------------------------------
+// replace special characters, make sure not empty
+std::string FileManager::sanitize_file_name(std::string name) {
+    // name "untitled" if no name
+    if (name.empty()) {
+       name = "untitled";
+    }
+    
+    // replace special characters with "-"
+    std::regex forbidden_chars(R"([\/:*?"<>|])");
+    name = std::regex_replace(name, forbidden_chars, "-");
+
+    return name;
+}
+
+// adds number to file name if duplicate name exists
+std::string FileManager::number_duplicate_paths(std::string desired_path) {
+    // return right away if no duplicates
+    if (!filesystem::exists(desired_path)) {
+        return desired_path;
+    }
+    
+    std::string parent_path = get_parent_path(desired_path);
+    std::string file_name = get_file_name(desired_path);
+    std::string extension = get_extension(desired_path);
+
+    // add number if file name exists there already
+    for (int i = 1; filesystem::exists(desired_path); ++i) {
+        desired_path = parent_path + "/" + (file_name + " (" + std::to_string(i) + ")" + extension);
+    }
+
+    return desired_path;
 }
