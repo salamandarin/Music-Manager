@@ -143,6 +143,17 @@ void Core::set_track_title(int track_id, const std::string& new_track_title) {
         // update file path in database
         database.set_track_file_path(track_id, new_path);
     }
+
+    // if image file exists: rename that too
+    std::optional<std::string> possible_image_path = database.get_track_image_path(track_id);
+    if (possible_image_path) { // check if image file exists
+        // update image file name to match
+        std::string new_image_path = FileManager::rename_file(*possible_image_path, new_track_title);
+
+        // update image path in database
+        database.set_track_image_path(track_id, new_image_path);
+    }
+
 }
 void Core::set_track_artist(int track_id, const std::string& new_artist_name) {
     // make sure isn't same as old artist
