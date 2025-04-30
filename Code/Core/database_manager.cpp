@@ -59,15 +59,11 @@ void DatabaseManager::add_track(const Track& track) {
     // handle adding new cascading data
     // add new artist (if not in DB)
     if (!track.artist.empty()) { // if artist is NOT empty
-        Artist new_artist;
-        new_artist.name = track.artist;
-        add_artist(new_artist);
+        add_artist(track.artist);
     }
     // add new album (if not in DB)
     if (!track.album.empty()) { // if album is NOT empty
-        Album new_album;
-        new_album.title = track.album;
-        add_album(new_album);
+        add_album(track.album);
     }
 
     // get artist & album ids
@@ -100,9 +96,7 @@ void DatabaseManager::add_album(const Album& album) {
     // handle adding new cascading data
     // add new artist (if not in DB)
     if (!album.artist.empty()) { // if artist is NOT empty
-        Artist new_artist;
-        new_artist.name = album.artist;
-        add_artist(new_artist);
+        add_artist(album.artist);
     }
 
     // get artist & album type ids
@@ -121,6 +115,12 @@ void DatabaseManager::add_album(const Album& album) {
 
     // execute
     execute_sql(sql);
+}
+// wrapper function
+void DatabaseManager::add_album(const std::string& album_title) {
+    Album new_album;
+    new_album.title = album_title;
+    add_album(new_album); // calls other function
 }
 void DatabaseManager::add_artist(const Artist& artist) {
     // check if exists in DB already
@@ -147,6 +147,12 @@ void DatabaseManager::add_artist(const Artist& artist) {
 
     // execute
     execute_sql(sql);
+}
+// wrapper function
+void DatabaseManager::add_artist(const std::string& artist_name) {
+    Artist new_artist;
+    new_artist.name = artist_name;
+    add_artist(new_artist); // calls other function
 }
 void DatabaseManager::add_person(const std::string& person) {
     // check if exists in DB already
@@ -734,14 +740,57 @@ void DatabaseManager::set_track_title(int track_id, const std::string& title) {
     // execute
     execute_sql(sql);
 }
+
 // set track artist
 void DatabaseManager::set_track_artist(int track_id, const std::string& artist_name) {
-    // TODO: check if artist exists, or make new artist
-    // TODO: grab the artist id
-    // TODO: set track artist id
+    // set to null if empty string given
+    if (artist_name.empty()) {
+        // prep & bind sql
+        sqlite3_stmt* sql = prepare_sql("UPDATE tracks SET artist_id = ? WHERE track_id = ?");
+        bind_null_to_sql(sql, 1); // null
+        bind_input_to_sql(sql, 2, track_id); // track_id
 
-    // TODO: possibly overload to also take in Artist type too, use that to set person?
+        // execute
+        execute_sql(sql);
+        return;
+    }
+
+    // if non-empty name is given
+    else {
+        // make new artist (if doesn't exist)
+        add_artist(artist_name); // doesn't add artist if already exists
+
+        // get artist_id
+        std::optional<int> artist_id = get_artist_id(artist_name);
+        if (!artist_id) {
+            throw std::runtime_error("Something went wrong adding track's artist to database");
+        }
+
+        // prep & bind sql
+        sqlite3_stmt* sql = prepare_sql("UPDATE tracks SET artist_id = ? WHERE track_id = ?");
+        bind_input_to_sql(sql, 1, *artist_id); // artist_id
+        bind_input_to_sql(sql, 2, track_id); // track_id
+
+        // execute
+        execute_sql(sql);
+    }
 }
+// set track artist (with given existing artist_id)
+void DatabaseManager::set_track_artist_id(int track_id, int artist_id) {
+    // make sure artist_id connects to real artist
+    if (!artist_exists(artist_id)) {
+        throw std::runtime_error("Tried to set track artist to invalid ID");
+    }
+
+    // prep & bind sql
+    sqlite3_stmt* sql = prepare_sql("UPDATE tracks SET artist_id = ? WHERE track_id = ?");
+    bind_input_to_sql(sql, 1, artist_id); // artist_id
+    bind_input_to_sql(sql, 2, track_id); // track_id
+
+    // execute
+    execute_sql(sql);
+}
+
 // set track album
 void DatabaseManager::set_track_album(int track_id, const std::string& album_title) {
     // TODO: check if album exists, or make new album
@@ -941,6 +990,13 @@ void DatabaseManager::bind_input_to_sql(sqlite3_stmt* sql, int index, int input_
 // int64_t
 void DatabaseManager::bind_input_to_sql(sqlite3_stmt* sql, int index, int64_t input_value) {
     if (sqlite3_bind_int64(sql, index, input_value) != SQLITE_OK) {
+        sqlite3_finalize(sql);  // clean up if failed
+        throw std::runtime_error(sqlite3_errmsg(database));
+    }
+}
+// null
+void DatabaseManager::bind_null_to_sql(sqlite3_stmt* sql, int index) {
+    if (sqlite3_bind_null(sql, index) != SQLITE_OK) {
         sqlite3_finalize(sql);  // clean up if failed
         throw std::runtime_error(sqlite3_errmsg(database));
     }

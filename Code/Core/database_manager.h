@@ -25,8 +25,13 @@ public:
     // ------------------------- ADD / REMOVE OBJECTS -------------------------
     // add new objects to DB
     void add_track(const Track& track);
+
     void add_album(const Album& album);
+    void add_album(const std::string& album_title);
+
     void add_artist(const Artist& artist);
+    void add_artist(const std::string& artist_name);
+
     void add_person(const std::string& person);
 
     // remove objects from DB
@@ -94,6 +99,7 @@ public:
     // set track data
     void set_track_title(int track_id, const std::string& title);
     void set_track_artist(int track_id, const std::string& artist_name);
+    void set_track_artist_id(int track_id, int artist_id);
     void set_track_album(int track_id, const std::string& album_title);
     void set_track_date(int track_id, const Date& date);
     void set_track_tracklist_num(int track_id, int tracklist_num);
@@ -124,6 +130,7 @@ private:
     void bind_input_to_sql(sqlite3_stmt* sql, int index, const std::string& input_value); // string
     void bind_input_to_sql(sqlite3_stmt* sql, int index, int input_value); // int
     void bind_input_to_sql(sqlite3_stmt* sql, int index, int64_t input_value); // int64_t
+    void bind_null_to_sql(sqlite3_stmt* sql, int index); // null
 
     // --------------- backend of other functions ---------------
     // execute sql queries
