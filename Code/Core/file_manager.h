@@ -28,6 +28,7 @@ public:
 
     // helper functions
     static std::string rename_file(const std::string& file_path, std::string new_file_name); // returns new path
+    static bool exists(const std::string& path); // check if file/folder exists
     static std::string get_file_name(const std::string& file_path); // get just file name (without full path or extension)
     static std::string get_extension(const std::string& file_path);
     static std::string get_parent_path(const std::string& file_path); // get parent path (without "/" at end)

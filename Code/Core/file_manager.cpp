@@ -135,6 +135,11 @@ std::string FileManager::rename_file(const std::string& file_path, std::string n
     return new_path;
 }
 
+// check if file/folder exists
+bool FileManager::exists(const std::string& path) {
+    filesystem::exists(file_path)
+}
+
 // get just file name (without full path or extension)
 std::string FileManager::get_file_name(const std::string& file_path) {
     return filesystem::path(file_path).stem().string();

@@ -68,12 +68,15 @@ void TracksPage::add_from_folder() {
     if (is_value_entered && !folder_path.empty()) {
         core.add_tracks_from_folder(folder_path); // add tracks from folder
 
-        // TODO: HANDLE INCORRECT PATHS WITHOUT CRASHING!!! LET THEM TRY AGAIN!!
+        // TODO: HANDLE INCORRECT PATHS WITHOUT CRASHING!!! LET THEM TRY AGAIN!! (JUST MAKE THIS FILE DIALOGUE)
 
         update_table(); // refresh table GUI
     }
 }
 void TracksPage::delete_library() { // TODO: DELETE THIS ENTIRE BUTTON
+    
+    // TODO: make file dialogue input OR check exists() so can't crash
+
     // gather input for possible additional path to delete
     bool is_value_entered; // whether they clicked OK or not (or hit enter)
     std::string additional_path = QInputDialog::getText(this,
