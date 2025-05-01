@@ -25,4 +25,5 @@ private slots:
 private:
     Ui::AddTrackPopup* ui;
     Core& core;
+    bool date_modified;
 };

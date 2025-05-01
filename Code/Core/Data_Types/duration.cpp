@@ -40,6 +40,9 @@ int Duration::get_seconds() const {
 }
 
 std::string Duration::to_string() const {
+    // return "" if 0
+    if (duration_in_seconds == 0) return "";
+
     // add leading 0 if < 10 seconds
     std::string seconds_string = std::to_string(seconds);
     if (seconds < 10) {

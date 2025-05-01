@@ -16,10 +16,6 @@ Date::Date(int month, int day, int year)
         throw std::runtime_error("Tried to construct Date with year outside the range of 0-2500");
     }
 }
-// Default constructor
-Date::Date()
-    :month{Month{0}}, day{0}, year{0} {}
-
 
 // ---------- Equality Operators ----------
 bool Date::operator==(const Date& rhs) const {
@@ -180,21 +176,54 @@ int Date::get_year() const {
     return year;
 }
 
-// ---------- Conversions ----------
-std::string Date::to_string() const {
-    // Return empty string if null / invalid date
-    if (year == 0 || month.number == 0 || day == 0) {
-        return "";
-    }
-
-    // Date -> string (MM/DD/YYYY format)
-    std::string date_string = std::to_string(month.number) + "/" + std::to_string(day) + "/" + std::to_string(year);
-    return date_string;
+// ---------- Setters ----------
+void Date::set_month(int month_num) {
+    month.set_month(month_num);
+}
+void Date::set_day(int day) {
+    this->day = day;
+}
+void Date::set_year(int year) {
+    this->year = year;
 }
 
-int64_t Date::to_unix() const {
+// ---------- Conversions ----------
+// Date -> string (MM/DD/YYYY format)
+std::string Date::to_string() const {
+    if (year == 0) return ""; // Empty string for null / invalid date
+    
+    // YYYY
+    if (month.number == 0) {
+        return std::to_string(year);
+    }
+    // MM/YYYY
+    if (day == 0) {
+        return std::to_string(month.number) + "/" + std::to_string(year);
+    }
+    // MM/DD/YYYY
+    return std::to_string(month.number) + "/" + std::to_string(day) + "/" + std::to_string(year);
+}
+// Date -> string (Month DD, YYYY format)
+std::string Date::to_long_string() const {
+    if (year == 0) return ""; // Empty string for null / invalid date
+    
+    // YYYY
+    if (month.number == 0) {
+        return std::to_string(year);
+    }
+    // Month YYYY
+    if (day == 0) {
+        return month.name + " " + std::to_string(year);
+    }
+    // Month DD, YYYY
+    return month.name + " " + std::to_string(day) + ", " + std::to_string(year);
+}
+
+std::optional<int64_t> Date::to_unix() const {
+    if (year == 0) return std::nullopt; // Return null if null or invalid date
+
     tm time;
-    time.tm_year = year - 1900; // tm is from 1900
+    time.tm_year = year - 1900; // tm counts from 1900
     time.tm_mon = month.number - 1;
     time.tm_mday = day;
     time.tm_hour = 0;
@@ -266,7 +295,7 @@ Date::Month::Month(int number)
 
 std::string Date::Month::find_month_name(int month_number) const {
     if (month_number == 0) {
-        return "null";
+        return "";
     }
     if (month_number == 1) {
         return "January";
@@ -309,7 +338,7 @@ std::string Date::Month::find_month_name(int month_number) const {
 }
 int Date::Month::find_month_number(const std::string& month_name) const {
     std::string lowercase_name = to_lowercase(month_name);
-    if (lowercase_name == "null") {
+    if (lowercase_name == "") {
         return 0;
     }
     if (lowercase_name == "january") {

@@ -16,6 +16,11 @@ AddTrackPopup::AddTrackPopup(Core& core, QWidget* parent)
                                 this, &AddTrackPopup::add_image_file);
     connect(ui->button_box, &QDialogButtonBox::accepted,
                             this, &AddTrackPopup::add_track);
+    // date signals
+    connect(ui->date_input, &QDateEdit::dateChanged, 
+                            this, [this]() { date_modified = true; });
+    connect(ui->clear_date_button, &QPushButton::clicked,
+                            this, [this]() { date_modified = false; });    
 }
 
 AddTrackPopup::~AddTrackPopup() {
@@ -50,8 +55,11 @@ void AddTrackPopup::add_track() {
     track.title = ui->title_input->text().trimmed().toStdString();
     track.artist = ui->artist_input->text().trimmed().toStdString();
     track.album = ui->album_input->text().trimmed().toStdString();
-    QDate qt_date = ui->date_input->date();
-    track.date = Date(qt_date.month(), qt_date.day(), qt_date.year());
+    // check if date was entered
+    if (date_modified) {
+        QDate qt_date = ui->date_input->date();
+        track.date = Date(qt_date.month(), qt_date.day(), qt_date.year());
+    }
     track.tracklist_num = ui->tracklist_num_input->text().trimmed().toInt(); // TODO: handle non-int input (or leave be cuz just sets to 0)
     
     core.add_track(track); // add track

@@ -5,8 +5,7 @@
 
 class Date {
 public:
-    Date(int month, int day, int year); // Constructor
-    Date(); // Default constructor
+    Date(int month=0, int day=0, int year=0); // Constructor
 
     // Equality operators
     bool operator==(const Date& rhs) const;
@@ -35,9 +34,15 @@ public:
     int get_day() const;
     int get_year() const;
 
+    // Setters
+    void set_month(int month_num);
+    void set_day(int day);
+    void set_year(int year);
+
     // Conversions
-    std::string to_string() const;
-    int64_t to_unix() const;
+    std::string to_string() const; // MM/DD/YYYY
+    std::string to_long_string() const; // Month DD, YYYY
+    std::optional<int64_t> to_unix() const;
     static Date from_unix(int64_t unix_time);
 
     // Helper functions

@@ -32,10 +32,10 @@
   <widget class="QWidget" name="formLayoutWidget_2">
    <property name="geometry">
     <rect>
-     <x>339</x>
-     <y>19</y>
+     <x>10</x>
+     <y>20</y>
      <width>211</width>
-     <height>241</height>
+     <height>251</height>
     </rect>
    </property>
    <layout class="QFormLayout" name="formLayout_2">
@@ -70,10 +70,10 @@
   <widget class="QWidget" name="formLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>10</x>
+     <x>220</x>
      <y>20</y>
      <width>331</width>
-     <height>251</height>
+     <height>240</height>
     </rect>
    </property>
    <layout class="QFormLayout" name="formLayout_4">
@@ -134,23 +134,6 @@
       </property>
      </widget>
     </item>
-    <item row="5" column="1">
-     <widget class="QDateEdit" name="date_input">
-      <property name="dateTime">
-       <datetime>
-        <hour>0</hour>
-        <minute>0</minute>
-        <second>0</second>
-        <year>2025</year>
-        <month>1</month>
-        <day>1</day>
-       </datetime>
-      </property>
-      <property name="displayFormat">
-       <string>M/d/yyyy</string>
-      </property>
-     </widget>
-    </item>
     <item row="6" column="0">
      <widget class="QLabel" name="tracklist_num_label">
       <property name="text">
@@ -167,6 +150,63 @@
        <string/>
       </property>
      </widget>
+    </item>
+    <item row="5" column="1">
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QDateEdit" name="date_input">
+        <property name="dateTime">
+         <datetime>
+          <hour>18</hour>
+          <minute>0</minute>
+          <second>0</second>
+          <year>2025</year>
+          <month>1</month>
+          <day>1</day>
+         </datetime>
+        </property>
+        <property name="maximumDate">
+         <date>
+          <year>9999</year>
+          <month>12</month>
+          <day>31</day>
+         </date>
+        </property>
+        <property name="currentSection">
+         <enum>QDateTimeEdit::Section::MonthSection</enum>
+        </property>
+        <property name="displayFormat">
+         <string>M/d/yyyy</string>
+        </property>
+        <property name="calendarPopup">
+         <bool>true</bool>
+        </property>
+        <property name="timeSpec">
+         <enum>Qt::TimeSpec::LocalTime</enum>
+        </property>
+        <property name="date">
+         <date>
+          <year>2025</year>
+          <month>1</month>
+          <day>1</day>
+         </date>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="clear_date_button">
+        <property name="maximumSize">
+         <size>
+          <width>50</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Clear</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
