@@ -63,7 +63,10 @@ void DatabaseManager::add_track(const Track& track) {
     }
     // add new album (if not in DB)
     if (!track.album.empty()) { // if album is NOT empty
-        add_album(track.album);
+        Album album;
+        album.title = track.album;
+        album.artist = track.artist; // set album artist too // TODO: undo (what if track has multiple artists)
+        add_album(album);
     }
 
     // get artist & album ids
