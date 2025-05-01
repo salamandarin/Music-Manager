@@ -98,6 +98,7 @@ void DatabaseManager::add_album(const Album& album) {
     if (!album.artist.empty()) { // if artist is NOT empty
         add_artist(album.artist);
     }
+    // doesn't add new album type cuz presets only
 
     // get artist & album type ids
     std::optional<int> artist_id = get_artist_id(album.artist);
@@ -757,45 +758,24 @@ void DatabaseManager::set_track_title(int track_id, const std::string& title) {
 
 // set track artist
 void DatabaseManager::set_track_artist(int track_id, const std::string& artist_name) {
-    // set to null if empty string given
-    if (artist_name.empty()) {
-        // prep & bind sql
-        sqlite3_stmt* sql = prepare_sql("UPDATE tracks SET artist_id = ? WHERE track_id = ?");
-        bind_null_to_sql(sql, 1); // null
-        bind_input_to_sql(sql, 2, track_id); // track_id
-
-        // execute
-        execute_sql(sql);
-        return;
+    // add new artist ONLY IF name given
+    if (!artist_name.empty()) {
+        add_artist(artist_name);
     }
 
-    // if non-empty name is given
-    else {
-        // make new artist (if doesn't exist)
-        add_artist(artist_name); // doesn't add artist if already exists
+    // get possible artist_id
+    std::optional<int> artist_id = get_artist_id(artist_name);
 
-        // get artist_id
-        std::optional<int> artist_id = get_artist_id(artist_name);
-        if (!artist_id) {
-            throw std::runtime_error("Something went wrong adding track's artist to database");
-        }
+    // prep & bind sql
+    sqlite3_stmt* sql = prepare_sql("UPDATE tracks SET artist_id = ? WHERE track_id = ?");
+    bind_input_to_sql(sql, 1, artist_id); // artist_id (binds null if empty)
+    bind_input_to_sql(sql, 2, track_id); // track_id
 
-        // prep & bind sql
-        sqlite3_stmt* sql = prepare_sql("UPDATE tracks SET artist_id = ? WHERE track_id = ?");
-        bind_input_to_sql(sql, 1, *artist_id); // artist_id
-        bind_input_to_sql(sql, 2, track_id); // track_id
-
-        // execute
-        execute_sql(sql);
-    }
+    // execute
+    execute_sql(sql);
 }
-// set track artist (with given existing artist_id)
+// set track artist (with given artist_id)
 void DatabaseManager::set_track_artist_id(int track_id, int artist_id) {
-    // make sure artist_id connects to real artist
-    if (!artist_exists(artist_id)) {
-        throw std::runtime_error("Tried to set track artist to invalid ID");
-    }
-
     // prep & bind sql
     sqlite3_stmt* sql = prepare_sql("UPDATE tracks SET artist_id = ? WHERE track_id = ?");
     bind_input_to_sql(sql, 1, artist_id); // artist_id
@@ -807,12 +787,33 @@ void DatabaseManager::set_track_artist_id(int track_id, int artist_id) {
 
 // set track album
 void DatabaseManager::set_track_album(int track_id, const std::string& album_title) {
-    // TODO: check if album exists, or make new album
-    // TODO: grab the album id
-    // TODO: set track album id
+    // add new album ONLY IF title given
+    if (!album_title.empty()) {
+        add_album(album_title);
+    }
 
-    // TODO: possibly overload to also take in Album type too, use that info too?
+    // get possible album_id
+    std::optional<int> album_id = get_album_id(album_title);
+
+    // prep & bind sql
+    sqlite3_stmt* sql = prepare_sql("UPDATE tracks SET album_id = ? WHERE track_id = ?");
+    bind_input_to_sql(sql, 1, album_id); // album_id (binds null if empty)
+    bind_input_to_sql(sql, 2, track_id); // track_id
+
+    // execute
+    execute_sql(sql);
 }
+// set track album (with given album_id)
+void DatabaseManager::set_track_album_id(int track_id, int album_id) {
+    // prep & bind sql
+    sqlite3_stmt* sql = prepare_sql("UPDATE tracks SET album_id = ? WHERE track_id = ?");
+    bind_input_to_sql(sql, 1, album_id); // album_id
+    bind_input_to_sql(sql, 2, track_id); // track_id
+
+    // execute
+    execute_sql(sql);
+}
+
 // set track date
 void DatabaseManager::set_track_date(int track_id, const Date& date) {
     // prep & bind sql
@@ -865,14 +866,36 @@ void DatabaseManager::set_album_title(int album_id, const std::string& title) {
     // execute
     execute_sql(sql);
 }
+
 // set album artist
 void DatabaseManager::set_album_artist(int album_id, const std::string& artist_name) {
-    // TODO: check if artist exists, or make new artist
-    // TODO: grab the artist id
-    // TODO: set album artist id
+    // add new artist ONLY IF name given
+    if (!artist_name.empty()) {
+        add_artist(artist_name);
+    }
 
-    // TODO: possibly overload to also take in Artist type too, use that to set person?
+    // get possible artist_id
+    std::optional<int> artist_id = get_artist_id(artist_name);
+
+    // prep & bind sql
+    sqlite3_stmt* sql = prepare_sql("UPDATE albums SET artist_id = ? WHERE album_id = ?");
+    bind_input_to_sql(sql, 1, artist_id); // artist_id (binds null if empty)
+    bind_input_to_sql(sql, 2, album_id); // album_id
+
+    // execute
+    execute_sql(sql);
 }
+// set album artist (with given artist_id)
+void DatabaseManager::set_album_artist_id(int album_id, int artist_id) {
+    // prep & bind sql
+    sqlite3_stmt* sql = prepare_sql("UPDATE albums SET artist_id = ? WHERE album_id = ?");
+    bind_input_to_sql(sql, 1, artist_id); // artist_id
+    bind_input_to_sql(sql, 2, album_id); // album_id
+
+    // execute
+    execute_sql(sql);
+}
+
 // set album date
 void DatabaseManager::set_album_date(int album_id, const Date& date) {
     // prep & bind sql
@@ -883,11 +906,31 @@ void DatabaseManager::set_album_date(int album_id, const Date& date) {
     // execute
     execute_sql(sql);
 }
+
 // set album type
 void DatabaseManager::set_album_type(int album_id, const std::string& album_type) {
-    // TODO: grab album type id, return error if doesn't exist
-    // TODO: set album type id
+    // get possible album_type_id (doesn't make new type cuz presets only)
+    std::optional<int> album_type_id = get_album_type_id(album_type);
+
+    // prep & bind sql
+    sqlite3_stmt* sql = prepare_sql("UPDATE albums SET album_type_id = ? WHERE album_id = ?");
+    bind_input_to_sql(sql, 1, album_type_id); // album_type_id (binds null if empty)
+    bind_input_to_sql(sql, 2, album_id); // album_id
+
+    // execute
+    execute_sql(sql);
 }
+// set album type (with given album_type_id)
+void DatabaseManager::set_album_type_id(int album_id, int album_type_id) {
+    // prep & bind sql
+    sqlite3_stmt* sql = prepare_sql("UPDATE albums SET album_type_id = ? WHERE album_id = ?");
+    bind_input_to_sql(sql, 1, album_type_id); // album_type_id
+    bind_input_to_sql(sql, 2, album_id); // album_id
+
+    // execute
+    execute_sql(sql);
+}
+
 // set album image path
 void DatabaseManager::set_album_image_path(int album_id, const std::string& image_path) {
     // prep & bind sql
@@ -910,12 +953,36 @@ void DatabaseManager::set_artist_name(int artist_id, const std::string& name) {
     // execute
     execute_sql(sql);
 }
-// set artist person behind
+
+// set artist person_behind
 void DatabaseManager::set_artist_person_behind(int artist_id, const std::string& person_behind) {
-    // TODO: check if person exists, or make new person
-    // TODO: grab the person id
-    // TODO: set artist person behind id
+    // add new person ONLY IF name given
+    if (!person_behind.empty()) {
+        add_person(person_behind);
+    }
+
+    // get possible person_id
+    std::optional<int> person_id = get_person_id(person_behind);
+
+    // prep & bind sql
+    sqlite3_stmt* sql = prepare_sql("UPDATE artists SET person_id = ? WHERE artist_id = ?");
+    bind_input_to_sql(sql, 1, person_id); // person_id (binds null if empty)
+    bind_input_to_sql(sql, 2, artist_id); // artist_id
+
+    // execute
+    execute_sql(sql);
 }
+// set artist person_behind (with given person_id)
+void DatabaseManager::set_artist_person_behind_id(int artist_id, int person_id) {
+    // prep & bind sql
+    sqlite3_stmt* sql = prepare_sql("UPDATE artists SET person_id = ? WHERE artist_id = ?");
+    bind_input_to_sql(sql, 1, person_id); // person_id
+    bind_input_to_sql(sql, 2, artist_id); // artist_id
+
+    // execute
+    execute_sql(sql);
+}
+
 // set artist image path
 void DatabaseManager::set_artist_image_path(int artist_id, const std::string& image_path) {
     // prep & bind sql

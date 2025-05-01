@@ -22,6 +22,7 @@ public:
     DatabaseManager(DatabaseManager&& other) noexcept; // move constructor
     DatabaseManager& operator=(DatabaseManager&& other) noexcept; // move assignment
 
+
     // ------------------------- ADD / REMOVE OBJECTS -------------------------
     // add new objects to DB
     void add_track(const Track& track);
@@ -46,6 +47,7 @@ public:
     bool artist_exists(int artist_id);
     bool person_exists(int person_id);
 
+
     // ------------------------- GET OBJECTS -------------------------
     // get ALL objects in table
     std::vector<Track> get_all_tracks();
@@ -68,13 +70,17 @@ public:
     std::optional<Album> get_album(const std::string& album_title);
     std::optional<Artist> get_artist(const std::string& artist_name);
 
+
     // ------------------------- GET DATA -------------------------
     // get specific track data
     std::optional<std::string> get_track_title(int track_id);
+
     std::optional<Artist> get_track_artist(int track_id);
     std::optional<int> get_track_artist_id(int track_id);
+
     std::optional<Album> get_track_album(int track_id);
     std::optional<int> get_track_album_id(int track_id);
+
     std::optional<Duration> get_track_duration(int track_id);
     std::optional<Date> get_track_date(int track_id);
     std::optional<int> get_track_tracklist_num(int track_id);
@@ -97,27 +103,45 @@ public:
     // get id from other values
     std::optional<int> get_track_id_from_file(const std::string& file_path);
 
+
     // ------------------------- SET DATA -------------------------
     // set track data
     void set_track_title(int track_id, const std::string& title);
+
     void set_track_artist(int track_id, const std::string& artist_name);
     void set_track_artist_id(int track_id, int artist_id);
+
     void set_track_album(int track_id, const std::string& album_title);
+    void set_track_album_id(int track_id, int album_id);
+
     void set_track_date(int track_id, const Date& date);
     void set_track_tracklist_num(int track_id, int tracklist_num);
     void set_track_file_path(int track_id, const std::string& file_path);
     void set_track_image_path(int track_id, const std::string& image_path);
 
+
     // set album data
     void set_album_title(int album_id, const std::string& title);
+
     void set_album_artist(int album_id, const std::string& artist_name);
+    void set_album_artist_id(int track_id, int artist_id);
+
     void set_album_date(int album_id, const Date& date);
+
     void set_album_type(int album_id, const std::string& album_type);
+    void set_album_type_id(int track_id, int album_type_id);
+
     void set_album_image_path(int album_id, const std::string& image_path);
 
+
+    // set artist data
     void set_artist_name(int artist_id, const std::string& name);
+    
     void set_artist_person_behind(int artist_id, const std::string& person_behind);
+    void set_artist_person_behind_id(int artist_id, int person_id);
+
     void set_artist_image_path(int artist_id, const std::string& image_path);
+
 
     // set person data
     void set_person_name(int person_id, const std::string& name);
