@@ -113,11 +113,12 @@ void Core::remove_person(int person_id) {
     database.remove_person(person_id);
 }
 
+
 //--------------------------------------------------------------------------------
-//                                  EDIT TRACK DATA
+//                                  SET TRACK DATA
 //--------------------------------------------------------------------------------
 
-// ---------- INFO IN BOTH DATABASE & METADATA ----------
+// ------------------------------ SET TRACK TITLE ------------------------------
 void Core::set_track_title(int track_id, const std::string& new_track_title) {
     // make sure isn't same as old title
     std::optional<std::string> current_title = database.get_track_title(track_id);
@@ -155,6 +156,8 @@ void Core::set_track_title(int track_id, const std::string& new_track_title) {
     }
 
 }
+
+// ------------------------------ SET TRACK ARTIST ------------------------------
 void Core::set_track_artist(int track_id, const std::string& new_artist_name) {
     // make sure isn't same as old artist
     std::optional<Artist> current_artist = database.get_track_artist(track_id);
@@ -167,12 +170,32 @@ void Core::set_track_artist(int track_id, const std::string& new_artist_name) {
     // update in database
     database.set_track_artist(track_id, new_artist_name);
 
+    // update file info (if file exists)
+    set_track_file_artist(track_id, new_artist_name);
+}
+void Core::set_track_artist_id(int track_id, int artist_id) {
+    // make sure isn't same as old artist
+    std::optional<int> current_artist_id = database.get_track_artist_id(track_id);
+    if (current_artist_id) {
+        if (current_artist_id == artist_id) {
+            return; // return if same as old
+        }
+    }
+
+    // update in database
+    database.set_track_artist_id(track_id, artist_id);
+    
+    // update file info (if file exists)
+    set_track_file_artist(track_id, database.get_artist_name(artist_id));
+}
+// private helper function
+void Core::set_track_file_artist(int track_id, const std::string& artist_name) {
     // if file exists: update metadata + file name + database file path
     std::optional<std::string> possible_file_path = database.get_track_file_path(track_id);
     if (possible_file_path) { // check if file exists
         // update in metadata
         MetadataManager metadata{*possible_file_path};
-        metadata.set_artist(new_artist_name);
+        metadata.set_artist(artist_name);
 
         // update file path
         Track track_data = get_track(track_id); // TODO: should this call core or db get track??
@@ -182,9 +205,9 @@ void Core::set_track_artist(int track_id, const std::string& new_artist_name) {
         // update file path in database
         database.set_track_file_path(track_id, new_path);
     }
-
-    // TODO: possibly overload to also take in Artist type too, use that to set person?
 }
+
+// ------------------------------ SET TRACK ALBUM ------------------------------
 void Core::set_track_album(int track_id, const std::string& new_album_title) {
     // make sure isn't same as old album
     std::optional<Album> current_album = database.get_track_album(track_id);
@@ -197,12 +220,32 @@ void Core::set_track_album(int track_id, const std::string& new_album_title) {
     // update in database
     database.set_track_album(track_id, new_album_title);
 
+    // update file info (if file exists)
+    set_track_file_album(track_id, new_album_title);
+}
+void Core::set_track_album_id(int track_id, int album_id) {
+    // make sure isn't same as old album
+    std::optional<int> current_album_id = database.get_track_album_id(track_id);
+    if (current_album_id) {
+        if (current_album_id == album_id) {
+            return; // return if same as old
+        }
+    }
+
+    // update in database
+    database.set_track_album_id(track_id, album_id);
+    
+    // update file info (if file exists)
+    set_track_file_album(track_id, database.get_album_title(album_id));
+}
+// private helper function
+void Core::set_track_file_album(int track_id, const std::string& album_title) {
     // update in metadata + file path (if there is file)
     std::optional<std::string> possible_file_path = database.get_track_file_path(track_id);
     if (possible_file_path) { // check if file exists
         // update in metadata
         MetadataManager metadata{*possible_file_path};
-        metadata.set_album(new_album_title);
+        metadata.set_album(album_title);
 
         // update file path
         Track track_data = get_track(track_id); // TODO: should this call core or db get track??
@@ -212,9 +255,9 @@ void Core::set_track_album(int track_id, const std::string& new_album_title) {
         // update file path in database
         database.set_track_file_path(track_id, new_path);
     }
-
-    // TODO: possibly overload to also take in Album type too, use that info too?
 }
+
+// ------------------------------ SET TRACK DATE ------------------------------
 void Core::set_track_date(int track_id, const Date& new_date) {
     // make sure isn't same as old date
     std::optional<Date> current_date = database.get_track_date(track_id);
@@ -229,6 +272,7 @@ void Core::set_track_date(int track_id, const Date& new_date) {
 
     // TODO: check if date is in metadata, set if so
 }
+// ------------------------------ SET TRACK TRACKLIST NUM ------------------------------
 void Core::set_track_tracklist_num(int track_id, int new_tracklist_num) {
     // make sure isn't same as old tracklist num
     std::optional<int> current_tracklist_num = database.get_track_tracklist_num(track_id);
@@ -250,8 +294,15 @@ void Core::set_track_tracklist_num(int track_id, int new_tracklist_num) {
     }
 }
 
-void Core::set_track_image(int track_id, const std::string& new_image_path) {
-
+// ------------------------------ SET TRACK FILE ------------------------------
+void Core::set_track_file(int track_id, const std::string& file_path) {
+    // TODO: CODE
+    // TODO: IF NO FILE - ADD NEW FILE TO PROGRAM, ATTACHING TO THIS TRACK
+    // TODO: IF HAS FILE - REPLACE THAT FILE, ADD THIS ONE
+    // TODO: put new path in database
+}
+// ------------------------------ SET TRACK IMAGE ------------------------------
+void Core::set_track_image(int track_id, const std::string& image_path) {
     // TODO: CODE - IF HAS FILE
         // TODO: get file_path from id, error if no file (or make this function take in file path directly)
 
@@ -265,6 +316,187 @@ void Core::set_track_image(int track_id, const std::string& new_image_path) {
 
     // TODO: put returned image_path into database
 }
+
+//--------------------------------------------------------------------------------
+//                               SET ALBUM DATA
+//--------------------------------------------------------------------------------
+
+// ------------------------------ SET ALBUM TITLE ------------------------------
+void Core::set_album_title(int album_id, const std::string& album_title) {
+    // make sure isn't same as old title
+    std::optional<std::string> current_title = database.get_album_title(album_id);
+    if (current_title) {
+        if (*current_title == album_title) {
+            return; // return if same as old
+        }
+    }
+
+    // update in database
+    database.set_album_title(album_id, album_title);
+
+    // TODO: FILE / METADATA CODE
+}
+
+// ------------------------------ SET ALBUM ARTIST ------------------------------
+void Core::set_album_artist(int album_id, const std::string& artist_name) {
+    // make sure isn't same as old artist
+    std::optional<Artist> current_artist = database.get_album_artist(album_id);
+    if (current_artist) {
+        if (current_artist->name == artist_name) {
+            return; // return if same as old
+        }
+    }
+
+    // update in database
+    database.set_album_artist(album_id, artist_name);
+
+    // TODO: FILE / METADATA CODE
+}
+void Core::set_album_artist_id(int album_id, int artist_id) {
+    // make sure isn't same as old artist_id
+    std::optional<int> current_artist_id = database.get_album_artist_id(album_id);
+    if (current_artist_id) {
+        if (*current_artist_id == artist_id) {
+            return; // return if same as old
+        }
+    }
+
+    // update in database
+    database.set_album_artist_id(album_id, artist_id);
+
+    // TODO: FILE / METADATA CODE
+}
+
+// ------------------------------ SET ALBUM DATE ------------------------------
+void Core::set_album_date(int album_id, const Date& album_date) {
+    // make sure isn't same as old date
+    std::optional<Date> current_date = database.get_album_date(album_id);
+    if (current_date) {
+        if (*current_date == album_date) {
+            return; // return if same as old
+        }
+    }
+
+    // update in database
+    database.set_album_date(album_id, album_date);
+
+    // TODO: FILE / METADATA CODE
+}
+
+// ------------------------------ SET ALBUM TYPE ------------------------------
+void Core::set_album_type(int album_id, const std::string& album_type) {
+    // make sure isn't same as old album_type
+    std::optional<std::string> current_album_type = database.get_album_album_type(album_id);
+    if (current_album_type) {
+        if (*current_album_type == album_type) {
+            return; // return if same as old
+        }
+    }
+
+    // update in database
+    database.set_album_type(album_id, album_type);
+
+    // TODO: FILE / METADATA CODE
+}
+void Core::set_album_type_id(int album_id, int album_type_id) {
+    // make sure isn't same as old album_type
+    std::optional<int> current_album_type_id = database.get_album_album_type_id(album_id);
+    if (current_album_type_id) {
+        if (*current_album_type_id == album_type_id) {
+            return; // return if same as old
+        }
+    }
+
+    // update in database
+    database.set_album_type_id(album_id, album_type_id);
+
+    // TODO: FILE / METADATA CODE
+}
+
+// ------------------------------ SET ALBUM IMAGE ------------------------------
+void Core::set_album_image(int album_id, const std::string& image_path) {
+    // TODO: CODE
+    // TODO: NOTE IT'S "set IMAGE" - NOT PATH - MEANS EDIT FILE
+    // TODO: NOTE IT'S "set IMAGE" - NOT PATH - MEANS EDIT FILE
+    // TODO: update in database
+}
+
+//--------------------------------------------------------------------------------
+//                               SET ARTIST DATA
+//--------------------------------------------------------------------------------
+
+// ------------------------------ SET ARTIST NAME ------------------------------
+void Core::set_artist_name(int artist_id, const std::string& artist_name) {
+    // make sure isn't same as old name
+    std::optional<std::string> current_name = database.get_artist_name(artist_id);
+    if (current_name) {
+        if (*current_name == artist_name) {
+            return; // return if same as old
+        }
+    }
+
+    // update in database
+    database.set_artist_name(artist_id, artist_name);
+
+    // TODO: FILE / METADATA CODE
+}
+
+// ------------------------------ SET ARTIST PERSON BEHIND ------------------------------
+void Core::set_artist_person_behind(int artist_id, const std::string& person_behind) {
+    // make sure isn't same as old person_behind
+    std::optional<std::string> current_person_behind = database.get_artist_person_behind(artist_id);
+    if (current_person_behind) {
+        if (*current_person_behind == person_behind) {
+            return; // return if same as old
+        }
+    }
+
+    // update in database
+    database.set_artist_person_behind(artist_id, person_behind);
+
+    // TODO: FILE / METADATA CODE
+}
+void Core::set_artist_person_behind_id(int artist_id, int person_id) {
+    // make sure isn't same as old person_id
+    std::optional<int> current_person_id = database.get_artist_person_behind_id(artist_id);
+    if (current_person_id) {
+        if (*current_person_id == person_id) {
+            return; // return if same as old
+        }
+    }
+
+    // update in database
+    database.set_artist_person_behind_id(artist_id, person_id);
+
+    // TODO: FILE / METADATA CODE
+}
+
+// ------------------------------ SET ARTIST IMAGE ------------------------------
+void Core::set_artist_image(int artist_id, const std::string& image_path) {
+    // TODO: CODE
+    // TODO: NOTE IT'S "set IMAGE" - NOT PATH - MEANS EDIT FILE
+    // TODO: NOTE IT'S "set IMAGE" - NOT PATH - MEANS EDIT FILE
+    // TODO: update in database
+}
+
+//--------------------------------------------------------------------------------
+//                               SET PERSON DATA
+//--------------------------------------------------------------------------------
+void Core::set_person_name(int person_id, const std::string& person_name) {
+    // make sure isn't same as old name
+    std::optional<std::string> current_name = database.get_person_name(person_id);
+    if (current_name) {
+        if (*current_name == person_name) {
+            return; // return if same as old
+        }
+    }
+
+    // update in database
+    database.set_person_name(person_id, person_name);
+
+    // TODO: FILE / METADATA CODE
+}
+
 
 //--------------------------------------------------------------------------------
 //                               GET -ALL- OBJECTS

@@ -65,6 +65,8 @@ public:
     Track get_track(int track_id);
     Album get_album(int album_id);
     Artist get_artist(int artist_id);
+    std::string get_person(int person_id); // just name
+    std::string get_album_type(int album_type_id); // just name
 
     // get whole objects by name (not id)
     std::optional<Album> get_album(const std::string& album_title);
@@ -72,6 +74,7 @@ public:
 
 
     // ------------------------- GET DATA -------------------------
+    
     // get specific track data
     std::optional<std::string> get_track_title(int track_id);
 
@@ -87,12 +90,35 @@ public:
     std::optional<std::string> get_track_file_path(int track_id);
     std::optional<std::string> get_track_image_path(int track_id);
 
+
     // get specific album data
-    std::optional<std::string> get_album_title(int album_id);
+    std::string get_album_title(int album_id); // non-optional
+
+    std::optional<Artist> get_album_artist(int album_id);
+    std::optional<int> get_album_artist_id(int album_id);
+
+    std::optional<Date> get_album_date(int album_id);
+
+    std::optional<std::string> get_album_album_type(int album_id);
+    std::optional<int> get_album_album_type_id(int album_id);
+
+    std::optional<std::string> get_album_image_path(int album_id);
+    
 
     // get specific artist data
-    std::optional<std::string> get_artist_name(int artist_id);
+    std::string get_artist_name(int artist_id); // non-optional
 
+    std::optional<std::string> get_artist_person_behind(int artist_id);
+    std::optional<int> get_artist_person_behind_id(int artist_id);
+
+    std::optional<std::string> get_artist_image_path(int artist_id);
+
+
+    // get other specific object data
+    std::string get_person_name(int person_id); // non-optional
+    std::string get_album_type_name(int album_type_id); // non-optional
+
+    // ------------------------- GET ID -------------------------
     // get id from name
     std::optional<int> get_track_id(const std::string& track_title);
     std::optional<int> get_album_id(const std::string& album_title);
@@ -106,7 +132,7 @@ public:
 
     // ------------------------- SET DATA -------------------------
     // set track data
-    void set_track_title(int track_id, const std::string& title);
+    void set_track_title(int track_id, const std::string& track_title);
 
     void set_track_artist(int track_id, const std::string& artist_name);
     void set_track_artist_id(int track_id, int artist_id);
@@ -114,28 +140,29 @@ public:
     void set_track_album(int track_id, const std::string& album_title);
     void set_track_album_id(int track_id, int album_id);
 
-    void set_track_date(int track_id, const Date& date);
+        // skip duration - do not manually set
+    void set_track_date(int track_id, const Date& track_date);
     void set_track_tracklist_num(int track_id, int tracklist_num);
     void set_track_file_path(int track_id, const std::string& file_path);
     void set_track_image_path(int track_id, const std::string& image_path);
 
 
     // set album data
-    void set_album_title(int album_id, const std::string& title);
+    void set_album_title(int album_id, const std::string& album_title);
 
     void set_album_artist(int album_id, const std::string& artist_name);
-    void set_album_artist_id(int track_id, int artist_id);
+    void set_album_artist_id(int album_id, int artist_id);
 
-    void set_album_date(int album_id, const Date& date);
+    void set_album_date(int album_id, const Date& album_date);
 
     void set_album_type(int album_id, const std::string& album_type);
-    void set_album_type_id(int track_id, int album_type_id);
+    void set_album_type_id(int album_id, int album_type_id);
 
     void set_album_image_path(int album_id, const std::string& image_path);
 
 
     // set artist data
-    void set_artist_name(int artist_id, const std::string& name);
+    void set_artist_name(int artist_id, const std::string& artist_name);
     
     void set_artist_person_behind(int artist_id, const std::string& person_behind);
     void set_artist_person_behind_id(int artist_id, int person_id);
@@ -144,7 +171,7 @@ public:
 
 
     // set person data
-    void set_person_name(int person_id, const std::string& name);
+    void set_person_name(int person_id, const std::string& person_name);
 
 
 private:

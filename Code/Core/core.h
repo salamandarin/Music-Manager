@@ -37,11 +37,46 @@ public:
     // ------------------------- SET DATA -------------------------
     // set track data (in both DB & metadata if applicable)
     void set_track_title(int track_id, const std::string& new_track_title);
+
     void set_track_artist(int track_id, const std::string& new_artist_name);
+    void set_track_artist_id(int track_id, int artist_id);
+
     void set_track_album(int track_id, const std::string& new_album_title);
+    void set_track_album_id(int track_id, int new_album_id);
+
+        // skip duration - do not manually set
     void set_track_date(int track_id, const Date& new_date);
     void set_track_tracklist_num(int track_id, int new_tracklist_num);
-    void set_track_image(int track_id, const std::string& new_image_path);
+    void set_track_file(int track_id, const std::string& file_path);
+    void set_track_image(int track_id, const std::string& file_path);
+
+
+    // TODO: set album data
+    void set_album_title(int album_id, const std::string& album_title);
+
+    void set_album_artist(int album_id, const std::string& artist_name);
+    void set_album_artist_id(int album_id, int artist_id);
+
+    void set_album_date(int album_id, const Date& album_date);
+
+    void set_album_type(int album_id, const std::string& album_type); // TODO: rename set_album_album_type ?
+    void set_album_type_id(int track_id, int album_type_id); // TODO: rename set_album_album_type ?
+
+    void set_album_image(int album_id, const std::string& image_path); // TODO: NOTE IT'S "IMAGE" - NOT PATH - MEANS EDIT FILE
+
+
+    // TODO: set artist data
+    void set_artist_name(int artist_id, const std::string& artist_name);
+    
+    void set_artist_person_behind(int artist_id, const std::string& person_behind);
+    void set_artist_person_behind_id(int artist_id, int person_id);
+
+    void set_artist_image(int artist_id, const std::string& image_path); // TODO: NOTE IT'S "IMAGE" - NOT PATH - MEANS EDIT FILE
+
+
+    // TODO: set person data
+    void set_person_name(int person_id, const std::string& person_name);
+
 
     // ------------------------- GET OBJECTS -------------------------
     // get ALL objects
@@ -67,6 +102,9 @@ public:
 private:
     void update_file_structure();
     std::string set_file_title(const std::string& file_path); // make track title & file name match
+    
+    void set_track_file_artist(int track_id, const std::string& artist_name);
+    void set_track_file_album(int track_id, const std::string& album_title);
 
     DatabaseManager database;
 

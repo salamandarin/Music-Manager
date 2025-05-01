@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS albums
 CREATE TABLE IF NOT EXISTS tracks
 (
     track_id          INTEGER PRIMARY KEY,
-    title             TEXT,
+    title             TEXT, -- TODO: make not null? (make getter non-optional too)
     artist_id         INTEGER,
     album_id          INTEGER,
     duration          INTEGER,
