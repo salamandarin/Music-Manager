@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Albums</string>
   </property>
   <widget class="QWidget" name="gridLayoutWidget">
    <property name="geometry">

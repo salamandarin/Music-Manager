@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Add Track</string>
   </property>
   <widget class="QDialogButtonBox" name="button_box">
    <property name="enabled">
@@ -157,12 +157,12 @@
        <widget class="QDateEdit" name="date_input">
         <property name="dateTime">
          <datetime>
-          <hour>18</hour>
+          <hour>0</hour>
           <minute>0</minute>
           <second>0</second>
           <year>2025</year>
           <month>1</month>
-          <day>1</day>
+          <day>2</day>
          </datetime>
         </property>
         <property name="maximumDate">
@@ -181,14 +181,11 @@
         <property name="calendarPopup">
          <bool>true</bool>
         </property>
-        <property name="timeSpec">
-         <enum>Qt::TimeSpec::LocalTime</enum>
-        </property>
         <property name="date">
          <date>
           <year>2025</year>
           <month>1</month>
-          <day>1</day>
+          <day>2</day>
          </date>
         </property>
        </widget>

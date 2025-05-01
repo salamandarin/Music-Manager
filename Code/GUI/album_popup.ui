@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Album</string>
   </property>
   <property name="toolTipDuration">
    <number>1</number>
