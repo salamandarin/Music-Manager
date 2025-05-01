@@ -465,7 +465,8 @@ Track DatabaseManager::get_track(int track_id) {
     bind_input_to_sql(sql, 1, track_id);
 
     // make sure track exists in db
-    if (sqlite3_step(sql) == SQLITE_ROW) { // execute
+    if (sqlite3_step(sql) == SQLITE_ROW) {
+        // execute & return row
         Track track = get_track_row(sql);
         sqlite3_finalize(sql); // clean up sql statement
         return track;
@@ -494,7 +495,8 @@ Album DatabaseManager::get_album(int album_id) {
     bind_input_to_sql(sql, 1, album_id);
 
     // make sure album exists in db
-    if (sqlite3_step(sql) == SQLITE_ROW) { // execute
+    if (sqlite3_step(sql) == SQLITE_ROW) {
+        // execute & return row
         Album album = get_album_row(sql);
         sqlite3_finalize(sql);  // clean up sql statement
         return album;
@@ -520,7 +522,8 @@ Artist DatabaseManager::get_artist(int artist_id) {
     bind_input_to_sql(sql, 1, artist_id);
 
     // make sure artist exists in db
-    if (sqlite3_step(sql) == SQLITE_ROW) { // execute
+    if (sqlite3_step(sql) == SQLITE_ROW) {
+        // execute & return row
         Artist artist = get_artist_row(sql);
         sqlite3_finalize(sql); // clean up sql statement
         return artist;
@@ -571,13 +574,10 @@ std::optional<std::string> DatabaseManager::get_track_title(int track_id) {
     // execute & return result
     return query_sql<std::string>(sql, extract_string);
 }
-std::optional<Artist> DatabaseManager::get_track_artist(int track_id) {
-    // prep & bind sql
-    sqlite3_stmt* sql = prepare_sql("SELECT artist_id FROM tracks WHERE track_id = ?");
-    bind_input_to_sql(sql, 1, track_id); // bind id
 
+std::optional<Artist> DatabaseManager::get_track_artist(int track_id) {
     // get artist id
-    std::optional<int> artist_id = query_sql<int>(sql, extract_int);
+    std::optional<int> artist_id = get_track_artist_id(track_id);
 
     // return artist if exists
     if (artist_id) {
@@ -588,13 +588,18 @@ std::optional<Artist> DatabaseManager::get_track_artist(int track_id) {
         return std::nullopt;
     }
 }
-std::optional<Album> DatabaseManager::get_track_album(int track_id) {
+std::optional<int> DatabaseManager::get_track_artist_id(int track_id) {
     // prep & bind sql
-    sqlite3_stmt* sql = prepare_sql("SELECT album_id FROM tracks WHERE track_id = ?");
+    sqlite3_stmt* sql = prepare_sql("SELECT artist_id FROM tracks WHERE track_id = ?");
     bind_input_to_sql(sql, 1, track_id); // bind id
 
+    // execute & return result
+    return query_sql<int>(sql, extract_int);
+}
+
+std::optional<Album> DatabaseManager::get_track_album(int track_id) {
     // get album id
-    std::optional<int> album_id = query_sql<int>(sql, extract_int);
+    std::optional<int> album_id = get_track_album_id(track_id);
 
     // return album if exists
     if (album_id) {
@@ -605,6 +610,15 @@ std::optional<Album> DatabaseManager::get_track_album(int track_id) {
         return std::nullopt;
     }
 }
+std::optional<int> DatabaseManager::get_track_album_id(int track_id) {
+    // prep & bind sql
+    sqlite3_stmt* sql = prepare_sql("SELECT album_id FROM tracks WHERE track_id = ?");
+    bind_input_to_sql(sql, 1, track_id); // bind id
+
+    // execute & return result
+    return query_sql<int>(sql, extract_int);
+}
+
 std::optional<Duration> DatabaseManager::get_track_duration(int track_id) {
     // prep & bind sql
     sqlite3_stmt* sql = prepare_sql("SELECT duration FROM tracks WHERE track_id = ?");

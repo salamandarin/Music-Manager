@@ -72,7 +72,9 @@ public:
     // get specific track data
     std::optional<std::string> get_track_title(int track_id);
     std::optional<Artist> get_track_artist(int track_id);
+    std::optional<int> get_track_artist_id(int track_id);
     std::optional<Album> get_track_album(int track_id);
+    std::optional<int> get_track_album_id(int track_id);
     std::optional<Duration> get_track_duration(int track_id);
     std::optional<Date> get_track_date(int track_id);
     std::optional<int> get_track_tracklist_num(int track_id);
