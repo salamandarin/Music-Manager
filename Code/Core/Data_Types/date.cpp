@@ -10,7 +10,7 @@ Date::Date(int month, int day, int year)
     validate_date();
 }
 
-void Date::validate_date() {
+void Date::validate_date() const {
     std::string base_message = "Tried to construct invalid Date: ";
     base_message += std::to_string(month.number()) + "/" + std::to_string(day) + "/" + std::to_string(year) + "\n";
     if (year == 0 && (month != 0 || day != 0)) {
@@ -113,11 +113,11 @@ void Date::operator--() {
 
 void Date::increment_year() {
     ++year;
-    handle_date_overflow();
+    clamp_excess_days();
 }
 void Date::decrement_year() {
     --year;
-    handle_date_overflow();
+    clamp_excess_days();
 }
 
 void Date::increment_month() {
@@ -128,10 +128,7 @@ void Date::increment_month() {
     else {
         month.set_month(month.number() + 1);
     }
-        // Clamp to last day of new month if needed
-        if (original_day > days_in_month()) {
-            day = days_in_month();
-        }
+    clamp_excess_days();
 }
 void Date::decrement_month() {
     if (month == 1) {
@@ -141,7 +138,7 @@ void Date::decrement_month() {
     else {
         month.set_month(month.number() - 1);
     }
-    handle_date_overflow();
+    clamp_excess_days();
 }
 
 // ---------- Addition / Subtraction ----------
@@ -296,11 +293,10 @@ int Date::days_in_month() const {
     }
 }
 
-void Date::handle_date_overflow() {
+void Date::clamp_excess_days() {
+    // Clamp to last day of month if overflow
     if (day > days_in_month()) {
-        increment_month();
-        int new_day = day - days_in_month();
-        day = new_day;
+        day = days_in_month();
     }
 }
 

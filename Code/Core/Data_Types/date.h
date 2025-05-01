@@ -99,9 +99,9 @@ private:
         std::string month_name;
     };
 
-    // Private member functions
-    void validate_date();
-    void handle_date_overflow();
+    // Private helper functions
+    void validate_date() const; // Throws errors
+    void clamp_excess_days();
 
     void increment_year();
     void decrement_year();
