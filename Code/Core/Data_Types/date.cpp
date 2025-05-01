@@ -6,14 +6,27 @@
 
 Date::Date(int month, int day, int year)
     :month{Month{month}}, day{day}, year{year} {
-    if (month < 0 || month > 12) {
-        throw std::runtime_error("Tried to construct Date with invalid month number. Month must be between 0-12.");
+
+    validate_date();
+}
+
+void Date::validate_date() {
+    std::string base_message = "Tried to construct invalid Date: ";
+    base_message += std::to_string(month.number()) + "/" + std::to_string(day) + "/" + std::to_string(year) + "\n";
+    if (year == 0 && (month != 0 || day != 0)) {
+        throw std::runtime_error(base_message + "Cannot set month or day without valid year");
+    }
+    if (month == 0 && day != 0) {
+        throw std::runtime_error(base_message + "Cannot set day without valid month");
+    }
+    if (month  < 0 || month > 12) {
+        throw std::runtime_error(base_message + "Month must be between 0-12");
     }
     if (day < 0 || day > days_in_month()) {
-        throw std::runtime_error("Tried to construct Date with invalid day. Day cannot be less than 0 or greater than days in month");
+        throw std::runtime_error(base_message + "Day cannot be negative or greater than days in month");
     }
-    if (year < 0 || year > 2500) {
-        throw std::runtime_error("Tried to construct Date with year outside the range of 0-2500");
+    if (year < 0 || year > 9999) {
+        throw std::runtime_error(base_message + "Year shouldn't be outside the range of 0-9999");
     }
 }
 
@@ -100,11 +113,11 @@ void Date::operator--() {
 
 void Date::increment_year() {
     ++year;
-    validate_days_in_month();
+    handle_date_overflow();
 }
 void Date::decrement_year() {
-    ++year;
-    validate_days_in_month();
+    --year;
+    handle_date_overflow();
 }
 
 void Date::increment_month() {
@@ -113,10 +126,12 @@ void Date::increment_month() {
         increment_year();
     }
     else {
-        int new_month = month.number + 1;
-        month.set_month(new_month);
+        month.set_month(month.number() + 1);
     }
-    validate_days_in_month();
+        // Clamp to last day of new month if needed
+        if (original_day > days_in_month()) {
+            day = days_in_month();
+        }
 }
 void Date::decrement_month() {
     if (month == 1) {
@@ -124,10 +139,9 @@ void Date::decrement_month() {
         decrement_year();
     }
     else {
-        int new_month = month.number - 1;
-        month.set_month(new_month);
+        month.set_month(month.number() - 1);
     }
-    validate_days_in_month();
+    handle_date_overflow();
 }
 
 // ---------- Addition / Subtraction ----------
@@ -164,10 +178,10 @@ Date Date::subtract_time(int days, int months, int years) const {
 
 // ---------- Getters ----------
 int Date::get_month_num() const {
-    return month.number;
+    return month.number();
 }
 std::string Date::get_month_name() const {
-    return month.name;
+    return month.name();
 }
 int Date::get_day() const {
     return day;
@@ -179,12 +193,15 @@ int Date::get_year() const {
 // ---------- Setters ----------
 void Date::set_month(int month_num) {
     month.set_month(month_num);
+    validate_date();
 }
 void Date::set_day(int day) {
     this->day = day;
+    validate_date();
 }
 void Date::set_year(int year) {
     this->year = year;
+    validate_date();
 }
 
 // ---------- Conversions ----------
@@ -193,53 +210,59 @@ std::string Date::to_string() const {
     if (year == 0) return ""; // Empty string for null / invalid date
     
     // YYYY
-    if (month.number == 0) {
+    if (month == 0) {
         return std::to_string(year);
     }
     // MM/YYYY
     if (day == 0) {
-        return std::to_string(month.number) + "/" + std::to_string(year);
+        return std::to_string(month.number()) + "/" + std::to_string(year);
     }
     // MM/DD/YYYY
-    return std::to_string(month.number) + "/" + std::to_string(day) + "/" + std::to_string(year);
+    return std::to_string(month.number()) + "/" + std::to_string(day) + "/" + std::to_string(year);
 }
 // Date -> string (Month DD, YYYY format)
 std::string Date::to_long_string() const {
     if (year == 0) return ""; // Empty string for null / invalid date
     
     // YYYY
-    if (month.number == 0) {
+    if (month == 0) {
         return std::to_string(year);
     }
     // Month YYYY
     if (day == 0) {
-        return month.name + " " + std::to_string(year);
+        return month.name() + " " + std::to_string(year);
     }
     // Month DD, YYYY
-    return month.name + " " + std::to_string(day) + ", " + std::to_string(year);
+    return month.name() + " " + std::to_string(day) + ", " + std::to_string(year);
 }
 
 std::optional<int64_t> Date::to_unix() const {
     if (year == 0) return std::nullopt; // Return null if null or invalid date
 
+    // Throw error if too big for 32-bit time_t
+    if (year >= 2038 && sizeof(std::time_t) == 4) {
+        std::string message = "Date.to_unix() failed: Cannot convert dates past 2038 on this device.";
+        throw std::runtime_error(message + " Need 64-bit time_t, not 32-bit");
+    }
+
     tm time;
     time.tm_year = year - 1900; // tm counts from 1900
-    time.tm_mon = month.number - 1;
+    time.tm_mon = month.number() - 1;
     time.tm_mday = day;
     time.tm_hour = 0;
     time.tm_min = 0;
     time.tm_sec = 0;
     time.tm_isdst = -1;
     
-    // convert to unix
-    std::time_t unix_time = mktime(&time); // uses local time
+    // Convert to unix
+    std::time_t unix_time = mktime(&time); // Uses local time
     if (unix_time == -1) {
         throw std::runtime_error("Failed trying to convert date to unix time");
     }
     return static_cast<int64_t>(unix_time);
 }
 Date Date::from_unix(int64_t unix_time) {
-    // convert int64_t to time_t (check for overflow)
+    // Convert int64_t to time_t (check for overflow)
     if (unix_time < static_cast<int64_t>(std::numeric_limits<std::time_t>::min()) || 
         unix_time > static_cast<int64_t>(std::numeric_limits<std::time_t>::max())) {
         throw std::runtime_error("int64_t unix time value is out of range for time_t");
@@ -247,7 +270,7 @@ Date Date::from_unix(int64_t unix_time) {
     std::time_t unix_converted = static_cast<std::time_t>(unix_time);
 
     tm time;
-    if (!localtime_r(&unix_converted, &time)) { // converts to local time (thread safe, but not cross-platform)
+    if (!localtime_r(&unix_converted, &time)) { // Converts to local time (thread safe, but not cross-platform)
         throw std::runtime_error("Failed to convert unix time to date");
     }
     return Date{time.tm_mon + 1, time.tm_mday, time.tm_year + 1900};
@@ -273,7 +296,7 @@ int Date::days_in_month() const {
     }
 }
 
-void Date::validate_days_in_month() {
+void Date::handle_date_overflow() {
     if (day > days_in_month()) {
         increment_month();
         int new_day = day - days_in_month();
@@ -282,7 +305,7 @@ void Date::validate_days_in_month() {
 }
 
 std::ostream& operator<<(std::ostream& os, const Date date) {
-    os << date.month.name << " " << date.day << ", " << date.year;
+    os << date.month.name() << " " << date.day << ", " << date.year;
     return os;
 }
 
@@ -290,44 +313,132 @@ std::ostream& operator<<(std::ostream& os, const Date date) {
 //--------------------------------------------------------------------------------
 //      MONTH STRUCT
 //--------------------------------------------------------------------------------
-Date::Month::Month(int number)
-    :number{number}, name{find_month_name(number)} {}
+// Constructor
+Date::Month::Month(int month_number)
+    :month_number{month_number}, month_name{find_month_name(month_number)} {}
 
-std::string Date::Month::find_month_name(int month_number) const {
-    if (month_number == 0) {
+// Assignment operator
+Date::Month& Date::Month::operator=(const Month& rhs) {
+    if (this == &rhs) {
+        return *this;
+    }
+    month_number = rhs.number();
+    month_name = find_month_name(month_number);
+    return *this;
+}
+
+// ---------- Set & Get ----------
+void Date::Month::set_month(int month_number)  {
+    this->month_number = month_number;
+    this->month_name = find_month_name(month_number);
+}
+int Date::Month::number() const {
+    return month_number;
+}
+std::string Date::Month::name() const {
+    return month_name;
+}
+
+// ---------- Operators ----------
+// ==
+bool Date::Month::operator==(const Month& rhs) const {
+    return month_number == rhs.number();
+}
+bool Date::Month::operator==(int rhs) const {
+    return month_number == rhs;
+}
+bool Date::Month::operator==(const std::string& rhs) const {
+    return to_lowercase(month_name) == to_lowercase(rhs);
+}
+// !=
+bool Date::Month::operator!=(const Month& rhs) const {
+    return !(*this == rhs);
+}
+bool Date::Month::operator!=(int rhs) const {
+    return !(*this == rhs);
+}
+bool Date::Month::operator!=(const std::string& rhs) const {
+    return !(*this == rhs);
+}
+
+// <
+bool Date::Month::operator<(const Month& rhs) const {
+    return month_number < rhs.number();
+}
+bool Date::Month::operator<(int rhs) const {
+    return month_number < rhs;
+}
+bool Date::Month::operator<(const std::string& rhs) const {
+    return month_number < find_month_number(rhs);
+}
+// >
+bool Date::Month::operator>(const Month& rhs) const {
+    return month_number > rhs.number();
+}
+bool Date::Month::operator>(int rhs) const {
+    return month_number > rhs;
+}
+bool Date::Month::operator>(const std::string& rhs) const {
+    return month_number > find_month_number(rhs);
+}
+
+// <=
+bool Date::Month::operator<=(const Month& rhs) const {
+    return *this < rhs || *this == rhs;
+}
+bool Date::Month::operator<=(int rhs) const {
+    return *this < rhs || *this == rhs;
+}
+bool Date::Month::operator<=(const std::string& rhs) const {
+    return *this < rhs || *this == rhs;
+}
+// >=
+bool Date::Month::operator>=(const Month& rhs) const {
+    return *this > rhs || *this == rhs;
+}
+bool Date::Month::operator>=(int rhs) const {
+    return *this > rhs || *this == rhs;
+}
+bool Date::Month::operator>=(const std::string& rhs) const {
+    return *this > rhs || *this == rhs;
+}
+
+// ---------- Helpers ----------
+std::string Date::Month::find_month_name(int number) const {
+    if (number == 0) {
         return "";
     }
-    if (month_number == 1) {
+    if (number == 1) {
         return "January";
     }
-    if (month_number == 2) {
+    if (number == 2) {
         return "February";
     }
-    if (month_number == 3) {
+    if (number == 3) {
         return "March";
     }
-    if (month_number == 4) {
+    if (number == 4) {
         return "April";
     }
-    if (month_number == 5) {
+    if (number == 5) {
         return "May";
     }
-    if (month_number == 6) {
+    if (number == 6) {
         return "June";
     }
-    if (month_number == 7) {
+    if (number == 7) {
         return "July";
     }
-    if (month_number == 8) {
+    if (number == 8) {
         return "August";
     }
-    if (month_number == 9) {
+    if (number == 9) {
         return "September";
     }
-    if (month_number == 10) {
+    if (number == 10) {
         return "October";
     }
-    if (month_number == 11) {
+    if (number == 11) {
         return "November";
     }
     if (number == 12) {
@@ -336,8 +447,8 @@ std::string Date::Month::find_month_name(int month_number) const {
         throw std::runtime_error("Tried to assign name to invalid month number. Only use ints from 0-12");
     }
 }
-int Date::Month::find_month_number(const std::string& month_name) const {
-    std::string lowercase_name = to_lowercase(month_name);
+int Date::Month::find_month_number(const std::string& name) const {
+    std::string lowercase_name = to_lowercase(name);
     if (lowercase_name == "") {
         return 0;
     }
@@ -379,54 +490,6 @@ int Date::Month::find_month_number(const std::string& month_name) const {
     } else {
         throw std::runtime_error("Tried to assign number to invalid month name. Please spell better");
     }
-}
-
-std::string Date::Month::set_month(int month_number)  {
-    number = month_number;
-    name = find_month_name(month_number);
-}
-
-// ---------- Operators ----------
-// ==
-bool Date::Month::operator==(const Month& rhs) const {
-    return number == rhs.number;
-}
-bool Date::Month::operator==(int rhs) const {
-    return number == rhs;
-}
-bool Date::Month::operator==(const std::string& rhs) const {
-    return to_lowercase(name) == to_lowercase(rhs);
-}
-
-// Assignment operator
-Date::Month& Date::Month::operator=(const Month& rhs) {
-    if (this == &rhs) {
-        return *this;
-    }
-    number = rhs.number;
-    name = rhs.name;
-    return *this;
-}
-
-// <
-bool Date::Month::operator<(const Month& rhs) const {
-    return number < rhs.number;
-}
-bool Date::Month::operator<(int rhs) const {
-    return number < rhs;
-}
-bool Date::Month::operator<(const std::string& rhs) const {
-    return number < find_month_number(rhs);
-}
-// >
-bool Date::Month::operator>(const Month& rhs) const {
-    return number > rhs.number;
-}
-bool Date::Month::operator>(int rhs) const {
-    return number > rhs;
-}
-bool Date::Month::operator>(const std::string& rhs) const {
-    return number > find_month_number(rhs);
 }
 
 

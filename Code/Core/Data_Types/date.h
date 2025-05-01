@@ -54,34 +54,54 @@ public:
 
 private:
     // Month
-    struct Month {
-        Month(int number);
+    class Month {
+    public:
+        Month(int number); // Constructor
+        Month& operator=(const Month& rhs); // Assignment operator
 
-        int number;
-        std::string name;
+        // Set & get data
+        void set_month(int month_number);
+        int number() const;
+        std::string name() const;
 
-        std::string find_month_name(int month_number) const;
-        int find_month_number(const std::string& month_name) const;
-
-        std::string set_month(int month_number);
-
+        // Operators
+        // ==
         bool operator==(const Month& rhs) const;
         bool operator==(int rhs) const;
         bool operator==(const std::string& rhs) const;
-
-        Month& operator=(const Month& rhs); // Assignment operator
-
+        // !=
+        bool operator!=(const Month& rhs) const;
+        bool operator!=(int rhs) const;
+        bool operator!=(const std::string& rhs) const;
+        // <
         bool operator<(const Month& rhs) const;
         bool operator<(int rhs) const;
         bool operator<(const std::string& rhs) const;
-
+        // >
         bool operator>(const Month& rhs) const;
         bool operator>(int rhs) const;
         bool operator>(const std::string& rhs) const;
+        // <=
+        bool operator<=(const Month& rhs) const;
+        bool operator<=(int rhs) const;
+        bool operator<=(const std::string& rhs) const;
+        // >=
+        bool operator>=(const Month& rhs) const;
+        bool operator>=(int rhs) const;
+        bool operator>=(const std::string& rhs) const;
+
+
+    private:
+        std::string find_month_name(int month_number) const;
+        int find_month_number(const std::string& month_name) const;
+
+        int month_number;
+        std::string month_name;
     };
 
     // Private member functions
-    void validate_days_in_month();
+    void validate_date();
+    void handle_date_overflow();
 
     void increment_year();
     void decrement_year();
