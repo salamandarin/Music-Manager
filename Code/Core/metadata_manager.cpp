@@ -229,7 +229,7 @@ std::string MetadataManager::get_image_extension(const std::string& mime_type) {
 
 std::string MetadataManager::write_image_to_file(const TagLib::ByteVector& image_data, const std::string& extension) {
     // construct image file path (naming it after music file)
-    std::string music_file_name = FileManager::get_file_name(file_path);
+    std::string music_file_name = FileManager::get_file_name(file_path).string();
     std::string image_path = FileManager::make_image_file_path(music_file_name, extension);
 
     // write to file

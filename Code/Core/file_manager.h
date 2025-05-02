@@ -7,36 +7,34 @@
 
 namespace filesystem = std::filesystem;
 
-const std::string MUSIC_FOLDER = "Music_Files";
-const std::string IMAGES_FOLDER = "Images";
+const filesystem::path MUSIC_FOLDER = "Music_Files";
+const filesystem::path IMAGES_FOLDER = "Images";
 
 class FileManager {
 public:
     FileManager() = default;
 
     // save / relocate files (generate path + move to correct location)
-    static std::string relocate_music_file(const std::string& current_path, const Track& track, bool is_nested);
-    static std::string save_image_file(const std::string& current_path, std::string image_name);
+    static std::string relocate_music_file(const filesystem::path& current_path, const Track& track, bool is_nested);
+    static std::string save_image_file(const filesystem::path& current_path, const std::string& image_name);
 
     // generate file paths
-    static std::string make_image_file_path(const std::string& name, const std::string& image_extension); // returns new image path
-    static std::string make_music_file_path(const std::string& current_path, const Track& track_data, bool is_nested); // returns new file path
+    static std::string make_image_file_path(const std::string& image_name, const std::string& image_extension); // returns new image path
+    static std::string make_music_file_path(const filesystem::path& current_path, const Track& track_data, bool is_nested); // returns new file path
 
     // file operations
-    static std::string move_file(const std::string& old_path, std::string new_path, const std::string& boundary_folder=""); // handles folder cleanup too
-    static void delete_file(const std::string& file_path, const std::string& boundary_folder=""); // handles folder cleanup too
+    static std::string move_file(const filesystem::path& old_path, filesystem::path new_path, const filesystem::path& boundary_folder=""); // handles folder cleanup too
+    static void delete_file(const filesystem::path& file_path, const filesystem::path& boundary_folder=""); // handles folder cleanup too
 
     // helper functions
-    static std::string rename_file(const std::string& file_path, std::string new_file_name); // returns new path
+    static std::string rename_file(const filesystem::path& file_path, const std::string& new_file_name); // returns new path
     static bool exists(const filesystem::path& path); // check if file/folder exists
-    static std::string get_file_name(const std::string& file_path); // get just file name (without full path or extension)
-    static std::string get_extension(const std::string& file_path);
-    static std::string get_parent_path(const std::string& file_path); // get parent path (without "/" at end)
+    static filesystem::path get_file_name(const filesystem::path& file_path); // without extension or full path
 
     // folder functions
-    static void delete_folder(const std::string& folder_path); // delete folder and all files inside (without any empty folder cleanup)
-    static std::vector<std::string> get_files_from_folder(const std::string& folder_path);
-    static bool is_folder_empty(const std::string& folder_path);
+    static void delete_folder(const filesystem::path& folder_path); // delete folder and all files inside (without any empty folder cleanup)
+    static std::vector<std::string> get_files_from_folder(const filesystem::path& folder_path);
+    static bool is_folder_empty(const filesystem::path& folder_path);
     static void delete_empty_parent_folders(filesystem::path current_path, const filesystem::path& boundary_folder);
 
 private:
@@ -45,5 +43,5 @@ private:
 
     // file name helpers
     static std::string sanitize_file_name(std::string name);
-    static std::string number_duplicate_paths(std::string desired_path);
+    static filesystem::path number_duplicate_paths(const filesystem::path& desired_path);
 };

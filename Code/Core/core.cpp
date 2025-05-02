@@ -585,7 +585,7 @@ void Core::delete_entire_library(const std::string& extra_folder_to_delete) {
     if (FileManager::exists(IMAGES_FOLDER)) {
         FileManager::delete_folder(IMAGES_FOLDER);
     }
-    
+
     // delete other folder (if passed in)
     if (!extra_folder_to_delete.empty()) { // check if there is extra_folder_to_delete
         FileManager::delete_folder(extra_folder_to_delete);
@@ -617,7 +617,7 @@ std::string Core::set_file_title(const std::string& file_path) {
 
     // make title = file name
     if (track_title.empty()) { // if no track title
-        std::string file_name = FileManager::get_file_name(file_path);
+        std::string file_name = FileManager::get_file_name(file_path).string();
         metadata_manager.set_track_title(file_name);
         return file_path; // return unchanged file path
     }
