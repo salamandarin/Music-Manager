@@ -48,15 +48,15 @@ Track MetadataManager::get_data() {
 
 // ---------- Simple Data Getters ----------
 std::string MetadataManager::get_track_title() {
-    std::string title_string = file_ref.tag()->title().to8Bit();
+    std::string title_string = file_ref.tag()->title().to8Bit(true);
     return title_string;
 }
 std::string MetadataManager::get_artist() {
-    std::string artist_string = file_ref.tag()->artist().to8Bit();
+    std::string artist_string = file_ref.tag()->artist().to8Bit(true);
     return artist_string;
 }
 std::string MetadataManager::get_album() {
-    std::string album_string = file_ref.tag()->album().to8Bit();
+    std::string album_string = file_ref.tag()->album().to8Bit(true);
     return album_string;
 }
 int MetadataManager::get_tracklist_num() {
@@ -105,7 +105,7 @@ std::string MetadataManager::save_cover_art() {
             TagLib::FLAC::Picture* picture = picture_list[0];
 
             // get image file type & extension
-            std::string mime_type = picture->mimeType().to8Bit();
+            std::string mime_type = picture->mimeType().to8Bit(true);
             std::string extension = get_image_extension(mime_type);
 
             // save image to file, return path
@@ -196,7 +196,7 @@ std::string MetadataManager::save_id3_cover_art(TagLib::ID3v2::Tag* id3v2_tag) {
         }
 
         // get image file type & extension
-        std::string mime_type = picture_frame->mimeType().to8Bit();
+        std::string mime_type = picture_frame->mimeType().to8Bit(true);
         std::string extension = get_image_extension(mime_type);
 
         // save image to file, return path
