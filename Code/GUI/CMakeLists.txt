@@ -1,4 +1,5 @@
 add_library(GUI
+        gui_utils.cpp
         main_window.cpp main_window.ui
         track_popup.cpp track_popup.ui
         settings_popup.cpp settings_popup.ui

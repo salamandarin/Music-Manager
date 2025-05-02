@@ -6,7 +6,7 @@ add_library(Core
 
         # Data_Types
         Data_Types/duration.cpp
-        Data_Types/date.cpp # TODO: DELETE
+        Data_Types/date.cpp
 )
 target_compile_options(Core PUBLIC -std=c++17)
 

@@ -4,9 +4,9 @@
 #include "core.h"
 #include "track_popup.h"
 #include "add_track_popup.h"
+#include "gui_utils.h"
 #include <QLabel>
 #include <QInputDialog>
-#include <QMessageBox>
 
 enum Columns {
     IMAGE_COLUMN = 0,
@@ -119,23 +119,8 @@ void TracksPage::update_table() {
     // fill in table
     for (int i = 0; i < tracks.size(); ++i) {   
         // -------------------- IMAGE --------------------
-        // get either default or actual image path
-        std::string default_image = "Code/GUI/Default_Images/default_track.jpg"; // default image
-        std::string image_path = default_image; // set to default first
-        if (!tracks[i].image_path.empty()) { // if has image
-            image_path = tracks[i].image_path; // replace default image with real one
-        }
-        // set image
-        QPixmap image_pixmap(QString::fromStdString(image_path));
-        if (image_pixmap.isNull()) { // handle error if image failed to load
-            QMessageBox::warning(nullptr, "Warning", QString::fromStdString("Failed to load image from: " + image_path));
-            image_pixmap.load(QString::fromStdString(default_image)); // set to default image
-        }
-        // put image in a QLabel for scaling
-        QLabel* image_label = new QLabel();
-        image_label->setPixmap(image_pixmap);
-        image_label->setFixedSize(50, 50); // set size
-        image_label->setScaledContents(true); // let QLabel scale it
+        QLabel* image_label = create_image_label(tracks[i].image_path, DEFAULT_TRACK_IMAGE);
+        image_label->setFixedSize(50, 50); // set image size
         // put image (inside QLabel) into row
         ui->tracks_table->setCellWidget(i, IMAGE_COLUMN, image_label);
 
