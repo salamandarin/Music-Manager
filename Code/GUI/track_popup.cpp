@@ -3,6 +3,7 @@
 #include "ui_track_popup.h"
 #include "core.h"
 #include <QPushButton>
+#include <QMessageBox>
 
 TrackPopup::TrackPopup(Core& core, int track_id, QWidget* parent)
     :core{core}, track_id{track_id}, QDialog{parent}, ui{new Ui::TrackPopup} {
@@ -37,14 +38,16 @@ void TrackPopup::update_data() {
 
     // -------------------- COVER ART --------------------
     // get image path (either actual image, or default)
-    std::string image_path = "Code/GUI/Default_Images/default_track.jpg"; // default image
+    std::string default_image = "Code/GUI/Default_Images/default_track.jpg"; // default image
+    std::string image_path = default_image; // set to default first
     if (!track.image_path.empty()) { // if has image
         image_path = track.image_path; // replace default image with real one
     }
     // set image
     QPixmap image(QString::fromStdString(image_path));
-    if (image.isNull()) { // throw error if image failed to load
-        throw std::runtime_error("Failed to load image from " + image_path);
+    if (image.isNull()) { // handle error if image failed to load
+        QMessageBox::warning(nullptr, "Warning", QString::fromStdString("Failed to load image from: " + image_path));
+        image.load(QString::fromStdString(default_image)); // set to default image
     }
     ui->cover_art->setScaledContents(true); // let QLabel scale it
     ui->cover_art->setPixmap(image); // set cover art

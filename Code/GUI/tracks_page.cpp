@@ -6,6 +6,7 @@
 #include "add_track_popup.h"
 #include <QLabel>
 #include <QInputDialog>
+#include <QMessageBox>
 
 enum Columns {
     IMAGE_COLUMN = 0,
@@ -119,14 +120,16 @@ void TracksPage::update_table() {
     for (int i = 0; i < tracks.size(); ++i) {   
         // -------------------- IMAGE --------------------
         // get either default or actual image path
-        std::string image_path = "Code/GUI/Default_Images/default_track.jpg"; // default image
+        std::string default_image = "Code/GUI/Default_Images/default_track.jpg"; // default image
+        std::string image_path = default_image; // set to default first
         if (!tracks[i].image_path.empty()) { // if has image
             image_path = tracks[i].image_path; // replace default image with real one
         }
         // set image
         QPixmap image_pixmap(QString::fromStdString(image_path));
-        if (image_pixmap.isNull()) { // throw error if image failed to load
-            throw std::runtime_error("Failed to load image from " + image_path);
+        if (image_pixmap.isNull()) { // handle error if image failed to load
+            QMessageBox::warning(nullptr, "Warning", QString::fromStdString("Failed to load image from: " + image_path));
+            image_pixmap.load(QString::fromStdString(default_image)); // set to default image
         }
         // put image in a QLabel for scaling
         QLabel* image_label = new QLabel();
