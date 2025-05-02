@@ -37,7 +37,7 @@ void TrackPopup::update_data() {
     Track track = core.get_track(track_id);
 
     // -------------------- COVER ART --------------------
-    // get image path (either actual image, or default)
+    // set cover art (either actual or default)
     set_label_image(track.image_path, DEFAULT_TRACK_IMAGE, ui->cover_art);
 
     // -------------------- MAIN INFO --------------------

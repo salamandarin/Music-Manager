@@ -119,8 +119,10 @@ void TracksPage::update_table() {
     // fill in table
     for (int i = 0; i < tracks.size(); ++i) {   
         // -------------------- IMAGE --------------------
-        QLabel* image_label = create_image_label(tracks[i].image_path, DEFAULT_TRACK_IMAGE);
-        image_label->setFixedSize(50, 50); // set image size
+        // set either actual or default image
+        QLabel* image_label = new QLabel();
+        image_label->setFixedSize(50, 50); // image size
+        set_image(tracks[i].image_path, DEFAULT_TRACK_IMAGE); // set image
         // put image (inside QLabel) into row
         ui->tracks_table->setCellWidget(i, IMAGE_COLUMN, image_label);
 
