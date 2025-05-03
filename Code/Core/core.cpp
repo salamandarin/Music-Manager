@@ -178,7 +178,6 @@ void Core::set_track_title(int track_id, const std::string& new_track_title) {
         // update image path in database
         database.set_track_image_path(track_id, new_image_path);
     }
-
 }
 
 // ------------------------------ SET TRACK ARTIST ------------------------------

@@ -24,7 +24,7 @@ public:
 
 
     // ------------------------- ADD / REMOVE OBJECTS -------------------------
-    // add new objects to DB
+    // add new objects to db
     void add_track(const Track& track);
 
     void add_album(const Album& album);
@@ -35,7 +35,7 @@ public:
 
     void add_person(const std::string& person);
 
-    // remove objects from DB
+    // remove objects from db
     void remove_track(int track_id);
     void remove_album(int album_id);
     void remove_artist(int artist_id);

@@ -38,7 +38,7 @@ public:
     void remove_person(int person_id);
 
     // ------------------------- SET DATA -------------------------
-    // set track data (in both DB & metadata if applicable)
+    // set track data (in both database & metadata if applicable)
     void set_track_title(int track_id, const std::string& new_track_title);
 
     void set_track_artist(int track_id, const std::string& new_artist_name);

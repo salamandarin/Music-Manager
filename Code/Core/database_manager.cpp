@@ -60,18 +60,12 @@ DatabaseManager& DatabaseManager::operator=(DatabaseManager&& other) noexcept {
 //                                  ADD OBJECTS
 //--------------------------------------------------------------------------------
 void DatabaseManager::add_track(const Track& track) { 
-    // check if exists in DB already
-    std::optional<int> track_id = get_track_id(track.title);
-    if (track_id) {
-        return; // return early if found
-    }
-
     // handle adding new cascading data
-    // add new artist (if not in DB)
+    // add new artist (if not in db)
     if (!track.artist.empty()) { // if artist is NOT empty
         add_artist(track.artist);
     }
-    // add new album (if not in DB)
+    // add new album (if not in db)
     if (!track.album.empty()) { // if album is NOT empty
         Album album;
         album.title = track.album;
@@ -100,14 +94,14 @@ void DatabaseManager::add_track(const Track& track) {
     execute_sql(sql);
 }
 void DatabaseManager::add_album(const Album& album) {
-    // check if exists in DB already
+    // check if title exists in db already
     std::optional<int> album_id = get_album_id(album.title);
     if (album_id) {
         return; // return early if found
     }
 
     // handle adding new cascading data
-    // add new artist (if not in DB)
+    // add new artist (if not in db)
     if (!album.artist.empty()) { // if artist is NOT empty
         add_artist(album.artist);
     }
@@ -137,7 +131,7 @@ void DatabaseManager::add_album(const std::string& album_title) {
     add_album(new_album); // calls other function
 }
 void DatabaseManager::add_artist(const Artist& artist) {
-    // check if exists in DB already
+    // check if name exists in db already
     std::optional<int> artist_id = get_artist_id(artist.name);
     if (artist_id) {
         return; // return early if found
@@ -169,7 +163,7 @@ void DatabaseManager::add_artist(const std::string& artist_name) {
     add_artist(new_artist); // calls other function
 }
 void DatabaseManager::add_person(const std::string& person) {
-    // check if exists in DB already
+    // check if name exists in db already
     std::optional<int> person_id = get_person_id(person);
     if (person_id) {
         return; // return early if found
