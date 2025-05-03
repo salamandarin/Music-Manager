@@ -18,6 +18,8 @@ private slots:
     void restore_defaults();
 
 private:
+    void update_checkboxes();
+    
     Ui::SettingsPopup* ui;
     Core& core;
 };

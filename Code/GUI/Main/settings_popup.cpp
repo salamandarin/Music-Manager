@@ -6,7 +6,9 @@
 SettingsPopup::SettingsPopup(Core& core, QWidget* parent)
     :core{core}, QDialog{parent}, ui{new Ui::SettingsPopup} {
     
+    // gui setup
     ui->setupUi(this);
+    update_checkboxes(); // check/uncheck boxes to reflect actual settings
 
     // connect signals to functions
     // checkboxes
@@ -31,11 +33,18 @@ SettingsPopup::~SettingsPopup() {
     delete ui;
 }
 
+// check/uncheck boxes to reflect actual settings
+void SettingsPopup::update_checkboxes() {
+    ui->nested_check->setChecked(core.get_is_nested());
+    ui->copy_files_check->setChecked(core.get_copy_music_files());
+    // TODO: add other settings if added (CAREFUL OF T/F VALUE)
+}
+
 void SettingsPopup::restore_defaults() {
     core.set_is_nested(true);
-    ui->nested_check->setChecked(true);
-
     core.set_copy_music_files(true);
-    ui->copy_files_check->setChecked(true);
     // TODO: add other settings if added (CAREFUL OF T/F VALUE)
+
+    // properly check/uncheck boxes to match
+    update_checkboxes();
 }

@@ -339,8 +339,8 @@ std::unordered_map<std::string, bool> DatabaseManager::get_all_settings() {
 
     // execute & grab all data for each row
     while (sqlite3_step(sql) == SQLITE_ROW) {
-        std::optional<std::string> setting_name = extract_string(sql);
-        std::optional<bool> setting_value = extract_bool(sql);
+        std::optional<std::string> setting_name = extract_string(sql); // column 0
+        std::optional<bool> setting_value = extract_bool(sql, 1); // column 1
         if (!setting_name || !setting_value) {
             std::string name = setting_name.value_or("");
             throw std::runtime_error("Found null setting/value in database:\nSetting: '" + name + "'");

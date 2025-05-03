@@ -21,8 +21,8 @@ public:
 
     // ------------------------- ADD OBJECTS -------------------------
     // add tracks
-    void add_track(const std::string& file_path); // track w/ file
-    void add_track(Track& track); // track w/ or w/o file
+    void add_track(std::string file_path); // track w/ file
+    void add_track(Track track); // track w/ or w/o file
     void add_tracks_from_folder(const std::string& folder_path);
 
     // add other objects

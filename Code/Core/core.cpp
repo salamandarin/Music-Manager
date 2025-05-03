@@ -7,8 +7,7 @@
 //                                  CONSTRUCTOR
 //--------------------------------------------------------------------------------
 Core::Core()
-    :database{}, is_nested{true}, copy_music_files{true} {
-
+    :database{} {
         // grab settings from database
         std::unordered_map<std::string, bool> settings = database.get_all_settings();
         is_nested = settings.at("is_nested");
@@ -29,6 +28,7 @@ void Core::set_is_nested(bool new_value) {
     is_nested = new_value;
     database.set_setting_value("is_nested", new_value);
 
+    // rearrange file structure (to either nested or flat)
     update_file_structure();
 }
 
@@ -49,9 +49,9 @@ void Core::set_copy_music_files(bool new_value) {
 //--------------------------------------------------------------------------------
 
 // ---------- Add Track w/ File ----------
-void Core::add_track(const std::string& original_file_path) {
+void Core::add_track(std::string file_path) {
     // make track title & file name match
-    std::string file_path = set_file_title(original_file_path);
+    file_path = set_file_title(file_path);
 
     // gather metadata from track 
     MetadataManager metadata_manager{file_path};
@@ -59,19 +59,18 @@ void Core::add_track(const std::string& original_file_path) {
     
     // TODO: MAKE GET / EXTRACT INFO FROM FILE FUNCTION (that gets file info too) (+ maybe calls save cover art)
 
-    // save cover art image file (if exists)
+    // save cover art from metadata (if exists)
     track.image_path = metadata_manager.save_cover_art();
 
-    // move music file to correct location
-    track.file_path = FileManager::relocate_music_file(track.file_path, track, is_nested);
-    // TODO: MAKE IT COPY ON ONLY ADD (all else is moving) IF BOOL INSIDE CLASS = TRUE (also images ALWAYS COPY)!!!!!!!!!!!
+    // save music file to correct location
+    track.file_path = FileManager::save_music_file(track.file_path, track, is_nested, copy_music_files);
 
     // log info to database
     database.add_track(track);
 }
 
 // ---------- Add Track w/ or w/o File ----------
-void Core::add_track(Track& track) {
+void Core::add_track(Track track) {
     // if no file attached 
     if (track.file_path.empty()) { 
         // grab image file if included, save new path
@@ -322,6 +321,7 @@ void Core::set_track_tracklist_num(int track_id, int new_tracklist_num) {
 // ------------------------------ SET TRACK FILE ------------------------------
 void Core::set_track_file(int track_id, const std::string& file_path) {
     // TODO: CODE
+    // TODO: EITHER COPY OR MOVE DEPENDING ON "copy_music_files" bool (do same as add_track())
     // TODO: IF NO FILE - ADD NEW FILE TO PROGRAM, ATTACHING TO THIS TRACK
     // TODO: IF HAS FILE - REPLACE THAT FILE, ADD THIS ONE
     // TODO: put new path in database

@@ -14,8 +14,9 @@ class FileManager {
 public:
     FileManager() = default;
 
-    // save / relocate files (generate path + move to correct location)
-    static std::string relocate_music_file(const filesystem::path& current_path, const Track& track, bool is_nested);
+    // save files (generate path + move/copy to correct location)
+    static std::string save_music_file(const filesystem::path& current_path,const Track& track,
+                                bool is_nested, bool copy_music_files);
     static std::string save_image_file(const filesystem::path& current_path, const std::string& image_name);
 
     // generate file paths

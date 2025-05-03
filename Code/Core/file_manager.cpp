@@ -10,9 +10,15 @@ namespace filesystem = std::filesystem;
 //--------------------------------------------------------------------------------
 //                                  SAVE FILES
 //--------------------------------------------------------------------------------
-std::string FileManager::relocate_music_file(const filesystem::path& current_path, const Track& track, bool is_nested) {
+std::string FileManager::save_music_file(const filesystem::path& current_path,const Track& track,
+                                        bool is_nested, bool copy_music_files) {
     filesystem::path new_path = make_music_file_path(current_path, track, is_nested);
-    new_path = move_file(current_path, new_path, MUSIC_FOLDER);
+    if (copy_music_files) {
+        new_path = copy_file(current_path, new_path);
+    }
+    else {
+        new_path = move_file(current_path, new_path, MUSIC_FOLDER);
+    }
     return new_path.string();
 }
 
@@ -20,8 +26,8 @@ std::string FileManager::save_image_file(const filesystem::path& current_path, c
     // make new path (with given name)
     filesystem::path new_path = make_image_file_path(image_name, current_path.extension());
 
-    // move to images folder 
-    new_path = move_file(current_path, new_path, IMAGES_FOLDER);
+    // copy to images folder
+    new_path = copy_file(current_path, new_path); // images always copy
 
     return new_path.string();
 }
@@ -34,7 +40,7 @@ std::string FileManager::make_image_file_path(const std::string& image_name, con
         filesystem::create_directory(IMAGES_FOLDER);
     }
 
-    // make & return image path
+    // construct & return (sanitized) image path
     filesystem::path image_path = IMAGES_FOLDER / (sanitize_file_name(image_name) + image_extension);
     return image_path.string();
 }
