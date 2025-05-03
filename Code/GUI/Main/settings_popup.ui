@@ -26,7 +26,7 @@
     <enum>Qt::Orientation::Horizontal</enum>
    </property>
    <property name="standardButtons">
-    <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Close|QDialogButtonBox::StandardButton::Ok|QDialogButtonBox::StandardButton::Reset|QDialogButtonBox::StandardButton::RestoreDefaults|QDialogButtonBox::StandardButton::Save</set>
+    <set>QDialogButtonBox::StandardButton::Close|QDialogButtonBox::StandardButton::RestoreDefaults</set>
    </property>
   </widget>
   <widget class="QWidget" name="verticalLayoutWidget">
@@ -39,20 +39,6 @@
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
-     <widget class="QCheckBox" name="album_art_check">
-      <property name="text">
-       <string>Display album art</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QCheckBox" name="nested_check">
-      <property name="text">
-       <string>Toggle nested file structure</string>
-      </property>
-     </widget>
-    </item>
     <item>
      <widget class="QPushButton" name="toggle_nested_button">
       <property name="text">
@@ -67,23 +53,36 @@
      </widget>
     </item>
     <item>
-     <widget class="QCheckBox" name="copy_files_check">
+     <widget class="QCheckBox" name="nested_check">
       <property name="text">
-       <string>Copy new files</string>
+       <string>Nested file structure</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QCheckBox" name="hide_nonfile_check">
+     <widget class="QCheckBox" name="copy_files_check">
+      <property name="text">
+       <string>Copy new files</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="hide_nonfiles_check">
       <property name="text">
        <string>Hide non-file tracks</string>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QCheckBox" name="real_names_check">
+     <widget class="QCheckBox" name="album_art_check">
       <property name="text">
-       <string>Use both stage and real names</string>
+       <string>Display album art instead of single art</string>
       </property>
      </widget>
     </item>

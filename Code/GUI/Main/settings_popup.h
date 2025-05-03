@@ -14,6 +14,9 @@ public:
     SettingsPopup(Core& core, QWidget* parent=nullptr);
     ~SettingsPopup();
 
+private slots:
+    void restore_defaults();
+
 private:
     Ui::SettingsPopup* ui;
     Core& core;

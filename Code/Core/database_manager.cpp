@@ -320,7 +320,7 @@ std::vector<std::string> DatabaseManager::get_all_people() {
     std::vector<std::string> people; // make vector
     
     // prep sql
-    sqlite3_stmt* sql = prepare_sql("SELECT people.name FROM people");
+    sqlite3_stmt* sql = prepare_sql("SELECT name FROM people");
 
     // execute & grab all data for each row
     while (sqlite3_step(sql) == SQLITE_ROW) {
@@ -330,6 +330,26 @@ std::vector<std::string> DatabaseManager::get_all_people() {
 
     sqlite3_finalize(sql); // clean up sql statement
     return people;
+}
+std::unordered_map<std::string, bool> DatabaseManager::get_all_settings() {
+    std::unordered_map<std::string, bool> settings; // make map
+    
+    // prep sql
+    sqlite3_stmt* sql = prepare_sql("SELECT name, value FROM settings");
+
+    // execute & grab all data for each row
+    while (sqlite3_step(sql) == SQLITE_ROW) {
+        std::optional<std::string> setting_name = extract_string(sql);
+        std::optional<bool> setting_value = extract_bool(sql);
+        if (!setting_name || !setting_value) {
+            std::string name = setting_name.value_or("");
+            throw std::runtime_error("Found null setting/value in database:\nSetting: '" + name + "'");
+        }
+        settings[*setting_name] = *setting_value; // set map
+    }
+
+    sqlite3_finalize(sql); // clean up sql statement
+    return settings;
 }
 
 //--------------------------------------------------------------------------------
@@ -1137,13 +1157,24 @@ void DatabaseManager::set_artist_image_path(int artist_id, const std::string& im
     execute_sql(sql);
 }
 
-// ------------------------------ SET PERSON DATA ------------------------------
+// ------------------------------ SET OTHER DATA ------------------------------
 // set person name
 void DatabaseManager::set_person_name(int person_id, const std::string& person_name) {
     // prep & bind sql
     sqlite3_stmt* sql = prepare_sql("UPDATE people SET name = ? WHERE person_id = ?");
     bind_input_to_sql(sql, 1, person_name); // person_name
     bind_input_to_sql(sql, 2, person_id); // person_id
+
+    // execute
+    execute_sql(sql);
+}
+
+// set setting value
+void DatabaseManager::set_setting_value(const std::string& setting_name, bool setting_value) {
+    // prep & bind sql
+    sqlite3_stmt* sql = prepare_sql("UPDATE settings SET value = ? WHERE name = ?");
+    bind_input_to_sql(sql, 1, setting_value); // setting_value
+    bind_input_to_sql(sql, 2, setting_name); // setting_name
 
     // execute
     execute_sql(sql);
@@ -1214,6 +1245,14 @@ void DatabaseManager::bind_input_to_sql(sqlite3_stmt* sql, int index, int input_
 // int64_t
 void DatabaseManager::bind_input_to_sql(sqlite3_stmt* sql, int index, int64_t input_value) {
     if (sqlite3_bind_int64(sql, index, input_value) != SQLITE_OK) {
+        sqlite3_finalize(sql);  // clean up if failed
+        throw std::runtime_error(sqlite3_errmsg(database));
+    }
+}
+// bool
+void DatabaseManager::bind_input_to_sql(sqlite3_stmt* sql, int index, bool input_value) {
+    int bool_value = input_value; // convert bool to int
+    if (sqlite3_bind_int(sql, index, bool_value) != SQLITE_OK) {
         sqlite3_finalize(sql);  // clean up if failed
         throw std::runtime_error(sqlite3_errmsg(database));
     }

@@ -6,18 +6,42 @@
 //--------------------------------------------------------------------------------
 //                                  CONSTRUCTOR
 //--------------------------------------------------------------------------------
-Core::Core(bool is_nested)
-    :database{}, is_nested{is_nested} {}
+Core::Core()
+    :database{}, is_nested{true}, copy_music_files{true} {
+
+        // grab settings from database
+        std::unordered_map<std::string, bool> settings = database.get_all_settings();
+        is_nested = settings.at("is_nested");
+        copy_music_files = settings.at("copy_music_files");
+    }
 
 //--------------------------------------------------------------------------------
 //                                  HANDLE SETTINGS
 //--------------------------------------------------------------------------------
+// is_nested
 bool Core::get_is_nested() {
     return is_nested;
 }
-void Core::toggle_nested() {
-    is_nested = !is_nested;
+void Core::set_is_nested(bool new_value) {
+    if (is_nested == new_value) return; // don't do anything if same
+
+    // update value
+    is_nested = new_value;
+    database.set_setting_value("is_nested", new_value);
+
     update_file_structure();
+}
+
+// copy_music_files
+bool Core::get_copy_music_files() {
+    return copy_music_files;
+}
+void Core::set_copy_music_files(bool new_value) {
+    if (copy_music_files == new_value) return; // don't do anything if same
+
+    // update value
+    copy_music_files = new_value;
+    database.set_setting_value("copy_music_files", new_value);
 }
 
 //--------------------------------------------------------------------------------
@@ -40,6 +64,7 @@ void Core::add_track(const std::string& original_file_path) {
 
     // move music file to correct location
     track.file_path = FileManager::relocate_music_file(track.file_path, track, is_nested);
+    // TODO: MAKE IT COPY ON ONLY ADD (all else is moving) IF BOOL INSIDE CLASS = TRUE (also images ALWAYS COPY)!!!!!!!!!!!
 
     // log info to database
     database.add_track(track);

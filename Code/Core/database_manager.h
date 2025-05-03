@@ -54,6 +54,7 @@ public:
     std::vector<Album> get_all_albums();
     std::vector<Artist> get_all_artists();
     std::vector<std::string> get_all_people();
+    std::unordered_map<std::string, bool> get_all_settings();
 
     // get objects by category
     std::vector<Track> get_album_tracks(int album_id);
@@ -170,8 +171,9 @@ public:
     void set_artist_image_path(int artist_id, const std::string& image_path);
 
 
-    // set person data
+    // set other data
     void set_person_name(int person_id, const std::string& person_name);
+    void set_setting_value(const std::string& setting_name, bool setting_value);
 
 
 private:
@@ -183,6 +185,7 @@ private:
     void bind_input_to_sql(sqlite3_stmt* sql, int index, const std::string& input_value); // string
     void bind_input_to_sql(sqlite3_stmt* sql, int index, int input_value); // int
     void bind_input_to_sql(sqlite3_stmt* sql, int index, int64_t input_value); // int64_t
+    void bind_input_to_sql(sqlite3_stmt* sql, int index, bool input_value); // bool
     void bind_null_to_sql(sqlite3_stmt* sql, int index); // null
 
     // --------------- backend of other functions ---------------

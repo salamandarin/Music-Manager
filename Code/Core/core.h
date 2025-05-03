@@ -10,11 +10,14 @@
 
 class Core {
 public:
-    Core(bool is_nested=true); // constructor
+    Core(); // constructor
 
-    // handle settings
+    // settings
     bool get_is_nested();
-    void toggle_nested();
+    void set_is_nested(bool new_value);
+    
+    bool get_copy_music_files();
+    void set_copy_music_files(bool new_value);
 
     // ------------------------- ADD OBJECTS -------------------------
     // add tracks
@@ -110,4 +113,5 @@ private:
 
     // settings
     bool is_nested;
+    bool copy_music_files;
 };

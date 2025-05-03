@@ -1,3 +1,10 @@
+-- Create Table: settings
+CREATE TABLE IF NOT EXISTS settings
+(
+    name              TEXT PRIMARY KEY NOT NULL,
+    value             INTEGER NOT NULL
+);
+
 -- Create Table: person
 CREATE TABLE IF NOT EXISTS people
 (
@@ -51,8 +58,17 @@ CREATE TABLE IF NOT EXISTS tracks
     FOREIGN KEY (album_id) REFERENCES albums (album_id)
 );
 
+
+--------------- INSERT DEFAULT DATA ---------------
+-- Insert: default settings values
+INSERT INTO settings (name, value)
+VALUES
+    ('is_nested', 1), -- true
+    ('copy_music_files', 1); -- true
+
+-- Insert: album types
 INSERT INTO album_types (name)
 VALUES
     ('Album'),
     ('EP'),
-    ('Single')
+    ('Single');
