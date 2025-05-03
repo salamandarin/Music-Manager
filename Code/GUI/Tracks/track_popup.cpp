@@ -5,6 +5,8 @@
 #include "gui_utils.h"
 #include <QPushButton>
 
+using namespace gui_utils;
+
 TrackPopup::TrackPopup(Core& core, int track_id, QWidget* parent)
     :core{core}, track_id{track_id}, QDialog{parent}, ui{new Ui::TrackPopup} {
 

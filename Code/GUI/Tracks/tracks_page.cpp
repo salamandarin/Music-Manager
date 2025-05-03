@@ -10,6 +10,8 @@
 #include <QFileDialog>
 #include <QMessageBox>
 
+using namespace gui_utils;
+
 enum Columns {
     IMAGE_COLUMN = 0,
     TITLE_COLUMN,

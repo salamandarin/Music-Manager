@@ -2,6 +2,8 @@
 #include "gui_utils.h"
 #include <QMessageBox>
 
+namespace gui_utils {
+
 void set_image(std::string image_path, const std::string& default_image, QLabel* label, QWidget* error_popup_parent) {
     // use default image if image_path is empty
     if (image_path.empty()) image_path = default_image;
@@ -17,4 +19,6 @@ void set_image(std::string image_path, const std::string& default_image, QLabel*
     // put pixmap in given label
     label->setPixmap(image_pixmap);
     label->setScaledContents(true); // let QLabel scale it
+}
+
 }
