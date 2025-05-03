@@ -10,8 +10,6 @@ AddTrackPopup::AddTrackPopup(Core& core, QWidget* parent)
     ui->setupUi(this);
 
     // connect signals to functions 
-    connect(ui->choose_music_file_button, &QPushButton::clicked,
-                                this, &AddTrackPopup::add_music_file);
     connect(ui->choose_image_file_button, &QPushButton::clicked,
                                 this, &AddTrackPopup::add_image_file);
     connect(ui->button_box, &QDialogButtonBox::accepted,
@@ -32,17 +30,6 @@ AddTrackPopup::~AddTrackPopup() {
     delete ui;
 }
 
-void AddTrackPopup::add_music_file() {
-    std::string file_path = QFileDialog::getOpenFileName(this, "Select Music File",
-                    "", "Audio Files (*.mp3 *.wav *.aiff *.aif *.flac *.m4a *.aac)").toStdString();
-    if (!file_path.empty()) {
-        core.add_track(file_path); // add track
-
-        emit tracks_added(); // emit signal to update table GUI
-        
-        accept(); // close popup
-    }
-}
 void AddTrackPopup::add_image_file() {
     QString file_path = QFileDialog::getOpenFileName(this, "Select Image File",
                                         "", "Images (*.png *.jpg *jpeg)");

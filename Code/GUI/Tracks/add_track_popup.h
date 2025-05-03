@@ -18,7 +18,6 @@ signals:
     void tracks_added();
 
 private slots:
-    void add_music_file();
     void add_image_file();
     void add_track();
 

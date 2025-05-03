@@ -16,8 +16,9 @@ public:
 
 private slots:
     // buttons
-    void add_track();
-    void add_from_folder();
+    void add_track_files();
+    void add_tracks_from_folder();
+    void manually_add_track();
     void delete_library();
 
     // track popup

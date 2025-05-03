@@ -97,7 +97,7 @@ public:
 
     // ---------- WARNING: EXTREMELY DANGEROUS!!! ----------
     // DELETE all music files, images, entire database file, and another folder too if provided
-    void delete_entire_library(const std::string& extra_folder_to_delete=""); // WARNING: EXTREMELY DANGEROUS!!!
+    void delete_entire_library(); // WARNING: EXTREMELY DANGEROUS!!!
 
 private:
     void update_file_structure();

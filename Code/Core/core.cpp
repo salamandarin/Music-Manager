@@ -568,7 +568,7 @@ Artist Core::get_artist(int artist_id) {
 //                            DELETE ENTIRE LIBRARY
 //--------------------------------------------------------------------------------
 // DELETE all music files, images, entire database file, and another folder too if provided
-void Core::delete_entire_library(const std::string& extra_folder_to_delete) {
+void Core::delete_entire_library() {
     // ---------- WARNING: EXTREMELY DANGEROUS!!! ----------
 
     // TODO: PUT EXTRA STEPS IN PLACE TO ENSURE SAFETY WHEN CALLING !!!
@@ -584,11 +584,6 @@ void Core::delete_entire_library(const std::string& extra_folder_to_delete) {
     // delete entire images folder (if exists)
     if (FileManager::exists(IMAGES_FOLDER)) {
         FileManager::delete_folder(IMAGES_FOLDER);
-    }
-
-    // delete other folder (if passed in)
-    if (!extra_folder_to_delete.empty()) { // check if there is extra_folder_to_delete
-        FileManager::delete_folder(extra_folder_to_delete);
     }
 }
 

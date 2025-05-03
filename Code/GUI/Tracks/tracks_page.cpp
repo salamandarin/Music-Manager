@@ -7,6 +7,8 @@
 #include "gui_utils.h"
 #include <QLabel>
 #include <QInputDialog>
+#include <QFileDialog>
+#include <QMessageBox>
 
 enum Columns {
     IMAGE_COLUMN = 0,
@@ -31,10 +33,13 @@ TracksPage::TracksPage(Core& core, QWidget* parent)
                         this, &TracksPage::open_track_popup);
 
     // connect buttons to slots
-    connect(ui->add_track_button, &QPushButton::clicked,
-                            this, &TracksPage::add_track);
+    connect(ui->add_files_button, &QPushButton::clicked,
+            this, &TracksPage::add_track_files);
     connect(ui->add_from_folder_button, &QPushButton::clicked,
-                            this, &TracksPage::add_from_folder);
+            this, &TracksPage::add_tracks_from_folder);
+    connect(ui->manual_add_button, &QPushButton::clicked,
+            this, &TracksPage::manually_add_track);
+
     connect(ui->delete_library_button, &QPushButton::clicked, // TODO: DELETE THIS ENTIRE BUTTON
                             this, &TracksPage::delete_library);
 }
@@ -46,7 +51,31 @@ TracksPage::~TracksPage() {
 //--------------------------------------------------------------------------------
 //                                    BUTTONS SLOTS
 //--------------------------------------------------------------------------------
-void TracksPage::add_track() {
+
+void TracksPage::add_track_files() {
+    QStringList file_paths = QFileDialog::getOpenFileNames(this, "Select Music File(s)",
+                    "", "Audio Files (*.mp3 *.wav *.aiff *.aif *.flac *.m4a *.aac)",
+                    nullptr, QFileDialog::ReadOnly);
+    
+    if (!file_paths.isEmpty()) {
+        for (const QString &file_path : file_paths) {
+            core.add_track(file_path.toStdString()); // add track
+        }
+        update_table(); // update table GUI
+    }  
+}
+
+void TracksPage::add_tracks_from_folder() {
+    std::string folder_path = QFileDialog::getExistingDirectory(this, "Select Folder",
+                            "", QFileDialog::ShowDirsOnly | QFileDialog::ReadOnly).toStdString();
+    
+    if (!folder_path.empty()) {
+        core.add_tracks_from_folder(folder_path); // add all files in folder
+
+        update_table(); // update table GUI
+    }  
+}
+void TracksPage::manually_add_track() {
     AddTrackPopup* add_track_popup = new AddTrackPopup(core, this);
 
     // update table GUI if tracks were added
@@ -55,43 +84,17 @@ void TracksPage::add_track() {
     
     add_track_popup->exec();
 }
-void TracksPage::add_from_folder() {
-    // gather input for folder path
-    bool is_value_entered; // whether they clicked OK or not (or hit enter)
-    std::string folder_path = QInputDialog::getText(this,
-                                         tr("Add Tracks from Folder"), // window label
-                                         tr("Enter folder path (relative to 'Music_Manager'):"), // text box label
-                                         QLineEdit::Normal,
-                                         "", // default text (empty)
-                                         &is_value_entered).toStdString();
 
-    // add tracks from folder                                    
-    if (is_value_entered && !folder_path.empty()) {
-        core.add_tracks_from_folder(folder_path); // add tracks from folder
-
-        // TODO: HANDLE INCORRECT PATHS WITHOUT CRASHING!!! LET THEM TRY AGAIN!! (JUST MAKE THIS FILE DIALOGUE)
-
+void TracksPage::delete_library() { // TODO: DELETE THIS ENTIRE BUTTON
+    // get confirmation before deleting
+    QMessageBox::StandardButton confirmation = QMessageBox::question(this, "Delete Library ", "Are you sure?",
+                                                QMessageBox::Yes | QMessageBox::No);
+    if (confirmation == QMessageBox::Yes) {
+        // delete libary + possible additional path
+        core.delete_entire_library();
+        
         update_table(); // refresh table GUI
     }
-}
-void TracksPage::delete_library() { // TODO: DELETE THIS ENTIRE BUTTON
-    
-    // TODO: make file dialogue input OR check exists() so can't crash
-
-    // gather input for possible additional path to delete
-    bool is_value_entered; // whether they clicked OK or not (or hit enter)
-    std::string additional_path = QInputDialog::getText(this,
-                                            tr("DELETE LIBRARY"), // window label
-                                            tr("Optional extra deletion path (relative to 'Music_Manager'):"), // text box label
-                                            QLineEdit::Normal,
-                                            "", // default text (empty)
-                                            &is_value_entered).toStdString();
-
-
-    // delete libary + possible additional path
-    core.delete_entire_library(additional_path);
-    
-    update_table(); // refresh table GUI
 }
 
 //--------------------------------------------------------------------------------

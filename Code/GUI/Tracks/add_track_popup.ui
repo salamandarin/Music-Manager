@@ -29,51 +29,13 @@
     <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Save</set>
    </property>
   </widget>
-  <widget class="QWidget" name="formLayoutWidget_2">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>20</y>
-     <width>211</width>
-     <height>251</height>
-    </rect>
-   </property>
-   <layout class="QFormLayout" name="formLayout_2">
-    <property name="labelAlignment">
-     <set>Qt::AlignmentFlag::AlignJustify|Qt::AlignmentFlag::AlignVCenter</set>
-    </property>
-    <property name="formAlignment">
-     <set>Qt::AlignmentFlag::AlignCenter</set>
-    </property>
-    <item row="0" column="0">
-     <widget class="QLabel" name="file_label">
-      <property name="text">
-       <string>File:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="1">
-     <widget class="QPushButton" name="choose_music_file_button">
-      <property name="maximumSize">
-       <size>
-        <width>125</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>Select Music File</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
   <widget class="QWidget" name="formLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>220</x>
-     <y>20</y>
-     <width>331</width>
-     <height>240</height>
+     <x>10</x>
+     <y>9</y>
+     <width>531</width>
+     <height>251</height>
     </rect>
    </property>
    <layout class="QFormLayout" name="formLayout_4">
@@ -194,12 +156,12 @@
        <widget class="QPushButton" name="clear_date_button">
         <property name="maximumSize">
          <size>
-          <width>50</width>
+          <width>150</width>
           <height>16777215</height>
          </size>
         </property>
         <property name="text">
-         <string>Clear</string>
+         <string>Clear Date</string>
         </property>
        </widget>
       </item>
