@@ -12,20 +12,30 @@ DatabaseManager::DatabaseManager() {
         throw std::runtime_error(sqlite3_errmsg(database));
     }
 
-    // initialize tables from .sql file
-    std::string file_name = "Code/Core/Database/tables.sql";
-    std::ifstream file{file_name};
-    if (!file) {
-        throw std::runtime_error("Could not open " + file_name + "\n");
-    }
-    std::string tables_sql{std::istreambuf_iterator<char>{file}, {}};
-    
-    // execute tables_sql
-    char* error_message = nullptr;
-    if (sqlite3_exec(database, tables_sql.c_str(), nullptr, nullptr, &error_message) != SQLITE_OK) {
-        std::string error = "SQL error: " + std::string(error_message);
-        sqlite3_free(error_message);
-        throw std::runtime_error(error);
+    // check if database is new
+    sqlite3_stmt* get_version_sql = prepare_sql("PRAGMA user_version;");
+    int version = query_sql<int>(get_version_sql, extract_int).value_or(0); // returns 0 if null
+
+    if (version == 0) {
+        // initialize tables from .sql file (if new database)
+        std::string file_name = "Code/Core/Database/tables.sql";
+        std::ifstream file{file_name};
+        if (!file) {
+            throw std::runtime_error("Could not open " + file_name + "\n");
+        }
+        std::string tables_sql{std::istreambuf_iterator<char>{file}, {}};
+
+        // execute tables.sql
+        char* error_message = nullptr;
+        if (sqlite3_exec(database, tables_sql.c_str(), nullptr, nullptr, &error_message) != SQLITE_OK) {
+            std::string error = "SQL error: " + std::string(error_message);
+            sqlite3_free(error_message);
+            throw std::runtime_error(error);
+        }        
+        
+        // set version to 1
+        sqlite3_stmt* set_version_sql = prepare_sql("PRAGMA user_version = 1");
+        execute_sql(set_version_sql);
     }
 }
 

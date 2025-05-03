@@ -61,13 +61,13 @@ CREATE TABLE IF NOT EXISTS tracks
 
 --------------- INSERT DEFAULT DATA ---------------
 -- Insert: default settings values
-INSERT INTO settings (name, value)
+INSERT OR IGNORE INTO settings (name, value)
 VALUES
     ('is_nested', 1), -- true
     ('copy_music_files', 1); -- true
 
 -- Insert: album types
-INSERT INTO album_types (name)
+INSERT OR IGNORE INTO album_types (name)
 VALUES
     ('Album'),
     ('EP'),
