@@ -82,10 +82,12 @@ std::string FileManager::move_file(const filesystem::path& old_path, filesystem:
     }
 
     // make new folders (if needed)
-    filesystem::create_directories(new_path.parent_path()); // make folders (if needed)
+    filesystem::create_directories(new_path.parent_path());
+
+    // add number to end of file name if taken
+    new_path = number_duplicate_files(new_path);
 
     // move file from old path -> new path
-    new_path = number_duplicate_paths(new_path); // make sure name isn't taken
     filesystem::rename(old_path, new_path);
 
     // cleanup: delete parent folders that might be empty now (IF boundary folder is given)
@@ -93,7 +95,30 @@ std::string FileManager::move_file(const filesystem::path& old_path, filesystem:
         delete_empty_parent_folders(old_path, boundary_folder); // stop at boundary folder
     }
 
-    return new_path.string();
+    return new_path.string(); // return cuz may be changed from number_duplicate_files()
+}
+
+// copy file
+std::string FileManager::copy_file(const filesystem::path& file_path, filesystem::path new_path) {
+    if (file_path == new_path) return file_path.string(); // don't do anything if paths match
+
+    // check if file doesn't exist or isn't a regular file
+    if (!filesystem::exists(file_path) || !filesystem::is_regular_file(file_path)) {
+        std::string error_message = "Tried to copy file that doesn't exist or isn't a regular file";
+        error_message += "\nTried to copy '" + file_path.string() + "' to '" + new_path.string() + "'";
+        throw std::runtime_error(error_message);
+    }
+
+    // make new folders (if needed)
+    filesystem::create_directories(new_path.parent_path());
+
+    // add number to end of file name if taken
+    new_path = number_duplicate_files(new_path);
+
+    // copy file to new path
+    filesystem::copy_file(file_path, new_path);
+
+    return new_path.string(); // return cuz may be changed from number_duplicate_files()
 }
 
 // delete file (& delete empty parent folders up to given boundary folder)
@@ -128,12 +153,13 @@ std::string FileManager::rename_file(const filesystem::path& file_path, const st
     new_file_name += file_path.extension();
     filesystem::path new_path = file_path.parent_path() / new_file_name;
 
-    new_path = number_duplicate_paths(new_path); // make sure name isn't taken
+    // add number to end of file name if taken
+    new_path = number_duplicate_files(new_path);
 
     // rename file
     filesystem::rename(file_path, new_path); 
 
-    return new_path.string();
+    return new_path.string(); // return cuz may be changed from number_duplicate_files()
 }
 
 // check if file/folder exists
@@ -253,16 +279,16 @@ std::string FileManager::sanitize_file_name(std::string name) {
 }
 
 // adds number to file name if duplicate name exists
-filesystem::path FileManager::number_duplicate_paths(const filesystem::path& desired_path) {
+filesystem::path FileManager::number_duplicate_files(const filesystem::path& desired_file_path) {
     // return right away if no duplicates
-    if (!filesystem::exists(desired_path)) {
-        return desired_path;
+    if (!filesystem::exists(desired_file_path)) {
+        return desired_file_path;
     }
     
-    filesystem::path parent_path = desired_path.parent_path();
-    filesystem::path file_name = get_file_name(desired_path);
-    filesystem::path extension = desired_path.extension();
-    filesystem::path new_path = desired_path;
+    filesystem::path parent_path = desired_file_path.parent_path();
+    filesystem::path file_name = get_file_name(desired_file_path);
+    filesystem::path extension = desired_file_path.extension();
+    filesystem::path new_path = desired_file_path;
 
     // add number if file name exists there already
     for (int i = 1; filesystem::exists(new_path); ++i) {

@@ -24,6 +24,7 @@ public:
 
     // file operations
     static std::string move_file(const filesystem::path& old_path, filesystem::path new_path, const filesystem::path& boundary_folder=""); // handles folder cleanup too
+    static std::string copy_file(const filesystem::path& file_path, filesystem::path new_path);
     static void delete_file(const filesystem::path& file_path, const filesystem::path& boundary_folder=""); // handles folder cleanup too
 
     // helper functions
@@ -43,5 +44,5 @@ private:
 
     // file name helpers
     static std::string sanitize_file_name(std::string name);
-    static filesystem::path number_duplicate_paths(const filesystem::path& desired_path);
+    static filesystem::path number_duplicate_files(const filesystem::path& desired_file_path);
 };
