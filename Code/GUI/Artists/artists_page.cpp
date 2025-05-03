@@ -2,6 +2,7 @@
 #include "artists_page.h"
 #include "ui_artists_page.h"
 #include "core.h"
+#include <QListWidgetItem>
 
 ArtistsPage::ArtistsPage(Core& core, QWidget* parent)
     :core{core}, QWidget{parent}, ui{new Ui::ArtistsPage} {

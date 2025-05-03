@@ -1,22 +1,32 @@
 add_library(GUI
-        gui_utils.cpp
-        main_window.cpp main_window.ui
-        track_popup.cpp track_popup.ui
-        settings_popup.cpp settings_popup.ui
-        albums_page.cpp albums_page.ui
-        tracks_page.cpp tracks_page.ui
-        artists_page.cpp artists_page.ui
-        add_track_popup.cpp add_track_popup.ui
+        Main/gui_utils.cpp
+        Main/main_window.cpp Main/main_window.ui
+        Main/settings_popup.cpp Main/settings_popup.ui
+
+        Tracks/tracks_page.cpp Tracks/tracks_page.ui
+        Tracks/track_popup.cpp Tracks/track_popup.ui
+        Tracks/add_track_popup.cpp Tracks/add_track_popup.ui
+
+        Albums/albums_page.cpp Albums/albums_page.ui
+
+        Artists/artists_page.cpp Artists/artists_page.ui
 )
 target_compile_options(GUI PUBLIC -std=c++17)
 
-# Core folder
 target_include_directories(GUI PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}
-        ${CMAKE_SOURCE_DIR}/Core # include Core
-        ${CMAKE_SOURCE_DIR}/Core/Data_Types # include Data_Types
 
+        # GUI folders
+        ${CMAKE_CURRENT_SOURCE_DIR}/Main
+        ${CMAKE_CURRENT_SOURCE_DIR}/Tracks
+        ${CMAKE_CURRENT_SOURCE_DIR}/Albums
+        ${CMAKE_CURRENT_SOURCE_DIR}/Artists
+
+        # Core folder
+        ${CMAKE_SOURCE_DIR}/Core
+        ${CMAKE_SOURCE_DIR}/Core/Data_Types # Data_Types
 )
+# Core folder
 target_link_libraries(GUI PRIVATE Core)
 
 # Qt

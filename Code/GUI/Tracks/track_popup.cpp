@@ -38,7 +38,7 @@ void TrackPopup::update_data() {
 
     // -------------------- COVER ART --------------------
     // set cover art (either actual or default)
-    set_label_image(track.image_path, DEFAULT_TRACK_IMAGE, ui->cover_art);
+    set_image(track.image_path, DEFAULT_TRACK_IMAGE, ui->cover_art);
 
     // -------------------- MAIN INFO --------------------
     setWindowTitle(QString::fromStdString(track.title)); // window title
