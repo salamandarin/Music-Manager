@@ -53,16 +53,6 @@
      </widget>
     </item>
     <item>
-     <widget class="QCheckBox" name="nested_check">
-      <property name="text">
-       <string>Nested file structure</string>
-      </property>
-      <property name="checked">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item>
      <widget class="QCheckBox" name="copy_files_check">
       <property name="text">
        <string>Copy new files</string>

@@ -11,10 +11,11 @@ SettingsPopup::SettingsPopup(Core& core, QWidget* parent)
     update_checkboxes(); // check/uncheck boxes to reflect actual settings
 
     // connect signals to functions
-    // checkboxes
-    connect(ui->nested_check, &QCheckBox::toggled, this, [this, &core](bool checked) {
+    connect(ui->toggle_nested_button, &QPushButton::clicked, this, [this, &core](bool checked) {
         core.set_is_nested(checked);
+        ui->toggle_nested_button->setText(core.get_is_nested() ? "Switch to Flat File Structure" : "Switch to Nested File Structure");
     });
+    // checkboxes
     connect(ui->copy_files_check, &QCheckBox::toggled, this, [this, &core](bool checked) {
         core.set_copy_music_files(checked);
     });
@@ -35,7 +36,9 @@ SettingsPopup::~SettingsPopup() {
 
 // check/uncheck boxes to reflect actual settings
 void SettingsPopup::update_checkboxes() {
-    ui->nested_check->setChecked(core.get_is_nested());
+    ui->toggle_nested_button->setText(core.get_is_nested() ? "Switch to Flat File Structure" : "Switch to Nested File Structure");
+    ui->toggle_nested_button->setChecked(core.get_is_nested());
+
     ui->copy_files_check->setChecked(core.get_copy_music_files());
     // TODO: add other settings if added (CAREFUL OF T/F VALUE)
 }
