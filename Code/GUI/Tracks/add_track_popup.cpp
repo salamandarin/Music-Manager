@@ -17,10 +17,15 @@ AddTrackPopup::AddTrackPopup(Core& core, QWidget* parent)
     connect(ui->button_box, &QDialogButtonBox::accepted,
                             this, &AddTrackPopup::add_track);
     // date signals
-    connect(ui->date_input, &QDateEdit::dateChanged, 
-                            this, [this]() { date_modified = true; });
+    connect(ui->date_input, &QDateEdit::dateChanged,
+                            this, [this]() {
+        date_modified = true;
+    });
     connect(ui->clear_date_button, &QPushButton::clicked,
-                            this, [this]() { date_modified = false; });    
+                            this, [this]() {
+        date_modified = false;
+        ui->date_input->setDate(QDate(2025, 1, 1));
+    });
 }
 
 AddTrackPopup::~AddTrackPopup() {
