@@ -111,7 +111,10 @@ void TracksPage::delete_library() { // TODO: DELETE THIS ENTIRE BUTTON
 //                                   TABLE STUFF
 //--------------------------------------------------------------------------------
 void TracksPage::update_table() {
-    // reset table first
+    // disable GUI updates until done (so not slowing down)
+    ui->tracks_table->setUpdatesEnabled(false);
+
+    // reset table
     ui->tracks_table->clearContents();
     ui->tracks_table->setRowCount(0);  // reset row count (before setting row count later)
 
@@ -149,6 +152,9 @@ void TracksPage::update_table() {
     // resize rows & columns to fit content
     ui->tracks_table->resizeColumnsToContents();
     ui->tracks_table->resizeRowsToContents();
+
+    // enable GUI updates again now that done
+    ui->tracks_table->setUpdatesEnabled(true);
 }
 
 // delete track with backspace key press
@@ -162,15 +168,20 @@ void TracksPage::keyPressEvent(QKeyEvent* key_press) {
         QMessageBox::StandardButton confirmation = QMessageBox::question(this, "Delete Tracks",
                 "Are you sure you want to delete selected tracks?", QMessageBox::Yes | QMessageBox::No);
         if (confirmation == QMessageBox::No) return; // return if selected no
-        
-        // delete all selected tracks
+
+        // sort rows greatest to least (to prevent errors when removing indexes)
+        std::vector<int> rows;
         for (const QModelIndex& index : selected_rows) {
-            int track_id = get_track_id(index.row());
-            core.remove_track(track_id); // delete track
+            rows.push_back(index.row());
         }
-        
-        // update table GUI
-        update_table();
+        std::sort(rows.begin(), rows.end(), std::greater<int>());
+
+        // delete all selected tracks
+        for (int row : rows) {
+            int track_id = get_track_id(row);
+            core.remove_track(track_id); // delete track
+            ui->tracks_table->removeRow(row);
+        }
     }
     else {
         // pass key press event to parent class if wasn't backspace
