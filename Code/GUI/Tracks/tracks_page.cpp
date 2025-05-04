@@ -33,6 +33,7 @@ TracksPage::TracksPage(Core& core, QWidget* parent)
     ui->tracks_table->setColumnCount(NUM_COLUMNS);
     ui->tracks_table->setHorizontalHeaderLabels({"", "Title", "Artist", "Album", "Duration", "Date", "Tracklist #"});
     ui->tracks_table->verticalHeader()->setDefaultAlignment(Qt::AlignCenter);
+    ui->tracks_table->verticalScrollBar()->setSingleStep(5); // adjust scroll speed
 
     // fill in table
     update_table(); 
