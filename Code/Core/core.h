@@ -39,19 +39,19 @@ public:
 
     // ------------------------- SET DATA -------------------------
     // set track data (in both database & metadata if applicable)
-    void set_track_title(int track_id, const std::string& new_track_title);
+    void set_track_title(int track_id, const std::string& track_title);
 
-    void set_track_artist(int track_id, const std::string& new_artist_name);
+    void set_track_artist(int track_id, const std::string& artist_name);
     void set_track_artist_id(int track_id, int artist_id);
 
-    void set_track_album(int track_id, const std::string& new_album_title);
-    void set_track_album_id(int track_id, int new_album_id);
+    void set_track_album(int track_id, const std::string& album_title);
+    void set_track_album_id(int track_id, int album_id);
 
         // skip duration - do not manually set
-    void set_track_date(int track_id, const Date& new_date);
-    void set_track_tracklist_num(int track_id, int new_tracklist_num);
+    void set_track_date(int track_id, const Date& track_date);
+    void set_track_tracklist_num(int track_id, int tracklist_num);
     void set_track_file(int track_id, const std::string& file_path);
-    void set_track_image(int track_id, const std::string& file_path);
+    void set_track_image(int track_id, const std::string& image_path);
 
 
     // TODO: set album data

@@ -143,27 +143,27 @@ void Core::remove_person(int person_id) {
 //--------------------------------------------------------------------------------
 
 // ------------------------------ SET TRACK TITLE ------------------------------
-void Core::set_track_title(int track_id, const std::string& new_track_title) {
+void Core::set_track_title(int track_id, const std::string& track_title) {
     // make sure isn't same as old title
     std::optional<std::string> current_title = database.get_track_title(track_id);
     if (current_title) {
-        if (*current_title == new_track_title) {
+        if (*current_title == track_title) {
             return; // return if same as old
         }
     }
 
     // update in database
-    database.set_track_title(track_id, new_track_title);
+    database.set_track_title(track_id, track_title);
 
     // if file exists: update metadata + file name + database file path
     std::optional<std::string> possible_file_path = database.get_track_file_path(track_id);
     if (possible_file_path) { // check if file exists
         // update in metadata
         MetadataManager metadata{*possible_file_path};
-        metadata.set_track_title(new_track_title);
+        metadata.set_track_title(track_title);
 
         // update file name to match
-        std::string new_path = FileManager::rename_file(*possible_file_path, new_track_title);
+        std::string new_path = FileManager::rename_file(*possible_file_path, track_title);
 
         // update file path in database
         database.set_track_file_path(track_id, new_path);
@@ -173,7 +173,7 @@ void Core::set_track_title(int track_id, const std::string& new_track_title) {
     std::optional<std::string> possible_image_path = database.get_track_image_path(track_id);
     if (possible_image_path) { // check if image file exists
         // update image file name to match
-        std::string new_image_path = FileManager::rename_file(*possible_image_path, new_track_title);
+        std::string new_image_path = FileManager::rename_file(*possible_image_path, track_title);
 
         // update image path in database
         database.set_track_image_path(track_id, new_image_path);
@@ -181,20 +181,20 @@ void Core::set_track_title(int track_id, const std::string& new_track_title) {
 }
 
 // ------------------------------ SET TRACK ARTIST ------------------------------
-void Core::set_track_artist(int track_id, const std::string& new_artist_name) {
+void Core::set_track_artist(int track_id, const std::string& artist_name) {
     // make sure isn't same as old artist
     std::optional<Artist> current_artist = database.get_track_artist(track_id);
     if (current_artist) {
-        if (current_artist->name == new_artist_name) {
+        if (current_artist->name == artist_name) {
             return; // return if same as old
         }
     }
 
     // update in database
-    database.set_track_artist(track_id, new_artist_name);
+    database.set_track_artist(track_id, artist_name);
 
     // update file info (if file exists)
-    set_track_file_artist(track_id, new_artist_name);
+    set_track_file_artist(track_id, artist_name);
 }
 void Core::set_track_artist_id(int track_id, int artist_id) {
     // make sure isn't same as old artist
@@ -231,20 +231,20 @@ void Core::set_track_file_artist(int track_id, const std::string& artist_name) {
 }
 
 // ------------------------------ SET TRACK ALBUM ------------------------------
-void Core::set_track_album(int track_id, const std::string& new_album_title) {
+void Core::set_track_album(int track_id, const std::string& album_title) {
     // make sure isn't same as old album
     std::optional<Album> current_album = database.get_track_album(track_id);
     if (current_album) {
-        if (current_album->title == new_album_title) {
+        if (current_album->title == album_title) {
             return; // return if same as old
         }
     }
 
     // update in database
-    database.set_track_album(track_id, new_album_title);
+    database.set_track_album(track_id, album_title);
 
     // update file info (if file exists)
-    set_track_file_album(track_id, new_album_title);
+    set_track_file_album(track_id, album_title);
 }
 void Core::set_track_album_id(int track_id, int album_id) {
     // make sure isn't same as old album
@@ -281,39 +281,39 @@ void Core::set_track_file_album(int track_id, const std::string& album_title) {
 }
 
 // ------------------------------ SET TRACK DATE ------------------------------
-void Core::set_track_date(int track_id, const Date& new_date) {
+void Core::set_track_date(int track_id, const Date& track_date) {
     // make sure isn't same as old date
     std::optional<Date> current_date = database.get_track_date(track_id);
     if (current_date) {
-        if (*current_date == new_date) {
+        if (*current_date == track_date) {
             return; // return if same as old
         }
     }
 
     // update in database
-    database.set_track_date(track_id, new_date);
+    database.set_track_date(track_id, track_date);
 
     // TODO: check if date is in metadata, set if so
 }
 // ------------------------------ SET TRACK TRACKLIST NUM ------------------------------
-void Core::set_track_tracklist_num(int track_id, int new_tracklist_num) {
+void Core::set_track_tracklist_num(int track_id, int tracklist_num) {
     // make sure isn't same as old tracklist num
     std::optional<int> current_tracklist_num = database.get_track_tracklist_num(track_id);
     if (current_tracklist_num) {
-        if (*current_tracklist_num == new_tracklist_num) {
+        if (*current_tracklist_num == tracklist_num) {
             return; // return if same as old
         }
     }
 
     // update in database
-    database.set_track_tracklist_num(track_id, new_tracklist_num);
+    database.set_track_tracklist_num(track_id, tracklist_num);
 
     // update in metadata (if there is file)
     std::optional<std::string> possible_file_path = database.get_track_file_path(track_id);
     if (possible_file_path) { // check if file exists
         // update in metadata
         MetadataManager metadata{*possible_file_path};
-        metadata.set_tracklist_num(new_tracklist_num);
+        metadata.set_tracklist_num(tracklist_num);
     }
 }
 
