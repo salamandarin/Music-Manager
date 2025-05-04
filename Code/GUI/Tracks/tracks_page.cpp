@@ -9,6 +9,7 @@
 #include <QInputDialog>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QKeyEvent>
 
 using namespace gui_utils;
 
@@ -28,7 +29,14 @@ TracksPage::TracksPage(Core& core, QWidget* parent)
     :core{core}, QWidget{parent}, ui{new Ui::TracksPage} {
     
     ui->setupUi(this);
-    setup_table(); // set table headers
+    // set up table headers
+    ui->tracks_table->setColumnCount(NUM_COLUMNS);
+    ui->tracks_table->setHorizontalHeaderLabels({"", "Title", "Artist", "Album", "Duration", "Date", "Tracklist #"});
+    ui->tracks_table->verticalHeader()->setDefaultAlignment(Qt::AlignCenter);
+
+    // fill in table
+    update_table(); 
+
 
     // connect double click signal -> open TrackPopup
     connect(ui->tracks_table, &QTableWidget::cellDoubleClicked,
@@ -51,7 +59,7 @@ TracksPage::~TracksPage() {
 }
 
 //--------------------------------------------------------------------------------
-//                                    BUTTONS SLOTS
+//                                BUTTON SLOTS
 //--------------------------------------------------------------------------------
 
 void TracksPage::add_track_files() {
@@ -89,7 +97,7 @@ void TracksPage::manually_add_track() {
 
 void TracksPage::delete_library() { // TODO: DELETE THIS ENTIRE BUTTON
     // get confirmation before deleting
-    QMessageBox::StandardButton confirmation = QMessageBox::question(this, "Delete Library ", "Are you sure?",
+    QMessageBox::StandardButton confirmation = QMessageBox::question(this, "Delete Library", "Are you sure?",
                                                 QMessageBox::Yes | QMessageBox::No);
     if (confirmation == QMessageBox::Yes) {
         // delete libary + possible additional path
@@ -102,14 +110,6 @@ void TracksPage::delete_library() { // TODO: DELETE THIS ENTIRE BUTTON
 //--------------------------------------------------------------------------------
 //                                   TABLE STUFF
 //--------------------------------------------------------------------------------
-void TracksPage::setup_table() { // TODO: CHANGE NAME???
-    ui->tracks_table->setColumnCount(NUM_COLUMNS);
-    ui->tracks_table->setHorizontalHeaderLabels({"", "Title", "Artist", "Album", "Duration", "Date", "Tracklist #"});
-    ui->tracks_table->verticalHeader()->setDefaultAlignment(Qt::AlignCenter);
-
-    update_table(); // fill in table
-}
-
 void TracksPage::update_table() {
     // reset table first
     ui->tracks_table->clearContents();
@@ -149,6 +149,33 @@ void TracksPage::update_table() {
     // resize rows & columns to fit content
     ui->tracks_table->resizeColumnsToContents();
     ui->tracks_table->resizeRowsToContents();
+}
+
+// delete track with backspace key press
+void TracksPage::keyPressEvent(QKeyEvent* key_press) {
+    QModelIndexList selected_rows = ui->tracks_table->selectionModel()->selectedRows(); // grab selected rows
+
+    // check if backspace was pressed & if any rows were selected
+    if (key_press->key() == Qt::Key_Backspace && !selected_rows.isEmpty()) {
+
+        // confirm deletion
+        QMessageBox::StandardButton confirmation = QMessageBox::question(this, "Delete Tracks",
+                "Are you sure you want to delete selected tracks?", QMessageBox::Yes | QMessageBox::No);
+        if (confirmation == QMessageBox::No) return; // return if selected no
+        
+        // delete all selected tracks
+        for (const QModelIndex& index : selected_rows) {
+            int track_id = get_track_id(index.row());
+            core.remove_track(track_id); // delete track
+        }
+        
+        // update table GUI
+        update_table();
+    }
+    else {
+        // pass key press event to parent class if wasn't backspace
+        QWidget::keyPressEvent(key_press);
+    }
 }
 
 //--------------------------------------------------------------------------------

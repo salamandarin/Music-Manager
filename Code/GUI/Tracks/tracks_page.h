@@ -14,6 +14,9 @@ public:
     TracksPage(Core& core, QWidget* parent=nullptr);
     ~TracksPage();
 
+protected:
+    void keyPressEvent(QKeyEvent* key_press) override;
+
 private slots:
     // buttons
     void add_track_files();
@@ -27,7 +30,6 @@ private slots:
 
 private:
     // table stuff
-    void setup_table();
     void update_table();
     void update_row(int row, int track_id);
 
