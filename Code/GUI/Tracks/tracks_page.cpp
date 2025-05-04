@@ -10,6 +10,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QKeyEvent>
+#include <QScrollBar>
 
 using namespace gui_utils;
 
@@ -25,14 +26,18 @@ enum Columns {
     NUM_COLUMNS // total # of columns (last column # + 1)
 };
 
+const int IMAGE_SIZE = 50;
+
 TracksPage::TracksPage(Core& core, QWidget* parent)
     :core{core}, QWidget{parent}, ui{new Ui::TracksPage} {
     
     ui->setupUi(this);
-    // set up table headers
+    // set up table
     ui->tracks_table->setColumnCount(NUM_COLUMNS);
     ui->tracks_table->setHorizontalHeaderLabels({"", "Title", "Artist", "Album", "Duration", "Date", "Tracklist #"});
     ui->tracks_table->verticalHeader()->setDefaultAlignment(Qt::AlignCenter);
+    ui->tracks_table->verticalHeader()->setDefaultSectionSize(IMAGE_SIZE); // row height
+    ui->tracks_table->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed); // row height resize off
     ui->tracks_table->verticalScrollBar()->setSingleStep(5); // adjust scroll speed
 
     // fill in table
@@ -130,7 +135,7 @@ void TracksPage::update_table() {
         // -------------------- IMAGE --------------------
         // set either actual or default image
         QLabel* image_label = new QLabel();
-        image_label->setFixedSize(50, 50); // image size
+        image_label->setFixedSize(IMAGE_SIZE, IMAGE_SIZE);
         set_image(tracks[i].image_path, DEFAULT_TRACK_IMAGE, image_label); // put image in label
         // put image (inside QLabel) into row
         ui->tracks_table->setCellWidget(i, IMAGE_COLUMN, image_label);
@@ -150,9 +155,12 @@ void TracksPage::update_table() {
         ui->tracks_table->setItem(i, TRACKLIST_NUM_COLUMN, new QTableWidgetItem(QString::number(tracks[i].tracklist_num)));
     }
     
-    // resize rows & columns to fit content
-    ui->tracks_table->resizeColumnsToContents();
-    ui->tracks_table->resizeRowsToContents();
+    // resize column widths
+    ui->tracks_table->resizeColumnsToContents(); // resize to fit
+    ui->tracks_table->setColumnWidth(IMAGE_COLUMN, IMAGE_SIZE);
+    ui->tracks_table->setColumnWidth(TITLE_COLUMN, 350);
+    ui->tracks_table->setColumnWidth(ALBUM_COLUMN, 200);
+    ui->tracks_table->setColumnWidth(TRACKLIST_NUM_COLUMN, 50);
 
     // enable GUI updates again now that done
     ui->tracks_table->setUpdatesEnabled(true);
