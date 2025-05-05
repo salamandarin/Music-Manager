@@ -916,6 +916,9 @@ void DatabaseManager::set_track_title(int track_id, const std::string& track_tit
 
 // set track artist
 void DatabaseManager::set_track_artist(int track_id, const std::string& artist_name) {
+    // save old artist to possibly delete later (if empty)
+    std::optional<int> old_artist_id = get_track_artist_id(track_id);
+
     // add new artist ONLY IF name given
     if (!artist_name.empty()) {
         add_artist(artist_name);
@@ -931,9 +934,19 @@ void DatabaseManager::set_track_artist(int track_id, const std::string& artist_n
 
     // execute
     execute_sql(sql);
+
+    // delete old artist if had artist before & that artist now has no songs
+    if (old_artist_id) { // check if had valid old artist
+        if (get_artist_tracks(*old_artist_id).size() == 0) { // check if artist has no tracks
+            remove_artist(*old_artist_id);
+        }
+    }
 }
 // set track artist (with given artist_id)
 void DatabaseManager::set_track_artist_id(int track_id, int artist_id) {
+    // save old artist to possibly delete later (if empty)
+    std::optional<int> old_artist_id = get_track_artist_id(track_id);
+    
     // prep & bind sql
     sqlite3_stmt* sql = prepare_sql("UPDATE tracks SET artist_id = ? WHERE track_id = ?");
     bind_input_to_sql(sql, 1, artist_id); // artist_id
@@ -941,15 +954,26 @@ void DatabaseManager::set_track_artist_id(int track_id, int artist_id) {
 
     // execute
     execute_sql(sql);
+
+    // delete old artist if had artist before & that artist now has no songs
+    if (old_artist_id) { // check if had valid old artist
+        if (get_artist_tracks(*old_artist_id).size() == 0) { // check if artist has no tracks
+            remove_artist(*old_artist_id);
+        }
+    }
 }
 
 // set track album
 void DatabaseManager::set_track_album(int track_id, const std::string& album_title) {
+    Track track = get_track(track_id); // get track info
+    
+    // save old album to possibly delete later (if empty)
+    std::string old_album = track.album;
+
     // add new album ONLY IF title given
-    if (!album_title.empty()) { // TODO: change to checking album existing HERE to prevent uneeded get_track() 
-        Track track = get_track(track_id); // get track info
+    if (!album_title.empty()) { // TODO: change to checking album existing HERE to prevent uneeded get_track()
         track.album = album_title; // use NEW album
-        add_album_from_track(new_album);
+        add_album_from_track(track);
     }
 
     // get possible album_id
@@ -962,9 +986,20 @@ void DatabaseManager::set_track_album(int track_id, const std::string& album_tit
 
     // execute
     execute_sql(sql);
+
+    // delete old album if had album before & that album is now empty
+    std::optional<int> old_album_id = get_album_id(old_album);
+    if (old_album_id) { // check if had valid old album
+        if (get_album_tracks(*old_album_id).size() == 0) { // check if album is empty
+            remove_album(*old_album_id);
+        }
+    }
 }
 // set track album (with given album_id)
 void DatabaseManager::set_track_album_id(int track_id, int album_id) {
+    // save old album to possibly delete later (if empty)
+    std::optional<int> old_album_id = get_track_album_id(track_id);
+    
     // prep & bind sql
     sqlite3_stmt* sql = prepare_sql("UPDATE tracks SET album_id = ? WHERE track_id = ?");
     bind_input_to_sql(sql, 1, album_id); // album_id
@@ -972,6 +1007,13 @@ void DatabaseManager::set_track_album_id(int track_id, int album_id) {
 
     // execute
     execute_sql(sql);
+
+    // delete old album if had album before & that album is now empty
+    if (old_album_id) { // check if had valid old album
+        if (get_album_tracks(*old_album_id).size() == 0) { // check if album is empty
+            remove_album(*old_album_id);
+        }
+    }
 }
 
 // set track date
