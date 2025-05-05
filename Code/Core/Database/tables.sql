@@ -70,5 +70,6 @@ VALUES
 INSERT OR IGNORE INTO album_types (name)
 VALUES
     ('Album'),
+    ('LP'), -- TODO: have EITHER 'Album' or 'LP'
     ('EP'),
     ('Single');

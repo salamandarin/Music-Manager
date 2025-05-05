@@ -11,6 +11,54 @@ TEST_CASE("database constructor") {
     CHECK_NOTHROW(DatabaseManager database);
 }
 
+// get all objects
+TEST_CASE("database get all objects") {
+    SUBCASE("get all tracks") {
+        std::vector<Track> tracks = database.get_all_tracks();
+        CHECK(tracks.size() != 0);
+
+        std::cout << "ALL TRACKS\n";
+        std::cout << "-----------------------------\n";
+        for (const Track& track: tracks) {
+            std::cout << track.title << "\n";
+        }
+        std::cout << "\n\n";
+    }
+    SUBCASE("get all albums") {
+        std::vector<Album> albums = database.get_all_albums();
+        CHECK(albums.size() != 0);
+
+        std::cout << "ALL ALBUMS\n";
+        std::cout << "-----------------------------\n";
+        for (const Album& album: albums) {
+            std::cout << album.title << "\n";
+        }
+        std::cout << "\n\n";
+    }
+    SUBCASE("get all artists") {
+        std::vector<Artist> artists = database.get_all_artists();
+        CHECK(artists.size() != 0);
+
+        std::cout << "ALL ARTISTS\n";
+        std::cout << "-----------------------------\n";
+        for (const Artist& artist: artists) {
+            std::cout << artist.name << "\n";
+        }
+        std::cout << "\n\n";
+    }
+    SUBCASE("get all people") {
+        std::vector<std::string> people = database.get_all_people();
+        CHECK(people.size() != 0);
+
+        std::cout << "ALL PEOPLE\n";
+        std::cout << "-----------------------------\n";
+        for (const std::string& person: people) {
+            std::cout << person << "\n";
+        }
+        std::cout << "\n\n";
+    }
+}
+
 // get objects by category
 TEST_CASE("database get objects by category") {
     SUBCASE("get album tracks") {
@@ -84,97 +132,9 @@ TEST_CASE("database get object") {
     }
 }
 
-// get track info
-TEST_CASE("database track info") {
-    SUBCASE("get title") {
-        std::optional<std::string> title = database.get_track_title(1);
-        if (title) {
-            CHECK(*title != "");
-
-            std::cout << "\nTITLE OF TRACK 1: " << *title << "\n";
-        }
-    }
-    SUBCASE("get duration") {
-        std::optional<Duration> duration = database.get_track_duration(1);
-        if (duration) {
-            CHECK(*duration != 0);
-
-            std::cout << "DURATION OF TRACK 1: " << *duration << "\n";
-        }
-    }
-}
-
-// get album info
-TEST_CASE("database album info") {
-    SUBCASE("get title") {
-        std::string title = database.get_album_title(1);
-        CHECK(title != "");
-
-        std::cout << "\nTITLE OF ALBUM 1: " << title << "\n";
-    }
-    SUBCASE("get artist") {
-        std::optional<Artist> artist = database.get_album_artist(1);
-        if (artist) {
-            CHECK(artist->name != "");
-
-            std::cout << "ARTIST OF ALBUM 1: " << artist->name << "\n";
-        }
-    }
-    SUBCASE("get date") {
-        std::optional<Date> date = database.get_album_date(1);
-        if (date) {
-            // CHECK(*date != ?); TODO: finish
-
-            std::cout << "DATE OF ALBUM 1: " << *date << "\n";
-        }
-    }
-    SUBCASE("get type") {
-        std::optional<std::string> album_type = database.get_album_album_type(1);
-        if (album_type) {
-             CHECK(*album_type != "");
-
-            std::cout << "TYPE OF ALBUM 1: " << *album_type << "\n";
-        }
-    }
-    SUBCASE("get image_path") {
-        std::optional<std::string> image_path = database.get_album_image_path(1);
-        if (image_path) {
-            CHECK(*image_path != "");
-
-            std::cout << "IMAGE_PATH OF ALBUM 1: " << *image_path << "\n";
-        }
-    }
-}
-
-// get artist info
-TEST_CASE("database artist info") {
-    SUBCASE("get name") {
-        std::string name = database.get_artist_name(1);
-        CHECK(name != "");
-
-        std::cout << "\nNAME OF ARTIST 1: " << name << "\n";
-    }
-    SUBCASE("get person_behind") {
-        std::optional<std::string> person_behind = database.get_artist_person_behind(1);
-        if (person_behind) {
-            CHECK(*person_behind != "");
-
-            std::cout << "PERSON_BEHIND ARTIST 1: " << *person_behind << "\n";
-        }
-    }
-    SUBCASE("get image_path") {
-        std::optional<std::string> image_path = database.get_artist_image_path(1);
-        if (image_path) {
-            CHECK(*image_path != "");
-
-            std::cout << "IMAGE_PATH OF ARTIST 1: " << *image_path << "\n";
-        }
-    }
-}
-
-// set track info
-TEST_CASE("database set track info") {
-    SUBCASE("set track title") {
+// get & set track info
+TEST_CASE("database get & set track info") {
+    SUBCASE("get & set track title") {
         // grab old value to reset later
         std::optional<std::string> old_value = database.get_track_title(1);
 
@@ -184,9 +144,9 @@ TEST_CASE("database set track info") {
         CHECK(*new_value == "new title");
 
         // set back to old value
-        database.set_track_title(1, *old_value);
+        database.set_track_title(1, old_value.value_or(""));
     }
-    SUBCASE("set track artist") {
+    SUBCASE("get & set track artist") {
         // grab old value to reset later
         std::optional<Artist> old_value = database.get_track_artist(1);
 
@@ -198,7 +158,7 @@ TEST_CASE("database set track info") {
         // set back to old value
         old_value ? database.set_track_artist(1, old_value->name) : database.set_track_artist(1, "");
     }
-    SUBCASE("set track album") {
+    SUBCASE("get & set track album") {
         // grab old value to reset later
         std::optional<Album> old_value = database.get_track_album(1);
 
@@ -210,7 +170,7 @@ TEST_CASE("database set track info") {
         // set back to old value
         old_value ? database.set_track_album(1, old_value->title) : database.set_track_album(1, "");
     }
-    SUBCASE("set track date") {
+    SUBCASE("get & set track date") {
         // grab old value to reset later
         std::optional<Date> old_value = database.get_track_date(10);
 
@@ -222,7 +182,7 @@ TEST_CASE("database set track info") {
         // set back to old value
         old_value ? database.set_track_date(1, *old_value) : database.set_track_date(1, Date{});
     }
-    SUBCASE("set track tracklist_num") {
+    SUBCASE("get & set track tracklist_num") {
         // grab old value to reset later
         std::optional<int> old_value = database.get_track_tracklist_num(1);
 
@@ -232,9 +192,9 @@ TEST_CASE("database set track info") {
         CHECK(*new_value == 7);
 
         // set back to old value
-        old_value ? database.set_track_tracklist_num(1, *old_value) : database.set_track_tracklist_num(1, 0);
+        database.set_track_tracklist_num(1, old_value.value_or(0));
     }
-    SUBCASE("set track file_path") {
+    SUBCASE("get & set track file_path") {
         // grab old value to reset later
         std::optional<std::string> old_value = database.get_track_file_path(1);
 
@@ -244,9 +204,9 @@ TEST_CASE("database set track info") {
         CHECK(*new_value == "new path");
 
         // set back to old value
-        old_value ? database.set_track_file_path(1, *old_value) : database.set_track_file_path(1, "");
+        database.set_track_file_path(1, old_value.value_or(""));
     }
-    SUBCASE("set track image_path") {
+    SUBCASE("get & set track image_path") {
         // grab old value to reset later
         std::optional<std::string> old_value = database.get_track_image_path(1);
 
@@ -256,6 +216,133 @@ TEST_CASE("database set track info") {
         CHECK(*new_value == "new path");
 
         // set back to old value
-        old_value ? database.set_track_image_path(1, *old_value) : database.set_track_image_path(1, "");
+        database.set_track_image_path(1, old_value.value_or(""));
+    }
+}
+
+// get & set album info
+TEST_CASE("database get & set album info") {
+    SUBCASE("get & set album title") {
+        // grab old value to reset later
+        std::optional<std::string> old_value = database.get_album_title(1);
+
+        // test
+        database.set_album_title(1, "new title");
+        std::optional<std::string> new_value = database.get_album_title(1);
+        CHECK(*new_value == "new title");
+
+        // set back to old value
+        database.set_album_title(1, *old_value);
+    }
+    SUBCASE("get & set album artist") {
+        std::optional<Artist> old_value = database.get_album_artist(1);
+
+        // test
+        database.set_album_artist(1, "new artist");
+        std::optional<Artist> new_value = database.get_album_artist(1);
+        CHECK(new_value->name == "new artist");
+
+        // set back to old value
+        old_value ? database.set_album_artist(1, old_value->name) : database.set_album_artist(1, "");
+    }
+    SUBCASE("get & set album date") {
+        // grab old value to reset later
+        std::optional<Date> old_value = database.get_album_date(10);
+
+        // test
+        database.set_album_date(1, Date{1,1,2025});
+        std::optional<Date> new_value = database.get_album_date(1);
+        CHECK(*new_value == Date{1,1,2025});
+
+        // set back to old value
+        old_value ? database.set_album_date(1, *old_value) : database.set_album_date(1, Date{});
+    }
+    SUBCASE("get & set album type") {
+        // grab old value to reset later
+        std::optional<std::string> old_value = database.get_album_type(1);
+
+        // test
+        database.set_album_type(1, "EP");
+        std::optional<std::string> new_value = database.get_album_type(1);
+        CHECK(*new_value == "EP");
+
+        // set back to old value
+        database.set_album_type(1, old_value.value_or(""));
+    }
+    SUBCASE("trying to set empty album type") {
+        // grab old value to reset later
+        std::optional<std::string> old_value = database.get_album_type(1);
+
+        // test
+        database.set_album_type(1, ""); // try to set empty album type
+        std::optional<std::string> new_value = database.get_album_type(1);
+        CHECK(new_value.value_or("") == "");
+
+        // set back to old value
+        database.set_album_type(1, old_value.value_or(""));
+    }
+    SUBCASE("trying to set non-existent album type") {
+        // grab old value to reset later
+        std::optional<std::string> old_value = database.get_album_type(1);
+
+        // test
+        database.set_album_type(1, "double lp"); // try to set non-existent album type
+        std::optional<std::string> new_value = database.get_album_type(1);
+        CHECK(new_value.value_or("") == "");
+
+        // set back to old value
+        database.set_album_type(1, old_value.value_or(""));
+    }
+    SUBCASE("get & set album image_path") {
+        // grab old value to reset later
+        std::optional<std::string> old_value = database.get_album_image_path(1);
+
+        // test
+        database.set_album_image_path(1, "new path");
+        std::optional<std::string> new_value = database.get_album_image_path(1);
+        CHECK(*new_value == "new path");
+
+        // set back to old value
+        database.set_album_image_path(1, old_value.value_or(""));
+    }
+}
+
+// get & set artist info
+TEST_CASE("database artist info") {
+    SUBCASE("get & set artist name") {
+        // grab old value to reset later
+        std::optional<std::string> old_value = database.get_artist_name(1);
+
+        // test
+        database.set_artist_name(1, "new name");
+        std::optional<std::string> new_value = database.get_artist_name(1);
+        CHECK(*new_value == "new name");
+
+        // set back to old value
+        database.set_artist_name(1, old_value.value_or(""));
+    }
+    SUBCASE("get & set artist person_behind") {
+        // grab old value to reset later
+        std::optional<std::string> old_value = database.get_artist_person_behind(1);
+
+        // test
+        database.set_artist_person_behind(1, "new person");
+        std::optional<std::string> new_value = database.get_artist_person_behind(1);
+        CHECK(*new_value == "new person");
+
+        // set back to old value
+        database.set_artist_person_behind(1, old_value.value_or(""));
+    }
+    SUBCASE("get & set artist image_path") {
+        // grab old value to reset later
+        std::optional<std::string> old_value = database.get_artist_image_path(1);
+
+        // test
+        database.set_artist_image_path(1, "new path");
+        std::optional<std::string> new_value = database.get_artist_image_path(1);
+        CHECK(*new_value == "new path");
+
+        // set back to old value
+        database.set_artist_image_path(1, old_value.value_or(""));
     }
 }

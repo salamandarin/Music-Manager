@@ -407,32 +407,34 @@ void Core::set_album_date(int album_id, const Date& album_date) {
     // TODO: FILE / METADATA CODE
 }
 
-// ------------------------------ SET ALBUM TYPE ------------------------------
-void Core::set_album_type(int album_id, const std::string& album_type) {
+// ------------------------------ SET ALBUM'S TYPE ------------------------------
+// set ALBUM'S type
+void Core::set_album_type(int album_id, const std::string& type_name) {
     // make sure isn't same as old album_type
-    std::optional<std::string> current_album_type = database.get_album_album_type(album_id);
-    if (current_album_type) {
-        if (*current_album_type == album_type) {
+    std::optional<std::string> current_type = database.get_album_type(album_id);
+    if (current_type) {
+        if (*current_type == type_name) {
             return; // return if same as old
         }
     }
 
     // update in database
-    database.set_album_type(album_id, album_type);
+    database.set_album_type(album_id, type_name);
 
     // TODO: FILE / METADATA CODE
 }
-void Core::set_album_type_id(int album_id, int album_type_id) {
-    // make sure isn't same as old album_type
-    std::optional<int> current_album_type_id = database.get_album_album_type_id(album_id);
-    if (current_album_type_id) {
-        if (*current_album_type_id == album_type_id) {
+// set ALBUM'S type
+void Core::set_album_type_id(int album_id, int type_id) {
+    // make sure isn't same as old type
+    std::optional<int> current_type_id = database.get_album_type_id(album_id);
+    if (current_type_id) {
+        if (*current_type_id == type_id) {
             return; // return if same as old
         }
     }
 
     // update in database
-    database.set_album_type_id(album_id, album_type_id);
+    database.set_album_type_id(album_id, type_id);
 
     // TODO: FILE / METADATA CODE
 }

@@ -67,7 +67,7 @@ public:
     Album get_album(int album_id);
     Artist get_artist(int artist_id);
     std::string get_person(int person_id); // just name
-    std::string get_album_type(int album_type_id); // just name
+    std::string get_type(int album_type_id); // just name (album_type, NOT album's album_type)
 
     // get whole objects by name (not id)
     std::optional<Album> get_album(const std::string& album_title);
@@ -100,8 +100,8 @@ public:
 
     std::optional<Date> get_album_date(int album_id);
 
-    std::optional<std::string> get_album_album_type(int album_id);
-    std::optional<int> get_album_album_type_id(int album_id);
+    std::optional<std::string> get_album_type(int album_id); // ALBUM'S type
+    std::optional<int> get_album_type_id(int album_id); // ALBUM'S type id
 
     std::optional<std::string> get_album_image_path(int album_id);
     
@@ -117,13 +117,13 @@ public:
 
     // get other specific object data
     std::string get_person_name(int person_id); // non-optional
-    std::string get_album_type_name(int album_type_id); // non-optional
+    std::string get_type_name(int album_type_id); // non-optional (album_type, NOT album's album_type)
 
     // ------------------------- GET ID -------------------------
     // get id from name
     std::optional<int> get_track_id(const std::string& track_title);
     std::optional<int> get_album_id(const std::string& album_title);
-    std::optional<int> get_album_type_id(const std::string& album_type);
+    std::optional<int> get_type_id(const std::string& album_type_name); // album_type, NOT album's album_type)
     std::optional<int> get_artist_id(const std::string& artist_name);
     std::optional<int> get_person_id(const std::string& person_name);
 
@@ -156,8 +156,8 @@ public:
 
     void set_album_date(int album_id, const Date& album_date);
 
-    void set_album_type(int album_id, const std::string& album_type);
-    void set_album_type_id(int album_id, int album_type_id);
+    void set_album_type(int album_id, const std::string& type_name); // ALBUM'S type
+    void set_album_type_id(int album_id, int type_id); // ALBUM'S type id
 
     void set_album_image_path(int album_id, const std::string& image_path);
 
@@ -200,9 +200,6 @@ private:
     static std::optional<bool> extract_bool(sqlite3_stmt* sql, int column=0);
     static std::optional<Duration> extract_duration(sqlite3_stmt* sql, int column=0);
     static std::optional<Date> extract_date(sqlite3_stmt* sql, int column=0);
-
-    // check if data exists
-    bool object_exists(const std::string& id_label, const std::string& table, int id);
 
     // get entire object rows
     Track get_track_row(sqlite3_stmt* sql);

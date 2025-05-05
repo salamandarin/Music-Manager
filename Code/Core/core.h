@@ -62,10 +62,10 @@ public:
 
     void set_album_date(int album_id, const Date& album_date);
 
-    void set_album_type(int album_id, const std::string& album_type); // TODO: rename set_album_album_type ?
-    void set_album_type_id(int track_id, int album_type_id); // TODO: rename set_album_album_type ?
+    void set_album_type(int album_id, const std::string& type_name); // ALBUM'S type
+    void set_album_type_id(int track_id, int type_id); // ALBUM'S type
 
-    void set_album_image(int album_id, const std::string& image_path); // TODO: NOTE IT'S "IMAGE" - NOT PATH - MEANS EDIT FILE
+    void set_album_image(int album_id, const std::string& image_path);
 
 
     // TODO: set artist data
@@ -74,7 +74,7 @@ public:
     void set_artist_person_behind(int artist_id, const std::string& person_behind);
     void set_artist_person_behind_id(int artist_id, int person_id);
 
-    void set_artist_image(int artist_id, const std::string& image_path); // TODO: NOTE IT'S "IMAGE" - NOT PATH - MEANS EDIT FILE
+    void set_artist_image(int artist_id, const std::string& image_path);
 
 
     // TODO: set person data

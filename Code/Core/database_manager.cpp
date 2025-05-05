@@ -109,7 +109,7 @@ void DatabaseManager::add_album(const Album& album) {
 
     // get artist & album type ids
     std::optional<int> artist_id = get_artist_id(album.artist);
-    std::optional<int> type_id = get_album_type_id(album.type);
+    std::optional<int> type_id = get_type_id(album.type);
 
     // prep sql
     sqlite3_stmt* sql = prepare_sql("INSERT INTO albums (title, artist_id, date, type_id, image_path) VALUES (?, ?, ?, ?, ?)");    
@@ -223,22 +223,6 @@ void DatabaseManager::remove_person(int person_id) {
 
     // TODO: remove cascading data (remove albums, artists, people) too if they no longer have any tracks or CREDITS?
     // TODO: OR JUST FLAG INSTEAD OF REMOVING STUFF (might still want)
-}
-
-//--------------------------------------------------------------------------------
-//                                  CHECK IF OBJECT EXISTS
-//--------------------------------------------------------------------------------
-bool DatabaseManager::track_exists(int track_id) {
-    return object_exists("track_id", "tracks", track_id);
-}
-bool DatabaseManager::album_exists(int album_id) {
-    return object_exists("album_id", "albums", album_id);
-}
-bool DatabaseManager::artist_exists(int artist_id) {
-    return object_exists("artist_id", "artists", artist_id);
-}
-bool DatabaseManager::person_exists(int person_id) {
-    return object_exists("person_id", "people", person_id);
 }
 
 //--------------------------------------------------------------------------------
@@ -567,9 +551,10 @@ std::string DatabaseManager::get_person(int person_id) {
     // doesn't return id
     return get_person_name(person_id);
 }
-std::string DatabaseManager::get_album_type(int album_type_id) { // non-optional
+// album_type (NOT album's album_type)
+std::string DatabaseManager::get_type(int album_type_id) { // non-optional
     // doesn't return id
-    return get_album_type_name(album_type_id);
+    return get_type_name(album_type_id);
 }
 
 // ------------------------ GET OBJECTS BY NAME ------------------------
@@ -744,20 +729,22 @@ std::optional<Date> DatabaseManager::get_album_date(int album_id) {
     return query_sql<Date>(sql, extract_date);
 }
 
-std::optional<std::string> DatabaseManager::get_album_album_type(int album_id) { // TODO: rename? but CANNOT be confused with get_album_type() + RENAME IN CORE
-    // get type id
-    std::optional<int> album_type_id = get_album_album_type_id(album_id);
+// ALBUM'S type
+std::optional<std::string> DatabaseManager::get_album_type(int album_id) {
+    // get ALBUM'S type id
+    std::optional<int> type_id = get_album_type_id(album_id);
 
     // return type if exists
-    if (album_type_id) {
-        return get_album_type(*album_type_id); // TODO: CODE GETTER (returns string) // TODO: rename? but CANNOT be confused with get_album_type() + RENAME IN CORE
+    if (type_id) {
+        return get_type(*type_id); // get type name
     }
     // return null if no type
     else {
         return std::nullopt;
     }
 }
-std::optional<int> DatabaseManager::get_album_album_type_id(int album_id) { 
+// ALBUM'S type
+std::optional<int> DatabaseManager::get_album_type_id(int album_id) { 
     // prep & bind sql
     sqlite3_stmt* sql = prepare_sql("SELECT type_id FROM albums WHERE album_id = ?");
     bind_input_to_sql(sql, 1, album_id); // bind id
@@ -838,8 +825,8 @@ std::string DatabaseManager::get_person_name(int person_id) { // non-optional
     return *person_name;
 }
 
-// get album type name
-std::string DatabaseManager::get_album_type_name(int album_type_id) { // non-optional
+// album_type (NOT album's album_type)
+std::string DatabaseManager::get_type_name(int album_type_id) { // non-optional
     // prep & bind sql
     sqlite3_stmt* sql = prepare_sql("SELECT name FROM album_types WHERE album_type_id = ?");
     bind_input_to_sql(sql, 1, album_type_id); // bind id
@@ -847,7 +834,7 @@ std::string DatabaseManager::get_album_type_name(int album_type_id) { // non-opt
     // execute & return result
     std::optional<std::string> type_name = query_sql<std::string>(sql, extract_string);
     if (!type_name) { // throw error if failed since type name can't be null
-        throw std::runtime_error("Could not find name for album type with ID: " + std::to_string(album_type_id));
+        throw std::runtime_error("Could not find name for album_type with ID: " + std::to_string(album_type_id));
     }
     return *type_name;
 }
@@ -872,10 +859,11 @@ std::optional<int> DatabaseManager::get_album_id(const std::string& album_title)
     // execute & return result
     return query_sql<int>(sql, extract_int);
 }
-std::optional<int> DatabaseManager::get_album_type_id(const std::string& album_type) {
+// album_type (NOT album's album_type)
+std::optional<int> DatabaseManager::get_type_id(const std::string& album_type_name) {
     // prep & bind sql
     sqlite3_stmt* sql = prepare_sql("SELECT album_type_id FROM album_types WHERE name = ?");
-    bind_input_to_sql(sql, 1, album_type); // bind album_type
+    bind_input_to_sql(sql, 1, album_type_name); // bind album_type_name
 
     // execute & return result
     return query_sql<int>(sql, extract_int);
@@ -1074,24 +1062,24 @@ void DatabaseManager::set_album_date(int album_id, const Date& album_date) {
     execute_sql(sql);
 }
 
-// set album type
-void DatabaseManager::set_album_type(int album_id, const std::string& album_type) {
-    // get possible album_type_id (doesn't make new type cuz presets only)
-    std::optional<int> album_type_id = get_album_type_id(album_type);
+// set ALBUM'S type
+void DatabaseManager::set_album_type(int album_id, const std::string& type_name) {
+    // get (possible) id of given type (doesn't make new type cuz presets only)
+    std::optional<int> type_id = get_type_id(type_name);
 
     // prep & bind sql
-    sqlite3_stmt* sql = prepare_sql("UPDATE albums SET album_type_id = ? WHERE album_id = ?");
-    bind_input_to_sql(sql, 1, album_type_id); // album_type_id (binds null if empty)
+    sqlite3_stmt* sql = prepare_sql("UPDATE albums SET type_id = ? WHERE album_id = ?");
+    bind_input_to_sql(sql, 1, type_id); // type_id (binds null if empty)
     bind_input_to_sql(sql, 2, album_id); // album_id
 
     // execute
     execute_sql(sql);
 }
-// set album type (with given album_type_id)
-void DatabaseManager::set_album_type_id(int album_id, int album_type_id) {
+// set ALBUM'S type (with given type_id)
+void DatabaseManager::set_album_type_id(int album_id, int type_id) {
     // prep & bind sql
-    sqlite3_stmt* sql = prepare_sql("UPDATE albums SET album_type_id = ? WHERE album_id = ?");
-    bind_input_to_sql(sql, 1, album_type_id); // album_type_id
+    sqlite3_stmt* sql = prepare_sql("UPDATE albums SET type_id = ? WHERE album_id = ?");
+    bind_input_to_sql(sql, 1, type_id); // type_id
     bind_input_to_sql(sql, 2, album_id); // album_id
 
     // execute
@@ -1132,7 +1120,7 @@ void DatabaseManager::set_artist_person_behind(int artist_id, const std::string&
     std::optional<int> person_id = get_person_id(person_behind);
 
     // prep & bind sql
-    sqlite3_stmt* sql = prepare_sql("UPDATE artists SET person_id = ? WHERE artist_id = ?");
+    sqlite3_stmt* sql = prepare_sql("UPDATE artists SET person_behind_id = ? WHERE artist_id = ?");
     bind_input_to_sql(sql, 1, person_id); // person_id (binds null if empty)
     bind_input_to_sql(sql, 2, artist_id); // artist_id
 
@@ -1142,7 +1130,7 @@ void DatabaseManager::set_artist_person_behind(int artist_id, const std::string&
 // set artist person_behind (with given person_id)
 void DatabaseManager::set_artist_person_behind_id(int artist_id, int person_id) {
     // prep & bind sql
-    sqlite3_stmt* sql = prepare_sql("UPDATE artists SET person_id = ? WHERE artist_id = ?");
+    sqlite3_stmt* sql = prepare_sql("UPDATE artists SET person_behind_id = ? WHERE artist_id = ?");
     bind_input_to_sql(sql, 1, person_id); // person_id
     bind_input_to_sql(sql, 2, artist_id); // artist_id
 
@@ -1281,19 +1269,6 @@ void DatabaseManager::execute_sql(sqlite3_stmt* sql) {
         throw std::runtime_error(sqlite3_errmsg(database));
     }
     sqlite3_finalize(sql); // clean up sql statement
-}
-
-// check if object exists
-bool DatabaseManager::object_exists(const std::string& id_label, const std::string& table, int id) {
-    // prep & bind sql
-    sqlite3_stmt* sql = prepare_sql("SELECT " + id_label + " FROM " + table + " WHERE " + id_label + " = ?");
-    bind_input_to_sql(sql, 1, id); // bind id
-
-    // execute & get result
-    bool exists = (sqlite3_step(sql) == SQLITE_ROW);
-
-    sqlite3_finalize(sql); // clean up sql statement
-    return exists;
 }
 
 //--------------------------------------------------------------------------------
