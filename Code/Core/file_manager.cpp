@@ -179,6 +179,45 @@ filesystem::path FileManager::get_file_name(const filesystem::path& file_path) {
 }
 
 //--------------------------------------------------------------------------------
+//                              FILE NAME HELPERS
+//--------------------------------------------------------------------------------
+// replace special characters, make sure not empty
+std::string FileManager::sanitize_file_name(std::string name) {
+    // name "untitled" if no name
+    if (name.empty()) {
+       name = "untitled";
+    }
+    
+    // replace special characters with "-"
+    std::regex forbidden_chars(R"([\/:*?"<>|])");
+    name = std::regex_replace(name, forbidden_chars, "-");
+
+    return name;
+}
+
+// adds number to file name if duplicate name exists
+filesystem::path FileManager::number_duplicate_files(const filesystem::path& desired_file_path) {
+    // return right away if no duplicates
+    if (!filesystem::exists(desired_file_path)) {
+        return desired_file_path;
+    }
+    
+    filesystem::path parent_path = desired_file_path.parent_path();
+    filesystem::path file_name = get_file_name(desired_file_path);
+    filesystem::path extension = desired_file_path.extension();
+    filesystem::path new_path = desired_file_path;
+
+    // add number if file name exists there already
+    for (int i = 1; filesystem::exists(new_path); ++i) {
+        new_path = parent_path / file_name;
+        new_path += " (" + std::to_string(i) + ")";
+        new_path += extension;
+    }
+
+    return new_path;
+}
+
+//--------------------------------------------------------------------------------
 //                              FOLDER FUNCTIONS
 //--------------------------------------------------------------------------------
 // delete folder and all files inside (without any empty folder cleanup)
@@ -267,41 +306,3 @@ void FileManager::recursive_delete_empty_parent_folders(const filesystem::path& 
     }
 }
 
-//--------------------------------------------------------------------------------
-//                              FILE NAME HELPERS
-//--------------------------------------------------------------------------------
-// replace special characters, make sure not empty
-std::string FileManager::sanitize_file_name(std::string name) {
-    // name "untitled" if no name
-    if (name.empty()) {
-       name = "untitled";
-    }
-    
-    // replace special characters with "-"
-    std::regex forbidden_chars(R"([\/:*?"<>|])");
-    name = std::regex_replace(name, forbidden_chars, "-");
-
-    return name;
-}
-
-// adds number to file name if duplicate name exists
-filesystem::path FileManager::number_duplicate_files(const filesystem::path& desired_file_path) {
-    // return right away if no duplicates
-    if (!filesystem::exists(desired_file_path)) {
-        return desired_file_path;
-    }
-    
-    filesystem::path parent_path = desired_file_path.parent_path();
-    filesystem::path file_name = get_file_name(desired_file_path);
-    filesystem::path extension = desired_file_path.extension();
-    filesystem::path new_path = desired_file_path;
-
-    // add number if file name exists there already
-    for (int i = 1; filesystem::exists(new_path); ++i) {
-        new_path = parent_path / file_name;
-        new_path += " (" + std::to_string(i) + ")";
-        new_path += extension;
-    }
-
-    return new_path;
-}

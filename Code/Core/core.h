@@ -30,12 +30,18 @@ public:
     void add_artist(const Artist& artist);
     void add_person(const std::string& person);
 
-    // ------------------------- REMOVE OBJECTS -------------------------
+    // ------------------------- REMOVE DATA -------------------------
     // remove objects
     void remove_track(int track_id);
     void remove_album(int album_id);
     void remove_artist(int artist_id);
     void remove_person(int person_id);
+
+    // remove files / images
+    void remove_track_file(int track_id);
+    void remove_track_image(int track_id);
+    void remove_album_image(int album_id);
+    void remove_artist_image(int artist_id);
 
     // ------------------------- SET DATA -------------------------
     // set track data (in both database & metadata if applicable)
@@ -50,8 +56,8 @@ public:
         // skip duration - do not manually set
     void set_track_date(int track_id, const Date& track_date);
     void set_track_tracklist_num(int track_id, int tracklist_num);
-    void set_track_file(int track_id, const std::string& file_path);
-    void set_track_image(int track_id, const std::string& image_path);
+    void set_track_file(int track_id, std::string file_path);
+    void set_track_image(int track_id, std::string image_path);
 
 
     // set album data
@@ -65,7 +71,7 @@ public:
     void set_album_type(int album_id, const std::string& type_name); // ALBUM'S type
     void set_album_type_id(int track_id, int type_id); // ALBUM'S type
 
-    void set_album_image(int album_id, const std::string& image_path);
+    void set_album_image(int album_id, std::string image_path);
 
 
     // set artist data
@@ -74,7 +80,7 @@ public:
     void set_artist_person_behind(int artist_id, const std::string& person_behind);
     void set_artist_person_behind_id(int artist_id, int person_id);
 
-    void set_artist_image(int artist_id, const std::string& image_path);
+    void set_artist_image(int artist_id, std::string image_path);
 
 
     // set person data

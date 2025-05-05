@@ -172,12 +172,20 @@ void MetadataManager::set_tracklist_num(unsigned int new_tracklist_num) {
 }
 
 // ---------- Set Cover Art ----------
-std::string MetadataManager::set_cover_art(const std::string& image_path) {
+void MetadataManager::set_cover_art(const std::string& image_path) {
     // TODO: CODE - SET COVER ART
 
-    // TODO: save new cover art to file
+    // TODO: save new cover art to file 
 
-    // TODO: return new image path
+    // TODO: figure out how to handle existing cover art (+ if can handle multiple? & if has none)
+
+    // TODO: return new image path? or no cuz probably won't use (saving og art instead)
+}
+
+// ---------- Remove Cover Art ----------
+void MetadataManager::remove_cover_art() {
+    // TODO: CODE - REMOVE COVER ART(s)
+    // TODO: do nothing if doesn't have cover art + get ALL cover art(s)
 }
 
 //--------------------------------------------------------------------------------
@@ -231,6 +239,9 @@ std::string MetadataManager::write_image_to_file(const TagLib::ByteVector& image
     // construct image file path (naming it after music file)
     std::string music_file_name = FileManager::get_file_name(file_path).string();
     std::string image_path = FileManager::make_image_file_path(music_file_name, extension);
+
+    // handle duplicate file names
+    image_path = FileManager::number_duplicate_files(image_path);
 
     // write to file
     std::ofstream output(image_path, std::ios::binary);

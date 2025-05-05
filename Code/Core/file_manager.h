@@ -30,6 +30,10 @@ public:
     static std::string rename_file(const std::filesystem::path& file_path, const std::string& new_file_name); // returns new path
     static bool exists(const std::filesystem::path& path); // check if file/folder exists
     static std::filesystem::path get_file_name(const std::filesystem::path& file_path); // without extension or full path
+    
+    // file name helpers
+    static std::string sanitize_file_name(std::string name);
+    static std::filesystem::path number_duplicate_files(const std::filesystem::path& desired_file_path);
 
     // folder functions
     static void delete_folder(const std::filesystem::path& folder_path); // delete folder and all files inside (without any empty folder cleanup)
@@ -40,8 +44,4 @@ public:
 private:
     // backend of delete_empty_parent_folders()
     static void recursive_delete_empty_parent_folders(const std::filesystem::path& current_path, const std::filesystem::path& boundary_folder);
-
-    // file name helpers
-    static std::string sanitize_file_name(std::string name);
-    static std::filesystem::path number_duplicate_files(const std::filesystem::path& desired_file_path);
 };

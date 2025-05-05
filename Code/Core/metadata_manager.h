@@ -31,8 +31,9 @@ public:
     void set_tracklist_num(unsigned int new_tracklist_num);
 
     // set cover art
-    std::string set_cover_art(const std::string& image_path); // returns new image path
-
+    void set_cover_art(const std::string& image_path);
+    // remove cover art
+    void remove_cover_art();
 
 private:
     // helper functions (for cover art)

@@ -111,23 +111,38 @@ void Core::add_person(const std::string& person) {
 //                                  REMOVE OBJECTS
 //--------------------------------------------------------------------------------
 void Core::remove_track(int track_id) {
+    Track track = database.get_track(track_id); // get track data
+
     // delete file (if exists)
-    std::optional<std::string> possible_file_path = database.get_track_file_path(track_id);
-    if (possible_file_path) { // check if file exists
-        FileManager::delete_file(*possible_file_path, MUSIC_FOLDER); // delete file
+    if (!track.file_path.empty()) { // check if file exists
+        FileManager::delete_file(track.file_path, MUSIC_FOLDER); // delete file
     }
 
-    // remove in database (must do last or else can't get file path)
+    // delete image file (if exists)
+    if (!track.image_path.empty()) { // check if file exists
+        FileManager::delete_file(track.image_path, IMAGES_FOLDER); // delete file
+    }
+
+    // remove in database (must do last)
     database.remove_track(track_id);
 }
 void Core::remove_album(int album_id) {
     // TODO: remove from all track metadata (or refresh??) (do 1st or 2nd??)
+
+    // delete image file (if exists)
+    remove_album_image(album_id); // TODO: keep this function if removing from image tracks too
 
     // remove in database
     database.remove_album(album_id);
 }
 void Core::remove_artist(int artist_id) {
     // TODO: remove from all track metadata (or refresh??) (do 1st or 2nd??)
+
+    // delete image file (if exists)
+    std::optional<std::string> possible_image_path = database.get_artist_image_path(artist_id);
+    if (possible_image_path) { // check if file exists
+        FileManager::delete_file(*possible_image_path, IMAGES_FOLDER); // delete file
+    }
 
     // remove in database
     database.remove_artist(artist_id);
@@ -137,6 +152,66 @@ void Core::remove_person(int person_id) {
     database.remove_person(person_id);
 }
 
+//--------------------------------------------------------------------------------
+//                                  REMOVE FILES / IMAGES
+//--------------------------------------------------------------------------------
+// ------------------------------ REMOVE TRACK FILE ------------------------------
+void Core::remove_track_file(int track_id) {
+    // delete file (if exists)
+    std::optional<std::string> possible_file_path = database.get_track_file_path(track_id);
+    if (possible_file_path) { // check if file exists
+        FileManager::delete_file(*possible_file_path, MUSIC_FOLDER); // delete file
+    }
+
+    // update in database
+    database.set_track_file_path(track_id, "");
+}
+
+// ------------------------------ REMOVE TRACK IMAGE ------------------------------
+// TODO: make function to remove ALL track images (plural)? + remove a SPECIFIC image
+void Core::remove_track_image(int track_id) {
+    Track track = database.get_track(track_id); // get track data
+
+    // delete image file (if exists)
+    if (!track.image_path.empty()) { // check if file exists
+        FileManager::delete_file(track.image_path, IMAGES_FOLDER); // delete file
+    }
+
+    // remove cover art metadata (if has file)
+    if (!track.file_path.empty()) { // check if file exists
+        MetadataManager metadata{track.file_path};
+        metadata.remove_cover_art(); // remove cover art
+    }
+
+    // update in database
+    database.set_track_image_path(track_id, "");
+}
+// ------------------------------ REMOVE ALBUM IMAGE ------------------------------
+void Core::remove_album_image(int album_id) {
+    // delete image file (if exists)
+    std::optional<std::string> possible_file_path = database.get_album_image_path(album_id);
+    if (possible_file_path) { // check if file exists
+        FileManager::delete_file(*possible_file_path, IMAGES_FOLDER); // delete file
+    }
+
+    // update in database
+    database.set_album_image_path(album_id, "");
+
+    // TODO: remove this image from all tracks too?????? OR NOT???
+    // TODO: figure out what if multiple Metadata cover arts?? (remove_cover_art() probably nukes ALL!!)
+    // TODO: call ---CORE::remove_track_image(THIS_SPECIFIC_IMAGE)----
+}
+// ------------------------------ REMOVE ARTIST IMAGE ------------------------------
+void Core::remove_artist_image(int artist_id) {
+    // delete image file (if exists)
+    std::optional<std::string> possible_file_path = database.get_artist_image_path(artist_id);
+    if (possible_file_path) { // check if file exists
+        FileManager::delete_file(*possible_file_path, IMAGES_FOLDER); // delete file
+    }
+
+    // update in database
+    database.set_artist_image_path(artist_id, "");
+}
 
 //--------------------------------------------------------------------------------
 //                                  SET TRACK DATA
@@ -318,27 +393,78 @@ void Core::set_track_tracklist_num(int track_id, int tracklist_num) {
 }
 
 // ------------------------------ SET TRACK FILE ------------------------------
-void Core::set_track_file(int track_id, const std::string& file_path) {
-    // TODO: CODE
-    // TODO: EITHER COPY OR MOVE DEPENDING ON "copy_music_files" bool (do same as add_track())
-    // TODO: IF NO FILE - ADD NEW FILE TO PROGRAM, ATTACHING TO THIS TRACK
-    // TODO: IF HAS FILE - REPLACE THAT FILE, ADD THIS ONE
-    // TODO: put new path in database
+void Core::set_track_file(int track_id, std::string file_path) {
+    Track track_current = database.get_track(track_id); // grab track info
+
+    // delete old file if exists
+    if (!track_current.image_path.empty()) {
+        FileManager::delete_file(track_current.image_path, IMAGES_FOLDER);
+    }
+    // -------------------- ADD FILE --------------------
+    // make track title & file name match
+    file_path = set_file_title(file_path);
+
+    // gather metadata from track 
+    MetadataManager metadata_manager{file_path};
+    Track new_track = metadata_manager.get_data();
+
+    // save cover art from metadata (if exists)
+    new_track.image_path = metadata_manager.save_cover_art();
+
+    // save music file to correct location
+    file_path = FileManager::save_music_file(track_current.file_path, track_current, is_nested, copy_music_files);
+
+    // update database with new file path
+    database.set_track_file_path(track_id, file_path);
+    // TODO: make database.set_track(int track_id, const Track& new_track)????? OR NO & HAVE ALL OLD INFO TAKE PRECEDENCE??? OR ask to import metadata??? or only take if old is empty????
+
+    // -------------------- ADD IMAGE --------------------
+    // if track HAS cover art already
+    if (!track_current.image_path.empty()) {
+        // if new file HAS cover art (& track had image) - OVERRIDE old image
+        if (!new_track.image_path.empty()) {
+            FileManager::delete_file(track_current.image_path, IMAGES_FOLDER); // delete old image
+            // TODO: figure out plan here (new images is already in files from metadata.save_cover_art(), BUT probably has a number cuz duplicate name
+        }
+        // if new file has NO cover art (& track had image)
+        else {
+            // set new file metadata cover art to track image
+            metadata_manager.set_cover_art(track_current.image_path);
+            new_track.image_path = track_current.image_path;
+        }
+    }
+
+    // update database with image path
+    database.set_track_file_path(track_id, new_track.image_path);
+
+    // TODO: careful if implementing album art - check if image_path == album_image_path
 }
+
 // ------------------------------ SET TRACK IMAGE ------------------------------
-void Core::set_track_image(int track_id, const std::string& image_path) {
-    // TODO: CODE - IF HAS FILE
-        // TODO: get file_path from id, error if no file (or make this function take in file path directly)
+void Core::set_track_image(int track_id, std::string image_path) {
+    // grab track info - make sure isn't same as old path
+    Track track_current = database.get_track(track_id);
+    if (track_current.image_path == image_path) {
+        return; // return if same as old
+    }
 
-        // TODO: call MetadataManager with file_path (returns image_path)
+    // delete old file if exists
+    if (!track_current.image_path.empty()) {
+        FileManager::delete_file(track_current.image_path, IMAGES_FOLDER);
+    }
+    
+    // save image to files
+    image_path = FileManager::save_image_file(image_path, track_current.title);
 
-        // TODO: put returned image_path into database
+    // update in database
+    database.set_track_image_path(track_id, image_path);
 
-    // TODO: CODE - IF NO FILE
-        // TODO: move image directly to correct folder, return image_path
-        
-
-    // TODO: put returned image_path into database
+    // if music file exists: set file cover art in metadata
+    if (!track_current.file_path.empty()) { // check if file exists
+        // set metadata cover art
+        MetadataManager metadata{track_current.file_path};
+        metadata.set_cover_art(image_path);
+    }
 }
 
 //--------------------------------------------------------------------------------
@@ -360,6 +486,7 @@ void Core::set_album_title(int album_id, const std::string& album_title) {
 
     // TODO: FINISH
     // TODO: FILE / METADATA CODE
+    // TODO: CASCADING FILE INFO??
 }
 
 // ------------------------------ SET ALBUM ARTIST ------------------------------
@@ -377,6 +504,7 @@ void Core::set_album_artist(int album_id, const std::string& artist_name) {
 
     // TODO: FINISH
     // TODO: FILE / METADATA CODE
+    // TODO: CASCADING FILE INFO??
 }
 void Core::set_album_artist_id(int album_id, int artist_id) {
     // make sure isn't same as old artist_id
@@ -392,6 +520,7 @@ void Core::set_album_artist_id(int album_id, int artist_id) {
 
     // TODO: FINISH
     // TODO: FILE / METADATA CODE
+    // TODO: CASCADING FILE INFO??
 }
 
 // ------------------------------ SET ALBUM DATE ------------------------------
@@ -409,6 +538,7 @@ void Core::set_album_date(int album_id, const Date& album_date) {
 
     // TODO: FINISH
     // TODO: FILE / METADATA CODE
+    // TODO: CASCADING FILE INFO??
 }
 
 // ------------------------------ SET ALBUM'S TYPE ------------------------------
@@ -427,6 +557,7 @@ void Core::set_album_type(int album_id, const std::string& type_name) {
 
     // TODO: FINISH
     // TODO: FILE / METADATA CODE
+    // TODO: CASCADING FILE INFO??
 }
 // set ALBUM'S type
 void Core::set_album_type_id(int album_id, int type_id) {
@@ -443,14 +574,31 @@ void Core::set_album_type_id(int album_id, int type_id) {
 
     // TODO: FINISH
     // TODO: FILE / METADATA CODE
+    // TODO: CASCADING FILE INFO??
 }
 
-// ------------------------------ SET ALBUM IMAGE ------------------------------
-void Core::set_album_image(int album_id, const std::string& image_path) {
-    // TODO: CODE
-    // TODO: NOTE IT'S "set IMAGE" - NOT PATH - MEANS EDIT FILE
-    // TODO: NOTE IT'S "set IMAGE" - NOT PATH - MEANS EDIT FILE
-    // TODO: update in database
+// ------------------------------ SET / REMOVE ALBUM IMAGE ------------------------------
+void Core::set_album_image(int album_id, std::string image_path) {
+    // grab album info - make sure isn't same as old path
+    Album album_current = database.get_album(album_id);
+    if (album_current.image_path == image_path) {
+        return; // return if same as old
+    }
+
+    // delete old file if exists
+    if (!album_current.image_path.empty()) {
+        FileManager::delete_file(album_current.image_path, IMAGES_FOLDER);
+    }
+
+    // save image to files
+    image_path = FileManager::save_image_file(image_path, album_current.title);
+
+    // update in database
+    database.set_album_image_path(album_id, image_path);
+
+    // TODO: CASCADING TRACK / TRACK FILE INFO??
+    // TODO: call ---CORE::set_track_image()---- (for metadata) OR make set_track_ALBUM_image()
+    // TODO: if track has no image - then album_image = track_image & metadata cover art, else it's SECONDARY
 }
 
 //--------------------------------------------------------------------------------
@@ -472,6 +620,7 @@ void Core::set_artist_name(int artist_id, const std::string& artist_name) {
 
     // TODO: FINISH
     // TODO: FILE / METADATA CODE
+    // TODO: CASCADING FILE INFO??
 }
 
 // ------------------------------ SET ARTIST PERSON BEHIND ------------------------------
@@ -489,6 +638,7 @@ void Core::set_artist_person_behind(int artist_id, const std::string& person_beh
 
     // TODO: FINISH
     // TODO: FILE / METADATA CODE
+    // TODO: CASCADING FILE INFO??
 }
 void Core::set_artist_person_behind_id(int artist_id, int person_id) {
     // make sure isn't same as old person_id
@@ -504,14 +654,27 @@ void Core::set_artist_person_behind_id(int artist_id, int person_id) {
 
     // TODO: FINISH
     // TODO: FILE / METADATA CODE
+    // TODO: CASCADING FILE INFO??
 }
 
 // ------------------------------ SET ARTIST IMAGE ------------------------------
-void Core::set_artist_image(int artist_id, const std::string& image_path) {
-    // TODO: CODE
-    // TODO: NOTE IT'S "set IMAGE" - NOT PATH - MEANS EDIT FILE
-    // TODO: NOTE IT'S "set IMAGE" - NOT PATH - MEANS EDIT FILE
-    // TODO: update in database
+void Core::set_artist_image(int artist_id, std::string image_path) {
+    // grab artist info - make sure isn't same as old path
+    Artist artist_current = database.get_artist(artist_id);
+    if (artist_current.image_path == image_path) {
+        return; // return if same as old
+    }
+
+    // delete old file if exists
+    if (!artist_current.image_path.empty()) {
+        FileManager::delete_file(artist_current.image_path, IMAGES_FOLDER);
+    }
+
+    // save image to files
+    image_path = FileManager::save_image_file(image_path, artist_current.name);
+
+    // update in database
+    database.set_artist_image_path(artist_id, image_path);
 }
 
 //--------------------------------------------------------------------------------
@@ -531,6 +694,7 @@ void Core::set_person_name(int person_id, const std::string& person_name) {
 
     // TODO: FINISH
     // TODO: FILE / METADATA CODE
+    // TODO: CASCADING FILE INFO??
 }
 
 

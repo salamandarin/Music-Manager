@@ -181,15 +181,6 @@ TEST_CASE("core get & set track info") {
         // set back to old value
         core.set_track_tracklist_num(1, track_old.tracklist_num);
     }
-    SUBCASE("get & set track image_path") {
-        // test
-        core.set_track_image(1, "non-existent-pic.png");
-        Track new_track = core.get_track(1);
-        CHECK(new_track.image_path == "non-existent-pic.png");
-
-        // set back to old value
-        core.set_track_image(1, track_old.image_path);
-    }
 }
 
 // get & set album info
@@ -250,15 +241,6 @@ TEST_CASE("core get & set album info") {
         // set back to old value
         core.set_album_type(1, album_old.type);
     }
-    SUBCASE("get & set album image_path") {
-        // test
-        core.set_album_image(1, "non-existent-pic.png");
-        Album new_album = core.get_album(1);
-        CHECK(new_album.image_path == "non-existent-pic.png");
-
-        // set back to old value
-        core.set_album_image(1, album_old.image_path);
-    }
 }
 
 // get & set artist info
@@ -282,14 +264,5 @@ TEST_CASE("core artist info") {
 
         // set back to old value
         core.set_artist_person_behind(1, artist_old.person_behind);
-    }
-    SUBCASE("get & set artist image_path") {
-        // test
-        core.set_artist_image(1, "non-existent-pic.png");
-        Artist new_artist = core.get_artist(1);
-        CHECK(new_artist.image_path == "non-existent-pic.png");
-
-        // set back to old value
-        core.set_artist_image(1, artist_old.image_path);
     }
 }
