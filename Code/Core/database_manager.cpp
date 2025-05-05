@@ -67,10 +67,7 @@ void DatabaseManager::add_track(const Track& track) {
     }
     // add new album (if not in db)
     if (!track.album.empty()) { // if album is NOT empty
-        Album album;
-        album.title = track.album;
-        album.artist = track.artist; // set album artist too // TODO: undo (what if track has multiple artists)
-        add_album(album);
+        add_album_from_track(track);
     }
 
     // get artist & album ids
@@ -125,9 +122,12 @@ void DatabaseManager::add_album(const Album& album) {
     execute_sql(sql);
 }
 // wrapper function
-void DatabaseManager::add_album(const std::string& album_title) {
+void DatabaseManager::add_album_from_track(const Track& track) {
     Album new_album;
-    new_album.title = album_title;
+    new_album.title = track.album;
+    new_album.artist = track.artist; // TODO: figure out what if track has multiple artists?
+    new_album.image_path = track.image_path;
+    new_album.date = track.date; // TODO: keep or delete?
     add_album(new_album); // calls other function
 }
 void DatabaseManager::add_artist(const Artist& artist) {
@@ -245,7 +245,8 @@ std::vector<Track> DatabaseManager::get_all_tracks() {
         FROM tracks
         LEFT JOIN artists ON tracks.artist_id = artists.artist_id
         LEFT JOIN albums ON tracks.album_id = albums.album_id
-    )");
+        ORDER BY artist DESC, album, tracklist_num
+    )"); // TODO: make it not descending?
 
     // execute & grab all data for each row
     while (sqlite3_step(sql) == SQLITE_ROW) {
@@ -343,6 +344,7 @@ std::unordered_map<std::string, bool> DatabaseManager::get_all_settings() {
 //--------------------------------------------------------------------------------
 //                            GET OBJECTS BY CATEGORY
 //--------------------------------------------------------------------------------
+// get all tracks in album - ORDERED BY TRACKLIST_NUM
 std::vector<Track> DatabaseManager::get_album_tracks(int album_id) {
     std::vector<Track> tracks; // make vector
 
@@ -361,6 +363,7 @@ std::vector<Track> DatabaseManager::get_album_tracks(int album_id) {
         LEFT JOIN artists ON tracks.artist_id = artists.artist_id
         LEFT JOIN albums ON tracks.album_id = albums.album_id
         WHERE tracks.album_id = ?
+        ORDER BY tracklist_num
     )");
     bind_input_to_sql(sql, 1, album_id);
 
@@ -943,8 +946,10 @@ void DatabaseManager::set_track_artist_id(int track_id, int artist_id) {
 // set track album
 void DatabaseManager::set_track_album(int track_id, const std::string& album_title) {
     // add new album ONLY IF title given
-    if (!album_title.empty()) {
-        add_album(album_title);
+    if (!album_title.empty()) { // TODO: change to checking album existing HERE to prevent uneeded get_track() 
+        Track track = get_track(track_id); // get track info
+        track.album = album_title; // use NEW album
+        add_album_from_track(new_album);
     }
 
     // get possible album_id

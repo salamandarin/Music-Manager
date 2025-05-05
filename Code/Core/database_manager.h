@@ -28,7 +28,7 @@ public:
     void add_track(const Track& track);
 
     void add_album(const Album& album);
-    void add_album(const std::string& album_title);
+    void add_album_from_track(const Track& track);
 
     void add_artist(const Artist& artist);
     void add_artist(const std::string& artist_name);
@@ -51,7 +51,7 @@ public:
     std::unordered_map<std::string, bool> get_all_settings();
 
     // get objects by category
-    std::vector<Track> get_album_tracks(int album_id);
+    std::vector<Track> get_album_tracks(int album_id); // ordered by tracklist_num
     std::vector<Track> get_artist_tracks(int artist_id);
     std::vector<Album> get_artist_albums(int artist_id);
     std::vector<Artist> get_person_artists(int person_id);
