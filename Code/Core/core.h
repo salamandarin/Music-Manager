@@ -115,8 +115,8 @@ private:
     void update_file_structure();
     std::string set_file_title(const std::string& file_path); // make track title & file name match
     
-    void set_track_file_artist(int track_id, const std::string& artist_name);
-    void set_track_file_album(int track_id, const std::string& album_title);
+    void set_track_file_artist(int track_id, const Track& track_data);
+    void set_track_file_album(int track_id, const Track& track_data);
 
     DatabaseManager database;
 
