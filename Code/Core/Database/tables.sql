@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS albums
 CREATE TABLE IF NOT EXISTS tracks
 (
     track_id          INTEGER PRIMARY KEY,
-    title             TEXT, -- TODO: make not null? (make getter non-optional too)
+    title             TEXT,
     artist_id         INTEGER,
     album_id          INTEGER,
     duration          INTEGER,
@@ -70,6 +70,6 @@ VALUES
 INSERT OR IGNORE INTO album_types (name)
 VALUES
     ('Album'),
-    ('LP'), -- TODO: have EITHER 'Album' or 'LP'
+    ('LP'),
     ('EP'),
     ('Single');

@@ -34,13 +34,11 @@ void SettingsPopup::update_checkboxes() {
     ui->toggle_nested_button->setChecked(core.get_is_nested());
 
     ui->copy_files_check->setChecked(core.get_copy_music_files());
-    // TODO: add other settings if added (CAREFUL OF T/F VALUE)
 }
 
 void SettingsPopup::restore_defaults() {
     core.set_is_nested(true);
     core.set_copy_music_files(true);
-    // TODO: add other settings if added (CAREFUL OF T/F VALUE)
 
     // properly check/uncheck boxes to match
     update_checkboxes();

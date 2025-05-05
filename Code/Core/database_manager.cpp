@@ -125,9 +125,9 @@ void DatabaseManager::add_album(const Album& album) {
 void DatabaseManager::add_album_from_track(const Track& track) {
     Album new_album;
     new_album.title = track.album;
-    new_album.artist = track.artist; // TODO: figure out what if track has multiple artists?
+    new_album.artist = track.artist;
     new_album.image_path = track.image_path;
-    new_album.date = track.date; // TODO: keep or delete?
+    new_album.date = track.date;
     add_album(new_album); // calls other function
 }
 void DatabaseManager::add_artist(const Artist& artist) {
@@ -181,6 +181,10 @@ void DatabaseManager::add_person(const std::string& person) {
 //                                  REMOVE OBJECTS
 //--------------------------------------------------------------------------------
 void DatabaseManager::remove_track(int track_id) {
+    // grab artist & album ids to check if empty later
+    std::optional<int> artist_id = get_track_artist_id(track_id);
+    std::optional<int> album_id = get_track_album_id(track_id);
+
     // prep & bind sql
     sqlite3_stmt* sql = prepare_sql("DELETE FROM tracks WHERE track_id = ?");
     bind_input_to_sql(sql, 1, track_id);
@@ -188,8 +192,18 @@ void DatabaseManager::remove_track(int track_id) {
     // execute
     execute_sql(sql);
 
-    // TODO: remove cascading data (remove albums, artists, people) too if they no longer have any tracks or CREDITS?
-    // TODO: OR JUST FLAG INSTEAD OF REMOVING STUFF (might still want)
+    // delete artist if now has no songs
+    if (artist_id) { // check if had valid artist
+        if (get_artist_tracks(*artist_id).size() == 0) { // check if artist has no tracks
+            remove_artist(*artist_id);
+        }
+    }
+    // delete album if now empty
+    if (album_id) { // check if had valid album
+        if (get_album_tracks(*album_id).size() == 0) { // check if album is empty
+            remove_album(*album_id);
+        }
+    }
 }
 void DatabaseManager::remove_album(int album_id) {
     // prep & bind sql
@@ -198,11 +212,11 @@ void DatabaseManager::remove_album(int album_id) {
 
     // execute
     execute_sql(sql);
-
-    // TODO: remove cascading data (remove albums, artists, people) too if they no longer have any tracks or CREDITS?
-    // TODO: OR JUST FLAG INSTEAD OF REMOVING STUFF (might still want)
 }
 void DatabaseManager::remove_artist(int artist_id) {
+    // grab person id to check if empty later
+    std::optional<int> person_id = get_artist_person_behind_id(artist_id);
+
     // prep & bind sql
     sqlite3_stmt* sql = prepare_sql("DELETE FROM artists WHERE artist_id = ?");
     bind_input_to_sql(sql, 1, artist_id);
@@ -210,8 +224,12 @@ void DatabaseManager::remove_artist(int artist_id) {
     // execute
     execute_sql(sql);
 
-    // TODO: remove cascading data (remove albums, artists, people) too if they no longer have any tracks or CREDITS?
-    // TODO: OR JUST FLAG INSTEAD OF REMOVING STUFF (might still want)
+    // delete person if now has no artists
+    if (person_id) { // check if had valid person (kinda has to)
+        if (get_person_artists(*person_id).size() == 0) { // check if person has no artists
+            remove_artist(*person_id);
+        }
+    }
 }
 void DatabaseManager::remove_person(int person_id) {
     // prep & bind sql
@@ -220,9 +238,6 @@ void DatabaseManager::remove_person(int person_id) {
 
     // execute
     execute_sql(sql);
-
-    // TODO: remove cascading data (remove albums, artists, people) too if they no longer have any tracks or CREDITS?
-    // TODO: OR JUST FLAG INSTEAD OF REMOVING STUFF (might still want)
 }
 
 //--------------------------------------------------------------------------------
@@ -245,8 +260,8 @@ std::vector<Track> DatabaseManager::get_all_tracks() {
         FROM tracks
         LEFT JOIN artists ON tracks.artist_id = artists.artist_id
         LEFT JOIN albums ON tracks.album_id = albums.album_id
-        ORDER BY artist DESC, album, tracklist_num
-    )"); // TODO: make it not descending?
+        ORDER BY artist, album, tracklist_num
+    )");
 
     // execute & grab all data for each row
     while (sqlite3_step(sql) == SQLITE_ROW) {
@@ -272,6 +287,7 @@ std::vector<Album> DatabaseManager::get_all_albums() {
         FROM albums
         LEFT JOIN artists ON albums.artist_id = artists.artist_id
         LEFT JOIN album_types ON albums.type_id = album_types.album_type_id
+        ORDER BY artist, albums.date
     )");
 
     // execute & grab all data for each row
@@ -971,7 +987,7 @@ void DatabaseManager::set_track_album(int track_id, const std::string& album_tit
     std::string old_album = track.album;
 
     // add new album ONLY IF title given
-    if (!album_title.empty()) { // TODO: change to checking album existing HERE to prevent uneeded get_track()
+    if (!album_title.empty()) {
         track.album = album_title; // use NEW album
         add_album_from_track(track);
     }

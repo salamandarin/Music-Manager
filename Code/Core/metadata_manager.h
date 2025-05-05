@@ -21,7 +21,7 @@ public:
     Duration get_duration();
 
     // get cover art
-    std::string save_cover_art(); // include alts if id3v2 // TODO: RETURN TYPE?????
+    std::string save_cover_art(); // include alts if id3v2
 
     
     // ---------- SET DATA ----------

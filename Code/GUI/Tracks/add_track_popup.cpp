@@ -52,7 +52,7 @@ void AddTrackPopup::add_track() {
         QDate qt_date = ui->date_input->date();
         track.date = Date(qt_date.month(), qt_date.day(), qt_date.year());
     }
-    track.tracklist_num = ui->tracklist_num_input->text().trimmed().toInt(); // TODO: handle non-int input (or leave be cuz just sets to 0)
+    track.tracklist_num = ui->tracklist_num_input->text().trimmed().toInt(); // non-int input just sets to 0
     
     core.add_track(track); // add track
 

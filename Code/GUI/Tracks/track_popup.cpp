@@ -122,9 +122,8 @@ void TrackPopup::clear_date() {
     emit track_updated(track_id); // emit signal so main table can refresh
 }
 void TrackPopup::edit_tracklist_num() {
-    // grab new data
+    // grab new data (non-int input just sets to 0)
     int new_tracklist_num = ui->edit_tracklist_num_input->text().trimmed().toInt(); // trim to remove extra whitespace
-    // TODO: handle non-int input (or leave be cuz just sets to 0)
 
     // set new data
     core.set_track_tracklist_num(track_id, new_tracklist_num);

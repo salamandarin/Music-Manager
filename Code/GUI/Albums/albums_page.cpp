@@ -34,8 +34,8 @@ void AlbumsPage::build_album_grid() {
         // make album widget
         AlbumWidget* album_widget = create_album_widget(albums[i], ui->scroll_area_widget_contents); // pass in parent
 
-        int area_width = ui->scrollArea->maximumViewportSize().width() - 15; // TODO: fix to not -15
-        const int columns = 4; // TODO: make constants at top?
+        int area_width = ui->scrollArea->maximumViewportSize().width() - 15;
+        const int columns = 4;
         const int spacing = 10;
         const int margins = 5;
         const double widget_height_ratio = 1.5;
@@ -72,7 +72,7 @@ void AlbumsPage::open_album_popup(int album_id) {
     // make popup 
     AlbumPopup* album_popup = new AlbumPopup(core, album_id, this);
 
-    // connect album_updated signal -> update_album() // TODO: MAKE THIS STUFF
+    // connect album_updated signal -> update_album() // TODO: code
     // connect(album_popup, &AlbumPopup::album_updated,
     //                 this, &AlbumsPage::update_album);
 

@@ -2,7 +2,6 @@
 #include "metadata_manager.h"
 #include "file_manager.h"
 #include <taglib/tag.h>
-// TODO: FIGURE OUT WHAT'S NEEDED
 #include <filesystem>
 #include <taglib/fileref.h>
 #include <taglib/id3v2tag.h>
@@ -39,9 +38,7 @@ Track MetadataManager::get_data() {
     track.tracklist_num = get_tracklist_num();
     track.duration = get_duration();
     // metadata doesn't hold date
-    track.file_path = file_path; // TODO: either keep same, or use file_ref.tag()->complexProperties->GENERALOBJECT->fileName
-
-    // TODO: add more fields?
+    track.file_path = file_path;
 
     return track;
 }
@@ -146,7 +143,7 @@ std::string MetadataManager::save_cover_art() {
         }
     }
 
-    // return empty path if not found // TODO: make std::optional<> ?
+    // return empty path if not found
     return "";
 }
 
@@ -178,8 +175,6 @@ void MetadataManager::set_cover_art(const std::string& image_path) {
     // TODO: save new cover art to file 
 
     // TODO: figure out how to handle existing cover art (+ if can handle multiple? & if has none)
-
-    // TODO: return new image path? or no cuz probably won't use (saving og art instead)
 }
 
 // ---------- Remove Cover Art ----------
@@ -211,7 +206,7 @@ std::string MetadataManager::save_id3_cover_art(TagLib::ID3v2::Tag* id3v2_tag) {
         return write_image_to_file(picture_frame->picture(), extension);
     }
     else {
-        // return empty path if not found // TODO: make std::optional<> ?
+        // return empty path if not found
         return "";
     }
 }
@@ -245,7 +240,7 @@ std::string MetadataManager::write_image_to_file(const TagLib::ByteVector& image
 
     // write to file
     std::ofstream output(image_path, std::ios::binary);
-    if (!output) { // TODO: maybe handle in better instead of throwing error??
+    if (!output) {
         throw std::runtime_error("Error trying to save cover art for this music file: " + file_path);
     }
     output.write(image_data.data(), image_data.size());

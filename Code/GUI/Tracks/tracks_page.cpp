@@ -56,7 +56,7 @@ TracksPage::TracksPage(Core& core, MainWindow* parent)
     connect(ui->manual_add_button, &QPushButton::clicked,
             this, &TracksPage::manually_add_track);
 
-    connect(ui->delete_library_button, &QPushButton::clicked, // TODO: DELETE THIS ENTIRE BUTTON
+    connect(ui->delete_library_button, &QPushButton::clicked,
                             this, &TracksPage::delete_library);
 }
 
@@ -101,9 +101,9 @@ void TracksPage::manually_add_track() {
     add_track_popup->exec();
 }
 
-void TracksPage::delete_library() { // TODO: DELETE THIS ENTIRE BUTTON
+void TracksPage::delete_library() {
     // get confirmation before deleting
-    QMessageBox::StandardButton confirmation = QMessageBox::question(this, "Delete Library", "Are you sure?",
+    QMessageBox::StandardButton confirmation = QMessageBox::question(this, "Delete Library", "Are you sure? This will delete:\n\n - ALL music files\n - ALL image files\n - The ENTIRE database\n\n⚠ THIS CANNOT BE UNDONE ⚠",
                                                 QMessageBox::Yes | QMessageBox::No);
     if (confirmation == QMessageBox::Yes) {
         // delete libary + possible additional path
