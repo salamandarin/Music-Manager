@@ -9,7 +9,6 @@ class Core;
 
 class ArtistsPage : public QWidget {
     Q_OBJECT
-
 public:
     ArtistsPage(Core& core, QWidget* parent=nullptr);
     ~ArtistsPage();

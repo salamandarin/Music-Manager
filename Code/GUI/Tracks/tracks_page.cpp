@@ -176,7 +176,11 @@ void TracksPage::keyPressEvent(QKeyEvent* key_press) {
         // confirm deletion
         QMessageBox::StandardButton confirmation = QMessageBox::question(this, "Delete Tracks",
                 "Are you sure you want to delete selected tracks?", QMessageBox::Yes | QMessageBox::No);
-        if (confirmation == QMessageBox::No) return; // return if selected no
+       // return if selected no
+        if (confirmation == QMessageBox::No) {
+            key_press->ignore(); // mark as ignored
+            return;
+        };
 
         // sort rows greatest to least (to prevent errors when removing indexes)
         std::vector<int> rows;
@@ -191,6 +195,8 @@ void TracksPage::keyPressEvent(QKeyEvent* key_press) {
             core.remove_track(track_id); // delete track
             ui->tracks_table->removeRow(row);
         }
+
+        key_press->accept(); // mark event as handled
     }
     else {
         // pass key press event to parent class if wasn't backspace

@@ -12,7 +12,6 @@ class ArtistsPage;
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
-
 public:
     MainWindow(Core& core, QWidget* parent=nullptr);
     ~MainWindow();

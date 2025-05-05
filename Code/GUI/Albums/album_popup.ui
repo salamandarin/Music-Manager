@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>TrackPopup</class>
- <widget class="QDialog" name="TrackPopup">
+ <class>AlbumPopup</class>
+ <widget class="QDialog" name="AlbumPopup">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -35,10 +35,10 @@
   <widget class="QLabel" name="cover_art">
    <property name="geometry">
     <rect>
-     <x>30</x>
+     <x>20</x>
      <y>10</y>
-     <width>161</width>
-     <height>161</height>
+     <width>211</width>
+     <height>211</height>
     </rect>
    </property>
    <property name="text">
@@ -54,10 +54,10 @@
   <widget class="QLabel" name="title">
    <property name="geometry">
     <rect>
-     <x>210</x>
-     <y>10</y>
-     <width>371</width>
-     <height>101</height>
+     <x>250</x>
+     <y>30</y>
+     <width>461</width>
+     <height>61</height>
     </rect>
    </property>
    <property name="font">
@@ -78,8 +78,8 @@
   <widget class="QLabel" name="artist_name">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>190</y>
+     <x>30</x>
+     <y>230</y>
      <width>181</width>
      <height>51</height>
     </rect>
@@ -99,8 +99,8 @@
   <widget class="QLabel" name="total_duration">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>240</y>
+     <x>30</x>
+     <y>280</y>
      <width>181</width>
      <height>51</height>
     </rect>
@@ -117,21 +117,11 @@
     <set>Qt::AlignmentFlag::AlignCenter</set>
    </property>
   </widget>
-  <widget class="QTableView" name="tracks_table_view">
-   <property name="geometry">
-    <rect>
-     <x>220</x>
-     <y>90</y>
-     <width>501</width>
-     <height>351</height>
-    </rect>
-   </property>
-  </widget>
   <widget class="QLabel" name="NOTE">
    <property name="geometry">
     <rect>
-     <x>300</x>
-     <y>150</y>
+     <x>310</x>
+     <y>180</y>
      <width>371</width>
      <height>101</height>
     </rect>
@@ -154,8 +144,8 @@
   <widget class="QPushButton" name="edit_button">
    <property name="geometry">
     <rect>
-     <x>60</x>
-     <y>380</y>
+     <x>70</x>
+     <y>390</y>
      <width>100</width>
      <height>32</height>
     </rect>
@@ -167,8 +157,8 @@
   <widget class="QLabel" name="date">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>290</y>
+     <x>30</x>
+     <y>330</y>
      <width>181</width>
      <height>51</height>
     </rect>
@@ -185,40 +175,26 @@
     <set>Qt::AlignmentFlag::AlignCenter</set>
    </property>
   </widget>
+  <widget class="QTableWidget" name="tracks_table">
+   <property name="geometry">
+    <rect>
+     <x>240</x>
+     <y>100</y>
+     <width>551</width>
+     <height>331</height>
+    </rect>
+   </property>
+  </widget>
+  <zorder>button_box</zorder>
+  <zorder>cover_art</zorder>
+  <zorder>title</zorder>
+  <zorder>artist_name</zorder>
+  <zorder>total_duration</zorder>
+  <zorder>edit_button</zorder>
+  <zorder>date</zorder>
+  <zorder>tracks_table</zorder>
+  <zorder>NOTE</zorder>
  </widget>
  <resources/>
- <connections>
-  <connection>
-   <sender>button_box</sender>
-   <signal>accepted()</signal>
-   <receiver>TrackPopup</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>157</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>button_box</sender>
-   <signal>rejected()</signal>
-   <receiver>TrackPopup</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>286</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

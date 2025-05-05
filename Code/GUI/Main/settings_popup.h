@@ -9,7 +9,6 @@ class Core;
 
 class SettingsPopup : public QDialog {
     Q_OBJECT
-
 public:
     SettingsPopup(Core& core, QWidget* parent=nullptr);
     ~SettingsPopup();

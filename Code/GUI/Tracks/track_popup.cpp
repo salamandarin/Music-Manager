@@ -12,7 +12,7 @@ TrackPopup::TrackPopup(Core& core, int track_id, QWidget* parent)
 
     // set up gui
     ui->setupUi(this);
-    update_data(); // set all values
+    set_data(); // set all values
 
     ui->button_box->button(QDialogButtonBox::Close)->setAutoDefault(false); // make it so enter key doesn't close popup
 
@@ -34,7 +34,7 @@ TrackPopup::~TrackPopup() {
 }
 
 
-void TrackPopup::update_data() {
+void TrackPopup::set_data() {
     // get track info
     Track track = core.get_track(track_id);
 
@@ -57,7 +57,7 @@ void TrackPopup::update_data() {
 
     // TODO: artist image
     ui->info_artist_name->setText(QString::fromStdString(track.artist));
-    // TODO: artist person hebind
+    // TODO: artist person behind
 
     ui->date->setText(QString::fromStdString(track.date.to_string()));
     ui->duration_smaller->setText(QString::fromStdString(track.duration.to_string()));
@@ -69,6 +69,21 @@ void TrackPopup::update_data() {
     // TODO: file type
     ui->file_path->setText(QString::fromStdString(track.file_path));
     ui->image_path->setText(QString::fromStdString(track.image_path));
+    // TODO: FINISH
+    // TODO: FINISH
+    // TODO: FINISH
+    // TODO: FINISH
+    // TODO: FINISH
+    // TODO: FINISH
+    // TODO: FINISH
+    // TODO: FINISH
+    // TODO: FINISH
+    // TODO: FINISH
+    // TODO: FINISH
+    // TODO: FINISH
+    // TODO: FINISH
+    // TODO: FINISH
+    // TODO: FINISH
     // TODO: FINISH
 
     // TODO: NOTES TAB
@@ -82,7 +97,7 @@ void TrackPopup::edit_title() {
     core.set_track_title(track_id, new_title);
 
     // update gui
-    update_data(); // update this popup
+    set_data(); // update this popup
     emit track_updated(track_id); // emit signal so main table can refresh
 }
 void TrackPopup::edit_artist() {
@@ -93,7 +108,7 @@ void TrackPopup::edit_artist() {
     core.set_track_artist(track_id, new_artist);
 
     // update gui
-    update_data(); // update this popup
+    set_data(); // update this popup
     emit track_updated(track_id); // emit signal so main table can refresh
 }
 void TrackPopup::edit_album() {
@@ -104,7 +119,7 @@ void TrackPopup::edit_album() {
     core.set_track_album(track_id, new_album);
 
     // update gui
-    update_data(); // update this popup
+    set_data(); // update this popup
     emit track_updated(track_id); // emit signal so main table can refresh
 }
 void TrackPopup::edit_date() {
@@ -116,7 +131,7 @@ void TrackPopup::edit_date() {
     core.set_track_date(track_id, new_date);
 
     // update gui
-    update_data(); // update this popup
+    set_data(); // update this popup
     emit track_updated(track_id); // emit signal so main table can refresh
 }
 void TrackPopup::edit_tracklist_num() {
@@ -128,6 +143,6 @@ void TrackPopup::edit_tracklist_num() {
     core.set_track_tracklist_num(track_id, new_tracklist_num);
 
     // update gui
-    update_data(); // update this popup
+    set_data(); // update this popup
     emit track_updated(track_id); // emit signal so main table can refresh
 }

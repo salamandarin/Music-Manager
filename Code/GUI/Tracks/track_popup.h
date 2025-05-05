@@ -7,7 +7,6 @@ namespace Ui {
 }
 class Core;
 
-
 class TrackPopup : public QDialog {
     Q_OBJECT
 public:
@@ -25,7 +24,7 @@ private slots:
     void edit_tracklist_num();
 
 private:
-    void update_data();
+    void set_data();
 
     Ui::TrackPopup* ui;
     Core& core;

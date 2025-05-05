@@ -9,7 +9,6 @@ class Core;
 
 class AddTrackPopup : public QDialog {
     Q_OBJECT
-
 public:
     AddTrackPopup(Core& core, QWidget* parent=nullptr);
     ~AddTrackPopup();

@@ -8,6 +8,8 @@ add_library(GUI
         Tracks/add_track_popup.cpp Tracks/add_track_popup.ui
 
         Albums/albums_page.cpp Albums/albums_page.ui
+        Albums/album_widget.cpp Albums/album_widget.ui
+        Albums/album_popup.cpp Albums/album_popup.ui
 
         Artists/artists_page.cpp Artists/artists_page.ui
 )
