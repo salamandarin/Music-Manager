@@ -68,7 +68,7 @@ public:
 
     void set_album_date(int album_id, const Date& album_date);
 
-    void set_album_type(int album_id, const std::string& type_name); // ALBUM'S type
+    bool set_album_type(int album_id, const std::string& type_name); // ALBUM'S type (returns if set or not)
     void set_album_type_id(int track_id, int type_id); // ALBUM'S type
 
     void set_album_image(int album_id, std::string image_path);

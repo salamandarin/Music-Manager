@@ -41,12 +41,6 @@ public:
     void remove_artist(int artist_id);
     void remove_person(int person_id);
 
-    // check if object exists
-    bool track_exists(int track_id);
-    bool album_exists(int album_id);
-    bool artist_exists(int artist_id);
-    bool person_exists(int person_id);
-
 
     // ------------------------- GET OBJECTS -------------------------
     // get ALL objects in table
@@ -156,7 +150,7 @@ public:
 
     void set_album_date(int album_id, const Date& album_date);
 
-    void set_album_type(int album_id, const std::string& type_name); // ALBUM'S type
+    bool set_album_type(int album_id, const std::string& type_name); // ALBUM'S type (returns if set or not)
     void set_album_type_id(int album_id, int type_id); // ALBUM'S type id
 
     void set_album_image_path(int album_id, const std::string& image_path);

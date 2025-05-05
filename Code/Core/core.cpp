@@ -508,38 +508,14 @@ void Core::set_album_date(int album_id, const Date& album_date) {
 
 // ------------------------------ SET ALBUM'S TYPE ------------------------------
 // set ALBUM'S type
-void Core::set_album_type(int album_id, const std::string& type_name) {
-    // make sure isn't same as old album_type
-    std::optional<std::string> current_type = database.get_album_type(album_id);
-    if (current_type) {
-        if (*current_type == type_name) {
-            return; // return if same as old
-        }
-    }
-
-    // update in database
-    database.set_album_type(album_id, type_name);
-
-    // TODO: FINISH
-    // TODO: FILE / METADATA CODE
-    // TODO: CASCADING FILE INFO??
+bool Core::set_album_type(int album_id, const std::string& type_name) {
+    // update in database + return if set
+    return database.set_album_type(album_id, type_name); // returns if was set (doesn't set if invalid type)
 }
 // set ALBUM'S type
 void Core::set_album_type_id(int album_id, int type_id) {
-    // make sure isn't same as old type
-    std::optional<int> current_type_id = database.get_album_type_id(album_id);
-    if (current_type_id) {
-        if (*current_type_id == type_id) {
-            return; // return if same as old
-        }
-    }
-
     // update in database
     database.set_album_type_id(album_id, type_id);
-
-    // TODO: FINISH
-    // TODO: FILE / METADATA CODE
-    // TODO: CASCADING FILE INFO??
 }
 
 // ------------------------------ SET / REMOVE ALBUM IMAGE ------------------------------

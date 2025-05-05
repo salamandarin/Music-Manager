@@ -1063,7 +1063,7 @@ void DatabaseManager::set_album_date(int album_id, const Date& album_date) {
 }
 
 // set ALBUM'S type
-void DatabaseManager::set_album_type(int album_id, const std::string& type_name) {
+bool DatabaseManager::set_album_type(int album_id, const std::string& type_name) {
     // get (possible) id of given type (doesn't make new type cuz presets only)
     std::optional<int> type_id = get_type_id(type_name);
 
@@ -1074,6 +1074,9 @@ void DatabaseManager::set_album_type(int album_id, const std::string& type_name)
 
     // execute
     execute_sql(sql);
+
+    // return bool if actually set or not (aka if valid id cuz doesn't set if invalid type)
+    return type_id.has_value();
 }
 // set ALBUM'S type (with given type_id)
 void DatabaseManager::set_album_type_id(int album_id, int type_id) {
