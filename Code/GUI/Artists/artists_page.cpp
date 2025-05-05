@@ -2,9 +2,10 @@
 #include "artists_page.h"
 #include "ui_artists_page.h"
 #include "core.h"
+#include "main_window.h"
 #include <QListWidgetItem>
 
-ArtistsPage::ArtistsPage(Core& core, QWidget* parent)
+ArtistsPage::ArtistsPage(Core& core, MainWindow* parent)
     :core{core}, QWidget{parent}, ui{new Ui::ArtistsPage} {
     
     ui->setupUi(this);

@@ -21,6 +21,7 @@ private slots:
     void edit_artist();
     void edit_album();
     void edit_date();
+    void clear_date();
     void edit_tracklist_num();
 
 private:

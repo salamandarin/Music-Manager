@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>213</width>
-    <height>260</height>
+    <width>151</width>
+    <height>236</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,10 +16,10 @@
   <widget class="QLabel" name="cover_art">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>10</y>
-     <width>191</width>
-     <height>191</height>
+     <x>0</x>
+     <y>0</y>
+     <width>151</width>
+     <height>151</height>
     </rect>
    </property>
    <property name="acceptDrops">
@@ -32,15 +32,15 @@
   <widget class="QLabel" name="album_title">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>205</y>
-     <width>191</width>
-     <height>21</height>
+     <x>0</x>
+     <y>150</y>
+     <width>151</width>
+     <height>51</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <pointsize>20</pointsize>
+     <pointsize>15</pointsize>
     </font>
    </property>
    <property name="text">
@@ -56,11 +56,16 @@
   <widget class="QLabel" name="artist_name">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>230</y>
-     <width>191</width>
+     <x>0</x>
+     <y>200</y>
+     <width>151</width>
      <height>21</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>9</pointsize>
+    </font>
    </property>
    <property name="text">
     <string>Artist</string>

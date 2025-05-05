@@ -6,11 +6,12 @@ namespace Ui {
     class TracksPage;
 }
 class Core;
+class MainWindow;
 
 class TracksPage : public QWidget {
     Q_OBJECT
 public:
-    TracksPage(Core& core, QWidget* parent=nullptr);
+    TracksPage(Core& core, MainWindow* parent=nullptr);
     ~TracksPage();
 
 protected:
@@ -29,7 +30,7 @@ private slots:
 
 private:
     // table stuff
-    void update_table();
+    void build_table();
     void update_row(int row, int track_id);
 
     // helper functions

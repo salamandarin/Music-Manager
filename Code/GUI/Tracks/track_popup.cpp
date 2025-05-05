@@ -15,6 +15,8 @@ TrackPopup::TrackPopup(Core& core, int track_id, QWidget* parent)
     set_data(); // set all values
 
     ui->button_box->button(QDialogButtonBox::Close)->setAutoDefault(false); // make it so enter key doesn't close popup
+    ui->clear_date_button->setDefault(false); // make enter key not press clear_date
+    ui->clear_date_button->setAutoDefault(false); // make enter key not press clear_date
 
     // connect signals to functions 
     connect(ui->edit_title_input, &QLineEdit::editingFinished,
@@ -25,6 +27,8 @@ TrackPopup::TrackPopup(Core& core, int track_id, QWidget* parent)
                             this, &TrackPopup::edit_album);
     connect(ui->edit_date_input, &QDateEdit::editingFinished,
                             this, &TrackPopup::edit_date);
+    connect(ui->clear_date_button, &QPushButton::clicked,
+                            this, &TrackPopup::clear_date);
     connect(ui->edit_tracklist_num_input, &QLineEdit::editingFinished,
                             this, &TrackPopup::edit_tracklist_num);
 }
@@ -49,7 +53,18 @@ void TrackPopup::set_data() {
     ui->album_title->setText(QString::fromStdString(track.album));
     ui->duration->setText(QString::fromStdString(track.duration.to_string()));
 
-    // -------------------- INFO TAB --------------------
+    // -------------------- VERTICAL INFO TAB --------------------
+    ui->track_id->setText(QString::number(track.id));
+    ui->info_title->setText(QString::fromStdString(track.title));
+    ui->info_artist->setText(QString::fromStdString(track.artist));
+    ui->info_album->setText(QString::fromStdString(track.album));
+    ui->info_duration->setText(QString::fromStdString(track.duration.to_string()));
+    ui->info_date->setText(QString::fromStdString(track.date.to_string()));
+    ui->info_tracklist_num->setText(QString::number(track.tracklist_num));
+    ui->info_file_path->setText(QString::fromStdString(track.file_path));
+    ui->info_image_path->setText(QString::fromStdString(track.image_path));
+
+    // -------------------- OLD INFO TAB --------------------
     // TODO: album cover art
     ui->info_album_title->setText(QString::fromStdString(track.album));
     // TODO: album type
@@ -129,6 +144,17 @@ void TrackPopup::edit_date() {
 
     // set new data
     core.set_track_date(track_id, new_date);
+
+    // update gui
+    set_data(); // update this popup
+    emit track_updated(track_id); // emit signal so main table can refresh
+}
+void TrackPopup::clear_date() {
+    // reset input to default date
+    ui->edit_date_input->setDate(QDate(2025, 1, 1));
+
+    // set null / default date
+    core.set_track_date(track_id, Date{});
 
     // update gui
     set_data(); // update this popup

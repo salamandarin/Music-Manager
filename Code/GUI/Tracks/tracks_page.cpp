@@ -5,6 +5,7 @@
 #include "track_popup.h"
 #include "add_track_popup.h"
 #include "gui_utils.h"
+#include "main_window.h"
 #include <QLabel>
 #include <QInputDialog>
 #include <QFileDialog>
@@ -28,7 +29,7 @@ enum Columns {
 
 const int IMAGE_SIZE = 50;
 
-TracksPage::TracksPage(Core& core, QWidget* parent)
+TracksPage::TracksPage(Core& core, MainWindow* parent)
     :core{core}, QWidget{parent}, ui{new Ui::TracksPage} {
     
     ui->setupUi(this);
@@ -41,8 +42,7 @@ TracksPage::TracksPage(Core& core, QWidget* parent)
     ui->tracks_table->verticalScrollBar()->setSingleStep(5); // adjust scroll speed
 
     // fill in table
-    update_table(); 
-
+    build_table(); 
 
     // connect double click signal -> open TrackPopup
     connect(ui->tracks_table, &QTableWidget::cellDoubleClicked,
@@ -77,7 +77,7 @@ void TracksPage::add_track_files() {
         for (const QString &file_path : file_paths) {
             core.add_track(file_path.toStdString()); // add track
         }
-        update_table(); // update table GUI
+        build_table(); // update table GUI
     }  
 }
 
@@ -88,7 +88,7 @@ void TracksPage::add_tracks_from_folder() {
     if (!folder_path.empty()) {
         core.add_tracks_from_folder(folder_path); // add all files in folder
 
-        update_table(); // update table GUI
+        build_table(); // update table GUI
     }  
 }
 void TracksPage::manually_add_track() {
@@ -96,7 +96,7 @@ void TracksPage::manually_add_track() {
 
     // update table GUI if tracks were added
     connect(add_track_popup, &AddTrackPopup::tracks_added,  
-                        this, &TracksPage::update_table);
+                        this, &TracksPage::build_table);
     
     add_track_popup->exec();
 }
@@ -109,14 +109,14 @@ void TracksPage::delete_library() { // TODO: DELETE THIS ENTIRE BUTTON
         // delete libary + possible additional path
         core.delete_entire_library();
         
-        update_table(); // refresh table GUI
+        build_table(); // refresh table GUI
     }
 }
 
 //--------------------------------------------------------------------------------
 //                                   TABLE STUFF
 //--------------------------------------------------------------------------------
-void TracksPage::update_table() {
+void TracksPage::build_table() {
     // disable GUI updates until done (so not slowing down)
     ui->tracks_table->setUpdatesEnabled(false);
 

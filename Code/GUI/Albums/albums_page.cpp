@@ -2,10 +2,11 @@
 #include "albums_page.h"
 #include "ui_albums_page.h"
 #include "core.h"
+#include "main_window.h"
 #include "album_widget.h"
 #include "album_popup.h"
 
-AlbumsPage::AlbumsPage(Core& core, QWidget* parent)
+AlbumsPage::AlbumsPage(Core& core, MainWindow* parent)
     :core{core}, QWidget{parent}, ui{new Ui::AlbumsPage} {
     
     ui->setupUi(this);
@@ -20,7 +21,7 @@ void AlbumsPage::build_album_grid() {
     // disable GUI updates until done (so not slowing down)
     ui->scroll_area_widget_contents->setUpdatesEnabled(false);
 
-    // TODO: clear grid first
+    // TODO: CLEAR GRID FIRST!!!!
 
     // grab all albums, fill in grid
     std::vector<Album> albums = core.get_all_albums(); // get all albums
@@ -28,7 +29,7 @@ void AlbumsPage::build_album_grid() {
         // make album widget
         AlbumWidget* album_widget = create_album_widget(albums[i], ui->scroll_area_widget_contents); // pass in parent
 
-        int area_width = ui->scrollArea->maximumViewportSize().width();
+        int area_width = ui->scrollArea->maximumViewportSize().width() - 15; // TODO: fix to not -15
         const int columns = 4; // TODO: make constants at top?
         const int spacing = 10;
         const int margins = 5;

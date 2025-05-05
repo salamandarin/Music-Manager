@@ -6,11 +6,12 @@ namespace Ui {
     class ArtistsPage;
 }
 class Core;
+class MainWindow;
 
 class ArtistsPage : public QWidget {
     Q_OBJECT
 public:
-    ArtistsPage(Core& core, QWidget* parent=nullptr);
+    ArtistsPage(Core& core, MainWindow* parent=nullptr);
     ~ArtistsPage();
 
 private:

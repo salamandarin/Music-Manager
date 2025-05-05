@@ -6,13 +6,14 @@ namespace Ui {
     class AlbumsPage;
 }
 class Core;
+class MainWindow;
 class AlbumWidget;
 class Album;
 
 class AlbumsPage : public QWidget {
     Q_OBJECT
 public:
-    AlbumsPage(Core& core, QWidget* parent=nullptr);
+    AlbumsPage(Core& core, MainWindow* parent=nullptr);
     ~AlbumsPage();
 
 private slots:
