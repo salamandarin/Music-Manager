@@ -54,7 +54,7 @@ public:
     void set_track_image(int track_id, const std::string& image_path);
 
 
-    // TODO: set album data
+    // set album data
     void set_album_title(int album_id, const std::string& album_title);
 
     void set_album_artist(int album_id, const std::string& artist_name);
@@ -68,7 +68,7 @@ public:
     void set_album_image(int album_id, const std::string& image_path);
 
 
-    // TODO: set artist data
+    // set artist data
     void set_artist_name(int artist_id, const std::string& artist_name);
     
     void set_artist_person_behind(int artist_id, const std::string& person_behind);
@@ -77,7 +77,7 @@ public:
     void set_artist_image(int artist_id, const std::string& image_path);
 
 
-    // TODO: set person data
+    // set person data
     void set_person_name(int person_id, const std::string& person_name);
 
 
@@ -86,6 +86,7 @@ public:
     std::vector<Track> get_all_tracks();
     std::vector<Album> get_all_albums();
     std::vector<Artist> get_all_artists();
+    std::vector<std::string> get_all_people();
 
     // get objects by category
     std::vector<Track> get_album_tracks(int album_id);
@@ -97,6 +98,8 @@ public:
     Track get_track(int track_id);
     Album get_album(int track_id);
     Artist get_artist(int track_id);
+    std::string get_person(int person_id); // just name
+    std::string get_type(int album_type_id); // just name (album_type, NOT album's album_type)
 
     // ---------- WARNING: EXTREMELY DANGEROUS!!! ----------
     // DELETE all music files, images, entire database file, and another folder too if provided

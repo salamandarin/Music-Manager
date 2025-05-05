@@ -6,7 +6,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
-#target_compile_options(tests PUBLIC -std=c++17) // TODO: DELETE?
 
 # metadata_tests exe
 add_executable(metadata_tests
@@ -25,6 +24,15 @@ add_executable(database_tests
 )
 target_link_libraries(database_tests PRIVATE Core) # Core
 target_include_directories(database_tests PRIVATE ${doctest_SOURCE_DIR}/doctest) # doctest
+
+# core_tests exe
+add_executable(core_tests
+        main.cpp
+        print_structs.cpp
+        core_tests.cpp
+)
+target_link_libraries(core_tests PRIVATE Core) # Core
+target_include_directories(core_tests PRIVATE ${doctest_SOURCE_DIR}/doctest) # doctest
 
 
 # Core folder

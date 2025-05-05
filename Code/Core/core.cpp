@@ -358,6 +358,7 @@ void Core::set_album_title(int album_id, const std::string& album_title) {
     // update in database
     database.set_album_title(album_id, album_title);
 
+    // TODO: FINISH
     // TODO: FILE / METADATA CODE
 }
 
@@ -374,6 +375,7 @@ void Core::set_album_artist(int album_id, const std::string& artist_name) {
     // update in database
     database.set_album_artist(album_id, artist_name);
 
+    // TODO: FINISH
     // TODO: FILE / METADATA CODE
 }
 void Core::set_album_artist_id(int album_id, int artist_id) {
@@ -388,6 +390,7 @@ void Core::set_album_artist_id(int album_id, int artist_id) {
     // update in database
     database.set_album_artist_id(album_id, artist_id);
 
+    // TODO: FINISH
     // TODO: FILE / METADATA CODE
 }
 
@@ -404,6 +407,7 @@ void Core::set_album_date(int album_id, const Date& album_date) {
     // update in database
     database.set_album_date(album_id, album_date);
 
+    // TODO: FINISH
     // TODO: FILE / METADATA CODE
 }
 
@@ -421,6 +425,7 @@ void Core::set_album_type(int album_id, const std::string& type_name) {
     // update in database
     database.set_album_type(album_id, type_name);
 
+    // TODO: FINISH
     // TODO: FILE / METADATA CODE
 }
 // set ALBUM'S type
@@ -436,6 +441,7 @@ void Core::set_album_type_id(int album_id, int type_id) {
     // update in database
     database.set_album_type_id(album_id, type_id);
 
+    // TODO: FINISH
     // TODO: FILE / METADATA CODE
 }
 
@@ -464,6 +470,7 @@ void Core::set_artist_name(int artist_id, const std::string& artist_name) {
     // update in database
     database.set_artist_name(artist_id, artist_name);
 
+    // TODO: FINISH
     // TODO: FILE / METADATA CODE
 }
 
@@ -480,6 +487,7 @@ void Core::set_artist_person_behind(int artist_id, const std::string& person_beh
     // update in database
     database.set_artist_person_behind(artist_id, person_behind);
 
+    // TODO: FINISH
     // TODO: FILE / METADATA CODE
 }
 void Core::set_artist_person_behind_id(int artist_id, int person_id) {
@@ -494,6 +502,7 @@ void Core::set_artist_person_behind_id(int artist_id, int person_id) {
     // update in database
     database.set_artist_person_behind_id(artist_id, person_id);
 
+    // TODO: FINISH
     // TODO: FILE / METADATA CODE
 }
 
@@ -520,6 +529,7 @@ void Core::set_person_name(int person_id, const std::string& person_name) {
     // update in database
     database.set_person_name(person_id, person_name);
 
+    // TODO: FINISH
     // TODO: FILE / METADATA CODE
 }
 
@@ -540,6 +550,9 @@ std::vector<Album> Core::get_all_albums() {
 }
 std::vector<Artist> Core::get_all_artists() {
     return database.get_all_artists(); // get database info
+}
+std::vector<std::string> Core::get_all_people() {
+    return database.get_all_people(); // get database info
 }
 
 //--------------------------------------------------------------------------------
@@ -580,14 +593,17 @@ Track Core::get_track(int track_id) {
     return track;
 }
 Album Core::get_album(int album_id) {
-    // get database info
-    Album album = database.get_album(album_id);
-    return album;
+    return database.get_album(album_id); // get database info
 }
 Artist Core::get_artist(int artist_id) {
-    // get database info
-    Artist artist = database.get_artist(artist_id);
-    return artist;
+    return database.get_artist(artist_id); // get database info
+}
+std::string Core::get_person(int person_id) { // just gets name
+    return database.get_person(person_id); // get database info
+}
+// album_type (NOT album's album_type)
+std::string Core::get_type(int album_type_id) { // just gets name
+    return database.get_type(album_type_id); // get database info
 }
 
 //--------------------------------------------------------------------------------
