@@ -17,8 +17,10 @@ ArtistsPage::~ArtistsPage() {
 }
 
 void ArtistsPage::update_list() {
-    std::vector<Artist> artists = core.get_all_artists();
+    // clear list first
+    ui->artists_list->clear();
 
+    std::vector<Artist> artists = core.get_all_artists();
     for (const Artist& artist : artists) {
         new QListWidgetItem(QString::fromStdString(artist.name), ui->artists_list);
     }

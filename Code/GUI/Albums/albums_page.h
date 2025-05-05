@@ -16,11 +16,12 @@ public:
     AlbumsPage(Core& core, MainWindow* parent=nullptr);
     ~AlbumsPage();
 
+    void build_album_grid();
+
 private slots:
-    void open_album_popup(Album& album);
+    void open_album_popup(int album_id);
 
 private:
-    void build_album_grid();
     AlbumWidget* create_album_widget(Album& album, QWidget* parent);
 
     Ui::AlbumsPage* ui;

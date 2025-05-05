@@ -21,7 +21,12 @@ void AlbumsPage::build_album_grid() {
     // disable GUI updates until done (so not slowing down)
     ui->scroll_area_widget_contents->setUpdatesEnabled(false);
 
-    // TODO: CLEAR GRID FIRST!!!!
+    // clear grid first
+    QLayoutItem* child;
+    while ((child = ui->grid_layout->takeAt(0)) != 0) {
+        delete child->widget();
+        delete child;
+    }
 
     // grab all albums, fill in grid
     std::vector<Album> albums = core.get_all_albums(); // get all albums
@@ -55,16 +60,17 @@ AlbumWidget* AlbumsPage::create_album_widget(Album& album, QWidget* parent) {
     AlbumWidget* album_widget = new AlbumWidget(album, parent);
 
     // connect double click signal -> open AlbumPopup
-    connect(album_widget, &AlbumWidget::album_double_clicked,
-            this, &AlbumsPage::open_album_popup); // gets album object from signal // TODO: AlbumWidget gotta be const, OR return album and call album_widget->get_album() here
+    connect(album_widget, &AlbumWidget::album_double_clicked, this, [this, album]() {
+        open_album_popup(album.id);
+    });
 
     return album_widget;
 }
 
 
-void AlbumsPage::open_album_popup(Album& album) {
+void AlbumsPage::open_album_popup(int album_id) {
     // make popup 
-    AlbumPopup* album_popup = new AlbumPopup(core, album, this);
+    AlbumPopup* album_popup = new AlbumPopup(core, album_id, this);
 
     // connect album_updated signal -> update_album() // TODO: MAKE THIS STUFF
     // connect(album_popup, &AlbumPopup::album_updated,

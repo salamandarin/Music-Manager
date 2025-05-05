@@ -62,20 +62,6 @@
       </property>
      </widget>
     </item>
-    <item>
-     <widget class="QCheckBox" name="hide_nonfiles_check">
-      <property name="text">
-       <string>Hide non-file tracks</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QCheckBox" name="album_art_check">
-      <property name="text">
-       <string>Display album art instead of single art</string>
-      </property>
-     </widget>
-    </item>
    </layout>
   </widget>
  </widget>

@@ -14,9 +14,9 @@ public:
     ArtistsPage(Core& core, MainWindow* parent=nullptr);
     ~ArtistsPage();
 
-private:
     void update_list();
-
+    
+private:
     Ui::ArtistsPage* ui;
     Core& core;
 };

@@ -53,7 +53,7 @@ void TrackPopup::set_data() {
     ui->album_title->setText(QString::fromStdString(track.album));
     ui->duration->setText(QString::fromStdString(track.duration.to_string()));
 
-    // -------------------- VERTICAL INFO TAB --------------------
+    // -------------------- INFO TAB --------------------
     ui->track_id->setText(QString::number(track.id));
     ui->info_title->setText(QString::fromStdString(track.title));
     ui->info_artist->setText(QString::fromStdString(track.artist));
@@ -63,45 +63,6 @@ void TrackPopup::set_data() {
     ui->info_tracklist_num->setText(QString::number(track.tracklist_num));
     ui->info_file_path->setText(QString::fromStdString(track.file_path));
     ui->info_image_path->setText(QString::fromStdString(track.image_path));
-
-    // -------------------- OLD INFO TAB --------------------
-    // TODO: album cover art
-    ui->info_album_title->setText(QString::fromStdString(track.album));
-    // TODO: album type
-    // TODO: album year
-
-    // TODO: artist image
-    ui->info_artist_name->setText(QString::fromStdString(track.artist));
-    // TODO: artist person behind
-
-    ui->date->setText(QString::fromStdString(track.date.to_string()));
-    ui->duration_smaller->setText(QString::fromStdString(track.duration.to_string()));
-    // TODO: category
-    // TODO: description
-    ui->tracklist_num->setText(QString::number(track.tracklist_num));
-
-    // -------------------- FILE INFO TAB --------------------
-    // TODO: file type
-    ui->file_path->setText(QString::fromStdString(track.file_path));
-    ui->image_path->setText(QString::fromStdString(track.image_path));
-    // TODO: FINISH
-    // TODO: FINISH
-    // TODO: FINISH
-    // TODO: FINISH
-    // TODO: FINISH
-    // TODO: FINISH
-    // TODO: FINISH
-    // TODO: FINISH
-    // TODO: FINISH
-    // TODO: FINISH
-    // TODO: FINISH
-    // TODO: FINISH
-    // TODO: FINISH
-    // TODO: FINISH
-    // TODO: FINISH
-    // TODO: FINISH
-
-    // TODO: NOTES TAB
 }
 
 void TrackPopup::edit_title() {

@@ -19,7 +19,7 @@
      <x>50</x>
      <y>20</y>
      <width>431</width>
-     <height>51</height>
+     <height>41</height>
     </rect>
    </property>
    <property name="font">
@@ -84,7 +84,7 @@
     </font>
    </property>
    <property name="text">
-    <string>Artist</string>
+    <string/>
    </property>
    <property name="alignment">
     <set>Qt::AlignmentFlag::AlignCenter</set>

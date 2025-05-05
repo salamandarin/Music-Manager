@@ -35,10 +35,10 @@
   <widget class="QLabel" name="cover_art">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>10</y>
-     <width>211</width>
-     <height>211</height>
+     <x>280</x>
+     <y>90</y>
+     <width>361</width>
+     <height>361</height>
     </rect>
    </property>
    <property name="text">
@@ -54,9 +54,9 @@
   <widget class="QLabel" name="title">
    <property name="geometry">
     <rect>
-     <x>250</x>
+     <x>60</x>
      <y>30</y>
-     <width>461</width>
+     <width>681</width>
      <height>61</height>
     </rect>
    </property>
@@ -69,7 +69,7 @@
     <string>ALBUM_TITLE</string>
    </property>
    <property name="alignment">
-    <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
+    <set>Qt::AlignmentFlag::AlignCenter</set>
    </property>
    <property name="wordWrap">
     <bool>true</bool>
@@ -78,10 +78,10 @@
   <widget class="QLabel" name="artist_name">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>230</y>
-     <width>181</width>
-     <height>51</height>
+     <x>10</x>
+     <y>120</y>
+     <width>261</width>
+     <height>211</height>
     </rect>
    </property>
    <property name="font">
@@ -96,69 +96,11 @@
     <set>Qt::AlignmentFlag::AlignCenter</set>
    </property>
   </widget>
-  <widget class="QLabel" name="total_duration">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>280</y>
-     <width>181</width>
-     <height>51</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>18</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>1 hr 20 minutes</string>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignmentFlag::AlignCenter</set>
-   </property>
-  </widget>
-  <widget class="QLabel" name="NOTE">
-   <property name="geometry">
-    <rect>
-     <x>310</x>
-     <y>180</y>
-     <width>371</width>
-     <height>101</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>20</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>TRACKS ORDERED BY TRACKLIST_NUM, WITH GAPS INBETWEEN IF MISSING!!!</string>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
-   </property>
-   <property name="wordWrap">
-    <bool>true</bool>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="edit_button">
-   <property name="geometry">
-    <rect>
-     <x>70</x>
-     <y>390</y>
-     <width>100</width>
-     <height>32</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>EDIT</string>
-   </property>
-  </widget>
   <widget class="QLabel" name="date">
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>330</y>
+     <y>380</y>
      <width>181</width>
      <height>51</height>
     </rect>
@@ -175,26 +117,40 @@
     <set>Qt::AlignmentFlag::AlignCenter</set>
    </property>
   </widget>
-  <widget class="QTableWidget" name="tracks_table">
-   <property name="geometry">
-    <rect>
-     <x>240</x>
-     <y>100</y>
-     <width>551</width>
-     <height>331</height>
-    </rect>
-   </property>
-  </widget>
-  <zorder>button_box</zorder>
-  <zorder>cover_art</zorder>
-  <zorder>title</zorder>
-  <zorder>artist_name</zorder>
-  <zorder>total_duration</zorder>
-  <zorder>edit_button</zorder>
-  <zorder>date</zorder>
-  <zorder>tracks_table</zorder>
-  <zorder>NOTE</zorder>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>button_box</sender>
+   <signal>accepted()</signal>
+   <receiver>AlbumPopup</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>630</x>
+     <y>445</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>405</x>
+     <y>235</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>button_box</sender>
+   <signal>rejected()</signal>
+   <receiver>AlbumPopup</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>630</x>
+     <y>445</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>405</x>
+     <y>235</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

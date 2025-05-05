@@ -19,12 +19,6 @@ SettingsPopup::SettingsPopup(Core& core, QWidget* parent)
     connect(ui->copy_files_check, &QCheckBox::toggled, this, [this, &core](bool checked) {
         core.set_copy_music_files(checked);
     });
-    connect(ui->hide_nonfiles_check, &QCheckBox::toggled, this, [this, &core](bool checked) {
-        // TODO: CODE ?
-    });
-    connect(ui->album_art_check, &QCheckBox::toggled, this, [this, &core](bool checked) {
-        // TODO: CODE ?
-    });
     // restore defaults button
     connect(ui->button_box->button(QDialogButtonBox::RestoreDefaults), &QPushButton::clicked,
                                                     this, &SettingsPopup::restore_defaults);

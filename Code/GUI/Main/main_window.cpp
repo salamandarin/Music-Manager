@@ -39,9 +39,11 @@ void MainWindow::show_tracks_page() {
     ui->stacked_widget->setCurrentWidget(tracks_page);
 }
 void MainWindow::show_albums_page() {
+    albums_page->build_album_grid(); // update GUI
     ui->stacked_widget->setCurrentWidget(albums_page);
 }
 void MainWindow::show_artists_page() {
+    artists_page->update_list(); // update GUI
     ui->stacked_widget->setCurrentWidget(artists_page);
 }
 void MainWindow::show_settings() {
