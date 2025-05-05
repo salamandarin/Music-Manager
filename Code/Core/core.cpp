@@ -259,6 +259,7 @@ void Core::set_track_artist(int track_id, const std::string& artist_name) {
     database.set_track_artist(track_id, artist_name);
 
     // update file info (if file exists)
+    track_current.artist = artist_name;
     set_track_file_artist(track_id, track_current);
 }
 void Core::set_track_artist_id(int track_id, int artist_id) {
@@ -270,6 +271,8 @@ void Core::set_track_artist_id(int track_id, int artist_id) {
     database.set_track_artist_id(track_id, artist_id);
     
     // update file info (if file exists)
+    track_current.artist = database.get_artist_name(artist_id);
+    // track_current.artist_id = artist_id; // TODO: add this line?????
     set_track_file_artist(track_id, track_current);
 }
 // private helper function
@@ -299,6 +302,7 @@ void Core::set_track_album(int track_id, const std::string& album_title) {
     database.set_track_album(track_id, album_title);
 
     // update file info (if file exists)
+    track_current.album = album_title;
     set_track_file_album(track_id, track_current);
 }
 void Core::set_track_album_id(int track_id, int album_id) {
@@ -310,6 +314,8 @@ void Core::set_track_album_id(int track_id, int album_id) {
     database.set_track_album_id(track_id, album_id);
     
     // update file info (if file exists)
+    track_current.album = database.get_album_title(album_id);
+    // track_current.artist_id = artist_id; // TODO: add this line?????
     set_track_file_album(track_id, track_current);
 }
 // private helper function
@@ -663,6 +669,7 @@ std::vector<std::string> Core::get_all_people() {
 //--------------------------------------------------------------------------------
 //                            GET OBJECTS BY CATEGORY
 //--------------------------------------------------------------------------------
+// get all tracks in album - ORDERED BY TRACKLIST_NUM
 std::vector<Track> Core::get_album_tracks(int album_id) {
     // get database info
     std::vector<Track> tracks = database.get_album_tracks(album_id);

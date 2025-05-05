@@ -9,7 +9,6 @@ class Core;
 
 class TracksPage : public QWidget {
     Q_OBJECT
-
 public:
     TracksPage(Core& core, QWidget* parent=nullptr);
     ~TracksPage();

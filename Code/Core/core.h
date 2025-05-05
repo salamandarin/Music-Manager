@@ -95,7 +95,7 @@ public:
     std::vector<std::string> get_all_people();
 
     // get objects by category
-    std::vector<Track> get_album_tracks(int album_id);
+    std::vector<Track> get_album_tracks(int album_id); // ordered by tracklist_num
     std::vector<Track> get_artist_tracks(int artist_id);
     std::vector<Album> get_artist_albums(int artist_id);
     std::vector<Artist> get_person_artists(int person_id);

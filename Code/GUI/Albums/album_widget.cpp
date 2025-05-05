@@ -12,10 +12,6 @@ AlbumWidget::AlbumWidget(Album& album, QWidget* parent)
     
     ui->setupUi(this);
 
-    // enable scaling / preserve aspect ratio
-    ui->cover_art->setScaledContents(true);
-    ui->cover_art->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-        
     set_data();
 }
 
