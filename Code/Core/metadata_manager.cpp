@@ -1,6 +1,7 @@
 // Samuel Sutton - 2025
 #include "metadata_manager.h"
 #include "file_manager.h"
+#include <iostream>
 #include <taglib/tag.h>
 #include <filesystem>
 #include <taglib/fileref.h>

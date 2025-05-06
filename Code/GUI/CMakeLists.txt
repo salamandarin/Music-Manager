@@ -1,3 +1,8 @@
+# Qt
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+
 add_library(GUI
         Main/gui_utils.cpp
         Main/main_window.cpp Main/main_window.ui
@@ -32,6 +37,11 @@ target_include_directories(GUI PUBLIC
 target_link_libraries(GUI PRIVATE Core)
 
 # Qt
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
-target_link_libraries(GUI PUBLIC Qt${QT_VERSION_MAJOR}::Widgets)
+set(QT_MIN_VERSION 5.15) 
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Core Gui)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Core Gui)
+target_link_libraries(GUI PUBLIC 
+    Qt${QT_VERSION_MAJOR}::Widgets 
+    Qt${QT_VERSION_MAJOR}::Core 
+    Qt${QT_VERSION_MAJOR}::Gui
+)
