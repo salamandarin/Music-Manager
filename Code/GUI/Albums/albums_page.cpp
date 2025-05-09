@@ -34,7 +34,7 @@ void AlbumsPage::build_album_grid() {
         // make album widget
         AlbumWidget* album_widget = create_album_widget(albums[i], ui->scroll_area_widget_contents); // pass in parent
 
-        int area_width = ui->scrollArea->maximumViewportSize().width() - 15;
+        int area_width = ui->scrollArea->maximumViewportSize().width() - 16;
         const int columns = 4;
         const int spacing = 10;
         const int margins = 5;

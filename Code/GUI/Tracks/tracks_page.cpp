@@ -39,7 +39,7 @@ TracksPage::TracksPage(Core& core, MainWindow* parent)
     ui->tracks_table->verticalHeader()->setDefaultAlignment(Qt::AlignCenter);
     ui->tracks_table->verticalHeader()->setDefaultSectionSize(IMAGE_SIZE); // row height
     ui->tracks_table->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed); // row height resize off
-    ui->tracks_table->verticalScrollBar()->setSingleStep(5); // adjust scroll speed
+    ui->tracks_table->verticalScrollBar()->setSingleStep(8); // adjust scroll speed
 
     // fill in table
     build_table(); 

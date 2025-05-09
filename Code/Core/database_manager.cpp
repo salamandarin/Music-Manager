@@ -260,7 +260,6 @@ std::vector<Track> DatabaseManager::get_all_tracks() {
         FROM tracks
         LEFT JOIN artists ON tracks.artist_id = artists.artist_id
         LEFT JOIN albums ON tracks.album_id = albums.album_id
-        ORDER BY artist, album, tracklist_num
     )");
 
     // execute & grab all data for each row
