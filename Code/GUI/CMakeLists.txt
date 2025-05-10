@@ -10,6 +10,7 @@ add_library(GUI
         Albums/albums_page.cpp Albums/albums_page.ui
         Albums/album_widget.cpp Albums/album_widget.ui
         Albums/album_popup.cpp Albums/album_popup.ui
+        Albums/add_album_popup.cpp Albums/add_album_popup.ui
 
         Artists/artists_page.cpp Artists/artists_page.ui
 )

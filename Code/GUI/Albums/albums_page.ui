@@ -38,7 +38,7 @@
     <string>ADD ALBUM</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="add_album_button_2">
+  <widget class="QPushButton" name="delete_album_button">
    <property name="geometry">
     <rect>
      <x>690</x>
@@ -51,7 +51,7 @@
     <string>DELETE ALBUM</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="add_album_button_3">
+  <widget class="QPushButton" name="edit_album_button">
    <property name="geometry">
     <rect>
      <x>690</x>

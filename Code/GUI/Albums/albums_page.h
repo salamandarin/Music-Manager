@@ -18,9 +18,10 @@ public:
 
 private slots:
     void open_album_popup(Album& album);
+    void add_album();
 
 private:
-    void build_album_grid();
+    void build_grid();
     AlbumWidget* create_album_widget(Album& album, QWidget* parent);
 
     Ui::AlbumsPage* ui;

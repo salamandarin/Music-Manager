@@ -5,23 +5,31 @@
 #include "main_window.h"
 #include "album_widget.h"
 #include "album_popup.h"
+#include "add_album_popup.h"
 
 AlbumsPage::AlbumsPage(Core& core, MainWindow* parent)
     :core{core}, QWidget{parent}, ui{new Ui::AlbumsPage} {
     
     ui->setupUi(this);
-    build_album_grid(); // make album grid
+    build_grid(); // make album grid
 
     // connect page opened signal -> build grid
     connect(parent, &MainWindow::albums_page_opened,
-                    this, &AlbumsPage::build_album_grid);
+                    this, &AlbumsPage::build_grid);
+
+    // connect buttons to slots
+    connect(ui->add_album_button, &QPushButton::clicked,
+            this, &AlbumsPage::add_album);
 }
 
 AlbumsPage::~AlbumsPage() {
     delete ui;
 }
 
-void AlbumsPage::build_album_grid() {
+//--------------------------------------------------------------------------------
+//                                ALBUM GRID
+//--------------------------------------------------------------------------------
+void AlbumsPage::build_grid() {
     // disable GUI updates until done (so not slowing down)
     ui->scroll_area_widget_contents->setUpdatesEnabled(false);
 
@@ -70,7 +78,6 @@ AlbumWidget* AlbumsPage::create_album_widget(Album& album, QWidget* parent) {
     return album_widget;
 }
 
-
 void AlbumsPage::open_album_popup(Album& album) {
     // make popup 
     AlbumPopup* album_popup = new AlbumPopup(core, album, this);
@@ -81,3 +88,17 @@ void AlbumsPage::open_album_popup(Album& album) {
 
     album_popup->exec();
 }
+
+//--------------------------------------------------------------------------------
+//                                BUTTON SLOTS
+//--------------------------------------------------------------------------------
+void AlbumsPage::add_album() {
+    AddAlbumPopup* add_album_popup = new AddAlbumPopup(core, this);
+
+    // update table GUI if tracks were added
+    connect(add_album_popup, &AddAlbumPopup::album_added,  
+                        this, &AlbumsPage::build_grid);
+    
+    add_album_popup->exec();
+}
+
