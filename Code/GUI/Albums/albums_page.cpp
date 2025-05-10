@@ -11,6 +11,10 @@ AlbumsPage::AlbumsPage(Core& core, MainWindow* parent)
     
     ui->setupUi(this);
     build_album_grid(); // make album grid
+
+    // connect page opened signal -> build grid
+    connect(parent, &MainWindow::albums_page_opened,
+                    this, &AlbumsPage::build_album_grid);
 }
 
 AlbumsPage::~AlbumsPage() {
@@ -21,7 +25,12 @@ void AlbumsPage::build_album_grid() {
     // disable GUI updates until done (so not slowing down)
     ui->scroll_area_widget_contents->setUpdatesEnabled(false);
 
-    // TODO: CLEAR GRID FIRST!!!!
+    // clear grid first
+    QLayoutItem* child;
+    while ((child = ui->grid_layout->takeAt(0)) != 0) {
+        delete child->widget();
+        delete child;
+    }
 
     // grab all albums, fill in grid
     std::vector<Album> albums = core.get_all_albums(); // get all albums

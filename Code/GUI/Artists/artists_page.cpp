@@ -9,14 +9,21 @@ ArtistsPage::ArtistsPage(Core& core, MainWindow* parent)
     :core{core}, QWidget{parent}, ui{new Ui::ArtistsPage} {
     
     ui->setupUi(this);
-    update_list(); // fill in artists
+    build_list(); // fill in artists
+
+    // connect page opened signal -> build list
+    connect(parent, &MainWindow::artists_page_opened,
+                    this, &ArtistsPage::build_list);
 }
 
 ArtistsPage::~ArtistsPage() {
     delete ui;
 }
 
-void ArtistsPage::update_list() {
+void ArtistsPage::build_list() {
+    // clear list first
+    ui->artists_list->clear();
+
     std::vector<Artist> artists = core.get_all_artists();
 
     for (const Artist& artist : artists) {

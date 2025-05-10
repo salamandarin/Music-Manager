@@ -36,12 +36,15 @@ MainWindow::~MainWindow() {
 
 
 void MainWindow::show_tracks_page() {
+    // TODO: rebuild on opening?
     ui->stacked_widget->setCurrentWidget(tracks_page);
 }
 void MainWindow::show_albums_page() {
+    emit albums_page_opened(); // emit signal to update GUI // TODO: test how slow it would be if 100 albums
     ui->stacked_widget->setCurrentWidget(albums_page);
 }
 void MainWindow::show_artists_page() {
+    emit artists_page_opened(); // emit signal to update GUI // TODO: test how slow it would be if 100?
     ui->stacked_widget->setCurrentWidget(artists_page);
 }
 void MainWindow::show_settings() {

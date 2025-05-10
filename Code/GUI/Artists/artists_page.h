@@ -15,7 +15,7 @@ public:
     ~ArtistsPage();
 
 private:
-    void update_list();
+    void build_list();
 
     Ui::ArtistsPage* ui;
     Core& core;
