@@ -14,7 +14,7 @@ public:
     ~AddTrackPopup();
 
 signals:  
-    void tracks_added();
+    void track_added();
 
 private slots:
     void add_image_file();

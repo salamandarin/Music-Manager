@@ -95,7 +95,7 @@ void TracksPage::manually_add_track() {
     AddTrackPopup* add_track_popup = new AddTrackPopup(core, this);
 
     // update table GUI if tracks were added
-    connect(add_track_popup, &AddTrackPopup::tracks_added,  
+    connect(add_track_popup, &AddTrackPopup::track_added,  
                         this, &TracksPage::build_table);
     
     add_track_popup->exec();

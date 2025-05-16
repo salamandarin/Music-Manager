@@ -115,7 +115,7 @@ void TrackPopup::edit_title() {
     set_data(); // update this popup
     emit track_updated(track_id); // emit signal so main table can refresh
 }
-void TrackPopup::edit_artist() {
+void TrackPopup::edit_artist() { // TODO: make dropdown to get id???
     // grab new data
     std::string new_artist = ui->edit_artist_input->text().trimmed().toStdString(); // trim to remove extra whitespace
 
@@ -126,7 +126,7 @@ void TrackPopup::edit_artist() {
     set_data(); // update this popup
     emit track_updated(track_id); // emit signal so main table can refresh
 }
-void TrackPopup::edit_album() {
+void TrackPopup::edit_album() { // TODO: make dropdown to get id???
     // grab new data
     std::string new_album = ui->edit_album_input->text().trimmed().toStdString(); // trim to remove extra whitespace
 

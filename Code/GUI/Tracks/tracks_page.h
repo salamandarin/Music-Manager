@@ -14,10 +14,6 @@ public:
     TracksPage(Core& core, MainWindow* parent=nullptr);
     ~TracksPage();
 
-    // table stuff
-    void build_table();
-    void update_row(int row, int track_id);
-
 protected:
     void keyPressEvent(QKeyEvent* key_press) override;
 
@@ -33,6 +29,10 @@ private slots:
     void update_track(int track_id); 
 
 private:
+    // table stuff
+    void build_table();
+    void update_row(int row, int track_id);
+    
     // helper functions
     int get_track_row(int track_id);
     int get_track_id(int row);

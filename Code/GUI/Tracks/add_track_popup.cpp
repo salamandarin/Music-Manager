@@ -45,8 +45,8 @@ void AddTrackPopup::add_track() {
     Track track;
     track.image_path = ui->image_path->text().trimmed().toStdString();
     track.title = ui->title_input->text().trimmed().toStdString();
-    track.artist = ui->artist_input->text().trimmed().toStdString();
-    track.album = ui->album_input->text().trimmed().toStdString();
+    track.artist = ui->artist_input->text().trimmed().toStdString(); // TODO: make dropdown to get id???
+    track.album = ui->album_input->text().trimmed().toStdString(); // TODO: make dropdown to get id???
     // check if date was entered
     if (date_modified) {
         QDate qt_date = ui->date_input->date();
@@ -56,5 +56,5 @@ void AddTrackPopup::add_track() {
     
     core.add_track(track); // add track
 
-    emit tracks_added(); // emit signal to update table GUI
+    emit track_added(); // emit signal to update table GUI
 }
