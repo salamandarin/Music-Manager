@@ -11,5 +11,5 @@ namespace gui_utils {
 
     void set_image(std::string image_path, const std::string& default_image, QLabel* label,
                     QWidget* error_popup_parent=nullptr);
-                    
+    QPixmap round_image_corners(const QPixmap& image, int radius);
 }
