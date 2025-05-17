@@ -27,7 +27,9 @@ enum Columns {
     NUM_COLUMNS // total # of columns (last column # + 1)
 };
 
-const int IMAGE_SIZE = 50;
+// sizes
+const int ROW_HEIGHT = 60;
+const int IMAGE_MARGIN = 5;
 
 TracksPage::TracksPage(Core& core, MainWindow* parent)
     :core{core}, QWidget{parent}, ui{new Ui::TracksPage} {
@@ -36,8 +38,9 @@ TracksPage::TracksPage(Core& core, MainWindow* parent)
     // set up table
     ui->tracks_table->setColumnCount(NUM_COLUMNS);
     ui->tracks_table->setHorizontalHeaderLabels({"", "Title", "Artist", "Album", "Duration", "Date", "Tracklist #"});
-    ui->tracks_table->verticalHeader()->setDefaultAlignment(Qt::AlignCenter);
-    ui->tracks_table->verticalHeader()->setDefaultSectionSize(IMAGE_SIZE); // row height
+    ui->tracks_table->setShowGrid(false); // remove grid lines
+    ui->tracks_table->verticalHeader()->setDefaultAlignment(Qt::AlignCenter); // align numbers
+    ui->tracks_table->verticalHeader()->setDefaultSectionSize(ROW_HEIGHT); // row height // TODO: image margins????????
     ui->tracks_table->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed); // row height resize off
     ui->tracks_table->verticalScrollBar()->setSingleStep(5); // adjust scroll speed
 
@@ -135,10 +138,11 @@ void TracksPage::build_table() {
         // -------------------- IMAGE --------------------
         // set either actual or default image
         QLabel* image_label = new QLabel();
-        image_label->setFixedSize(IMAGE_SIZE, IMAGE_SIZE);
+        image_label->setFixedSize(ROW_HEIGHT, ROW_HEIGHT); // TODO: image margins????????
         set_image(tracks[i].image_path, DEFAULT_TRACK_IMAGE, image_label); // put image in label
         // put image (inside QLabel) into row
         ui->tracks_table->setCellWidget(i, IMAGE_COLUMN, image_label);
+        ui->tracks_table->cellWidget(i, IMAGE_COLUMN)->setContentsMargins(IMAGE_MARGIN, IMAGE_MARGIN, IMAGE_MARGIN, IMAGE_MARGIN); // set margins
 
 
         // -------------------- OTHER COLUMNS --------------------
@@ -157,7 +161,7 @@ void TracksPage::build_table() {
     
     // resize column widths
     ui->tracks_table->resizeColumnsToContents(); // resize to fit
-    ui->tracks_table->setColumnWidth(IMAGE_COLUMN, IMAGE_SIZE);
+    ui->tracks_table->setColumnWidth(IMAGE_COLUMN, ROW_HEIGHT); // width = height so square // TODO: image margins????????
     ui->tracks_table->setColumnWidth(TITLE_COLUMN, 350);
     ui->tracks_table->setColumnWidth(ALBUM_COLUMN, 200);
     ui->tracks_table->setColumnWidth(TRACKLIST_NUM_COLUMN, 50);
