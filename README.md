@@ -1,16 +1,27 @@
 # Music Manager
 
+![](Code/GUI/Main/Default_Images/tracks_page.png)
+
 # Installation
 
-1. Install libraries (Qt, TagLib, & Sqlite3)
-    > `brew install qt taglib sqlite3`
+1. Download this project
 
-2. Go to the 'Code' folder (which is inside the project folder)
+2. Install libraries (Qt, TagLib, Sqlite3)
+    - You can run this if using Homebrew on Mac:
+        > `brew install qt taglib sqlite3`
+
+3. Go to the 'Code' folder (which is inside the project folder)
     > `cd Code`
 
-3. Set working directory to 'Music-Manager' or whatever the project folder you downloaded is called
+4. Set working directory to 'Music-Manager' or whatever the project folder you downloaded is called
     - If you get the error: `std::runtime_error: unable to open database file` that means your working directory isn't right
         - Program automatically makes database file if doesn't exist, so you only get this error if it's looking in the wrong spot
+    - In CLion, set it in the configuration 
+        ![](Code/GUI/Main/Default_Images/CLion_working_dir_2.png)
+
+
+    - In Qt Creator, it's in *Projects / Run*
+        ![](Code/GUI/Main/Default_Images/Qt_working_dir_marked.png)
 
 4. Build & run the project with CMake
 
