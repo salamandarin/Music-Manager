@@ -6,6 +6,7 @@
 #include "add_track_popup.h"
 #include "gui_utils.h"
 #include "main_window.h"
+#include "settings_popup.h"
 #include <QLabel>
 #include <QInputDialog>
 #include <QFileDialog>
@@ -51,6 +52,10 @@ TracksPage::TracksPage(Core& core, MainWindow* parent)
     connect(ui->tracks_table, &QTableWidget::cellDoubleClicked,
                         this, &TracksPage::open_track_popup);
 
+    // connect library_deleted signal -> rebuild table
+    connect(parent, &MainWindow::library_deleted,
+            this, &TracksPage::build_table);
+
     // connect buttons to slots
     connect(ui->add_files_button, &QPushButton::clicked,
             this, &TracksPage::add_track_files);
@@ -58,9 +63,6 @@ TracksPage::TracksPage(Core& core, MainWindow* parent)
             this, &TracksPage::add_tracks_from_folder);
     connect(ui->manual_add_button, &QPushButton::clicked,
             this, &TracksPage::manually_add_track);
-
-    connect(ui->delete_library_button, &QPushButton::clicked, // TODO: DELETE THIS ENTIRE BUTTON
-                            this, &TracksPage::delete_library);
 }
 
 TracksPage::~TracksPage() {
@@ -102,18 +104,6 @@ void TracksPage::manually_add_track() {
                         this, &TracksPage::build_table);
     
     add_track_popup->exec();
-}
-
-void TracksPage::delete_library() { // TODO: DELETE THIS ENTIRE BUTTON
-    // get confirmation before deleting
-    QMessageBox::StandardButton confirmation = QMessageBox::question(this, "Delete Library", "Are you sure?",
-                                                QMessageBox::Yes | QMessageBox::No);
-    if (confirmation == QMessageBox::Yes) {
-        // delete libary + possible additional path
-        core.delete_entire_library();
-        
-        build_table(); // refresh table GUI
-    }
 }
 
 //--------------------------------------------------------------------------------

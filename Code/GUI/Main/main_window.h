@@ -19,6 +19,7 @@ public:
 signals:
     void albums_page_opened();
     void artists_page_opened();
+    void library_deleted();
 
 private slots:
     void show_tracks_page();

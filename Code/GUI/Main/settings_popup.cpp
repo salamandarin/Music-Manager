@@ -2,6 +2,7 @@
 #include "settings_popup.h"
 #include "ui_settings_popup.h"
 #include "core.h"
+#include <QMessageBox>
 
 SettingsPopup::SettingsPopup(Core& core, QWidget* parent)
     :core{core}, QDialog{parent}, ui{new Ui::SettingsPopup} {
@@ -28,6 +29,9 @@ SettingsPopup::SettingsPopup(Core& core, QWidget* parent)
     // restore defaults button
     connect(ui->button_box->button(QDialogButtonBox::RestoreDefaults), &QPushButton::clicked,
                                                     this, &SettingsPopup::restore_defaults);
+    // delete library button
+    connect(ui->delete_library_button, &QPushButton::clicked,
+                            this, &SettingsPopup::delete_library);
 }
 
 SettingsPopup::~SettingsPopup() {
@@ -50,4 +54,16 @@ void SettingsPopup::restore_defaults() {
 
     // properly check/uncheck boxes to match
     update_checkboxes();
+}
+
+void SettingsPopup::delete_library() {
+    // get confirmation before deleting
+    QMessageBox::StandardButton confirmation = QMessageBox::question(this, "Delete Library", "Are you sure? This will delete:\n\n - ALL music files\n - ALL image files\n - The ENTIRE database\n\n⚠ THIS CANNOT BE UNDONE ⚠",
+                                                QMessageBox::Yes | QMessageBox::No);
+    if (confirmation == QMessageBox::Yes) {
+        // delete libary
+        core.delete_entire_library();
+        
+        emit library_deleted(); // emit signal to rebuild table GUI
+    }
 }
