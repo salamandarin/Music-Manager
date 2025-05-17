@@ -13,8 +13,12 @@ public:
     SettingsPopup(Core& core, QWidget* parent=nullptr);
     ~SettingsPopup();
 
+signals:
+    void library_deleted();
+
 private slots:
     void restore_defaults();
+    void delete_library();
 
 private:
     void update_checkboxes();

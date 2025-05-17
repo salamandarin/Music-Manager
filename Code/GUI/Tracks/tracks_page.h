@@ -22,7 +22,6 @@ private slots:
     void add_track_files();
     void add_tracks_from_folder();
     void manually_add_track();
-    void delete_library();
 
     // track popup
     void open_track_popup(int row, int column);

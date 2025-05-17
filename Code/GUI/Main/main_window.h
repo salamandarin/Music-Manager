@@ -16,6 +16,9 @@ public:
     MainWindow(Core& core, QWidget* parent=nullptr);
     ~MainWindow();
 
+signals:
+    void library_deleted();
+
 private slots:
     void show_tracks_page();
     void show_albums_page();

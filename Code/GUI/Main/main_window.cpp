@@ -48,5 +48,10 @@ void MainWindow::show_artists_page() {
 }
 void MainWindow::show_settings() {
     SettingsPopup* settings_popup = new SettingsPopup(core, this);
+
+    // relay library_deleted signal to tracks table
+    connect(settings_popup, &SettingsPopup::library_deleted,
+                        this, &MainWindow::library_deleted); // emit signal
+
     settings_popup->exec();
 }

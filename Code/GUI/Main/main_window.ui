@@ -35,7 +35,7 @@
     <widget class="QPushButton" name="albums_page_button">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>20</x>
        <y>150</y>
        <width>170</width>
        <height>40</height>
@@ -48,7 +48,7 @@
     <widget class="QPushButton" name="tracks_page_button">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>20</x>
        <y>100</y>
        <width>170</width>
        <height>40</height>
@@ -61,7 +61,7 @@
     <widget class="QPushButton" name="artists_page_button">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>20</x>
        <y>200</y>
        <width>170</width>
        <height>40</height>
@@ -74,10 +74,10 @@
     <widget class="QPushButton" name="settings_button">
      <property name="geometry">
       <rect>
-       <x>40</x>
-       <y>10</y>
-       <width>111</width>
-       <height>31</height>
+       <x>20</x>
+       <y>620</y>
+       <width>171</width>
+       <height>41</height>
       </rect>
      </property>
      <property name="text">

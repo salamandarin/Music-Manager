@@ -40,6 +40,19 @@
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
+     <widget class="QPushButton" name="delete_library_button">
+      <property name="text">
+       <string>⚠ DELETE ENTIRE LIBRARY</string>
+      </property>
+      <property name="checkable">
+       <bool>false</bool>
+      </property>
+      <property name="checked">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="QPushButton" name="toggle_nested_button">
       <property name="text">
        <string>Toggle Nested File Structure</string>

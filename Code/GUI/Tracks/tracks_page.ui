@@ -39,29 +39,6 @@
     <string>Add Files from Folder</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="delete_library_button">
-   <property name="geometry">
-    <rect>
-     <x>900</x>
-     <y>20</y>
-     <width>151</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>10</pointsize>
-     <bold>false</bold>
-     <kerning>true</kerning>
-    </font>
-   </property>
-   <property name="toolTip">
-    <string extracomment="Nuke ENTIRE library, ALL music files, ALL image files, &amp; ENTIRE database"/>
-   </property>
-   <property name="text">
-    <string>⚠ DELETE ENTIRE LIBRARY</string>
-   </property>
-  </widget>
   <widget class="QTableWidget" name="tracks_table">
    <property name="geometry">
     <rect>
