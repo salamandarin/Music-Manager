@@ -13,6 +13,7 @@
 #include <taglib/wavfile.h>
 #include <taglib/mp4file.h>
 #include <fstream>
+#include <climits>
 
 MetadataManager::MetadataManager(const std::string& file_path)
     // save file path, open file with TagLib

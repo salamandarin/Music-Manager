@@ -2,6 +2,8 @@
 #pragma once
 #include <ostream>
 #include <string>
+#include <optional>
+#include <limits>
 
 class Date {
 public:
