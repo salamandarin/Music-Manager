@@ -7,6 +7,8 @@
 #include "date.h"
 #include <string>
 #include <sqlite3.h>
+#include <unordered_map>
+#include <vector>
 
 class DatabaseManager {
 public:

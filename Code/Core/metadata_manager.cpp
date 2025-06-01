@@ -2,6 +2,7 @@
 #include "metadata_manager.h"
 #include "file_manager.h"
 #include <taglib/tag.h>
+#include <climits>
 // TODO: FIGURE OUT WHAT'S NEEDED
 #include <filesystem>
 #include <taglib/fileref.h>
