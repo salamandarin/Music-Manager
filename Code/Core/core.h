@@ -49,6 +49,7 @@ public:
 
     void set_track_artist(int track_id, const std::string& artist_name);
     void set_track_artist_id(int track_id, int artist_id);
+    void set_track_artist_id(Track track, int artist_id);
 
     void set_track_album(int track_id, const std::string& album_title);
     void set_track_album_id(int track_id, int album_id);
@@ -115,8 +116,10 @@ private:
     void update_file_structure();
     std::string set_file_title(const std::string& file_path); // make track title & file name match
     
-    void set_track_file_artist(int track_id, const Track& track_data);
-    void set_track_file_album(int track_id, const Track& track_data);
+    void file_set_track_artist(const Track& track_data);
+    void file_set_track_album(const Track& track_data);
+
+    void set_album_artist_children(int album_id, int artist_id);
 
     DatabaseManager database;
 

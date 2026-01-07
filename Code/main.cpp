@@ -6,6 +6,9 @@
 
 int main(int argc, char* argv[]) {
     try {
+        // set working directory // TODO: fix cuz hardcoded to only MY computer
+        std::filesystem::current_path("/Users/Sam/Desktop/Computer_Science/Personal_Projects/1-GitHub/Music_Manager");
+
         QApplication application(argc, argv); // starts Qt program
         Core core;
 
