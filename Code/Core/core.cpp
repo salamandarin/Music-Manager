@@ -473,9 +473,11 @@ void Core::set_album_title(int album_id, const std::string& album_title) {
     // update in database
     database.set_album_title(album_id, album_title);
 
-    // TODO: FINISH
-    // TODO: FILE / METADATA CODE
-    // TODO: CASCADING FILE INFO??
+    // update metadata / file path of child tracks (don't need to do child db updates cuz db uses ids)
+    std::vector<Track> tracks = database.get_album_tracks(album_id);
+    for (const Track& track : tracks) {
+        file_set_track_album(track);
+    }
 }
 
 // ------------------------------ SET ALBUM ARTIST ------------------------------
@@ -491,9 +493,13 @@ void Core::set_album_artist(int album_id, const std::string& artist_name) {
     // update in database
     database.set_album_artist(album_id, artist_name);
 
-    // TODO: FINISH
-    // TODO: FILE / METADATA CODE
-    // TODO: CASCADING FILE INFO??
+    // update artist of child tracks to match
+    // get artist_id
+    std::optional<int> artist_id = database.get_artist_id(artist_name);
+    if (!artist_id) {
+        throw std::runtime_error("Can't find artist id AFTER setting album's artist in db???? Artist name: " + artist_name);
+    }
+    set_album_artist_children(album_id, *artist_id); // call helper function
 }
 void Core::set_album_artist_id(int album_id, int artist_id) {
     // make sure isn't same as old artist_id
@@ -507,9 +513,17 @@ void Core::set_album_artist_id(int album_id, int artist_id) {
     // update in database
     database.set_album_artist_id(album_id, artist_id);
 
-    // TODO: FINISH
-    // TODO: FILE / METADATA CODE
-    // TODO: CASCADING FILE INFO??
+    // update artist of child tracks to match
+    set_album_artist_children(album_id, artist_id); // call helper function
+}
+// private helper function for cascading data
+void Core::set_album_artist_children(int album_id, int artist_id) {
+    // update artist of child tracks to match
+    // TODO: KEEP OR REPLACE THIS?? (what if track has multiple artists (like features)???)
+    std::vector<Track> tracks = database.get_artist_tracks(artist_id);
+    for (const Track& track : tracks) {
+        set_track_artist_id(track, artist_id);
+    }
 }
 
 // ------------------------------ SET ALBUM DATE ------------------------------
@@ -527,7 +541,7 @@ void Core::set_album_date(int album_id, const Date& album_date) {
 
     // TODO: FINISH
     // TODO: FILE / METADATA CODE
-    // TODO: CASCADING FILE INFO??
+    // TODO: CASCADING FILE INFO?? But what if track is SINGLE?????????????????????
 }
 
 // ------------------------------ SET ALBUM'S TYPE ------------------------------
