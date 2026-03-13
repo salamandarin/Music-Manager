@@ -11,9 +11,9 @@ namespace filesystem = std::filesystem;
 //                                  SAVE FILES
 //--------------------------------------------------------------------------------
 std::string FileManager::save_music_file(const filesystem::path& current_path,const Track& track,
-                                        bool is_nested, bool copy_music_files) {
+                                        bool is_nested, bool should_copy_music_files) {
     filesystem::path new_path = make_music_file_path(current_path, track, is_nested);
-    if (copy_music_files) {
+    if (should_copy_music_files) {
         new_path = copy_file(current_path, new_path);
     }
     else {

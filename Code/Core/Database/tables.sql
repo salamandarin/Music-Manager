@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS tracks
 INSERT OR IGNORE INTO settings (name, value)
 VALUES
     ('is_nested', 1), -- true
-    ('copy_music_files', 1); -- true
+    ('should_copy_music_files', 1); -- true
 
 -- Insert: album types
 INSERT OR IGNORE INTO album_types (name)

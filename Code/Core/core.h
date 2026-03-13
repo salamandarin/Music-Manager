@@ -16,8 +16,8 @@ public:
     bool get_is_nested();
     void set_is_nested(bool new_value);
     
-    bool get_copy_music_files();
-    void set_copy_music_files(bool new_value);
+    bool get_should_copy_music_files();
+    void set_should_copy_music_files(bool new_value);
 
     // ------------------------- ADD OBJECTS -------------------------
     // add tracks
@@ -125,5 +125,5 @@ private:
 
     // settings
     bool is_nested;
-    bool copy_music_files;
+    bool should_copy_music_files;
 };

@@ -11,7 +11,7 @@ Core::Core()
         // grab settings from database
         std::unordered_map<std::string, bool> settings = database.get_all_settings();
         is_nested = settings.at("is_nested");
-        copy_music_files = settings.at("copy_music_files");
+        should_copy_music_files = settings.at("should_copy_music_files");
     }
 
 //--------------------------------------------------------------------------------
@@ -32,16 +32,16 @@ void Core::set_is_nested(bool new_value) {
     update_file_structure();
 }
 
-// copy_music_files
-bool Core::get_copy_music_files() {
-    return copy_music_files;
+// should_copy_music_files
+bool Core::get_should_copy_music_files() {
+    return should_copy_music_files;
 }
-void Core::set_copy_music_files(bool new_value) {
-    if (copy_music_files == new_value) return; // don't do anything if same
+void Core::set_should_copy_music_files(bool new_value) {
+    if (should_copy_music_files == new_value) return; // don't do anything if same
 
     // update value
-    copy_music_files = new_value;
-    database.set_setting_value("copy_music_files", new_value);
+    should_copy_music_files = new_value;
+    database.set_setting_value("should_copy_music_files", new_value);
 }
 
 //--------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ void Core::add_track(std::string file_path) {
     track.image_path = metadata_manager.save_cover_art();
 
     // save music file to correct location
-    track.file_path = FileManager::save_music_file(track.file_path, track, is_nested, copy_music_files);
+    track.file_path = FileManager::save_music_file(track.file_path, track, is_nested, should_copy_music_files);
 
     // log info to database
     database.add_track(track);
@@ -399,7 +399,7 @@ void Core::set_track_file(int track_id, std::string file_path) {
     new_track.image_path = metadata_manager.save_cover_art();
 
     // save music file to correct location
-    file_path = FileManager::save_music_file(track.file_path, track, is_nested, copy_music_files);
+    file_path = FileManager::save_music_file(track.file_path, track, is_nested, should_copy_music_files);
 
     // update database with new file path
     database.set_track_file_path(track.id, file_path);
