@@ -6,7 +6,7 @@
 
 int main(int argc, char* argv[]) {
     try {
-        // set working directory // TODO: fix cuz hardcoded to only MY computer
+        // set working directory // TODO: fix cuz HARDCODED to only MY computer
         std::filesystem::current_path("/Users/Sam/Desktop/Computer_Science/Personal_Projects/1-GitHub/Music_Manager");
 
         QApplication application(argc, argv); // starts Qt program
@@ -18,6 +18,6 @@ int main(int argc, char* argv[]) {
         return application.exec(); // keeps program running
     }
     catch (std::runtime_error& error) {
-        std::cout << "\nError: " << error.what() << "\n";
+        std::cout << "\n\nError: " << error.what() << std::endl;
     }
  }
