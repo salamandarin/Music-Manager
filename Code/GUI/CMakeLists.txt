@@ -14,7 +14,6 @@ add_library(GUI
 
         Artists/artists_page.cpp Artists/artists_page.ui
 )
-target_compile_options(GUI PUBLIC -std=c++17)
 
 target_include_directories(GUI PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}

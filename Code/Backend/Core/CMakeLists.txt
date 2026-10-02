@@ -8,7 +8,6 @@ add_library(Core
         Data_Types/duration.cpp
         Data_Types/date.cpp
 )
-target_compile_options(Core PUBLIC -std=c++17)
 
 target_include_directories(Core PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}
