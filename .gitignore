@@ -34,8 +34,9 @@
 *.out
 *.app
 
-# Apple index
+# Apple
 .DS_Store
+*.plist
 
 # CMake
 build
