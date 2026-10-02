@@ -16,9 +16,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
-# Core folder
-add_subdirectory(Core)
-target_link_libraries(music PRIVATE Core)
+# Backend folder
+add_subdirectory(Backend)
+target_link_libraries(music PRIVATE Backend)
 
 # GUI folder
 add_subdirectory(GUI) 

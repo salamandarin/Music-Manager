@@ -7,7 +7,7 @@
 //--------------------------------------------------------------------------------
 DatabaseManager::DatabaseManager() {
     // open database
-    int return_code = sqlite3_open("Code/Core/Database/music_manager.db", &database);
+    int return_code = sqlite3_open("Code/Backend/Core/Database/music_manager.db", &database);
     if (return_code){
         throw std::runtime_error(sqlite3_errmsg(database));
     }

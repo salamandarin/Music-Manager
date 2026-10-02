@@ -7,7 +7,6 @@ add_library(Core
         # Data_Types
         Data_Types/duration.cpp
         Data_Types/date.cpp
-        Data_Types/wav.cpp
 )
 target_compile_options(Core PUBLIC -std=c++17)
 
@@ -16,8 +15,10 @@ target_include_directories(Core PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/Data_Types # include Data_Types
 )
 
-# TagLib
+# -------------------- dependencies --------------------
 find_package(PkgConfig REQUIRED)
+
+# TagLib
 pkg_search_module(TAGLIB REQUIRED taglib)
 target_include_directories(Core PUBLIC ${TAGLIB_INCLUDE_DIRS})
 target_link_directories(Core PUBLIC ${TAGLIB_LIBRARY_DIRS})
@@ -25,4 +26,4 @@ target_link_libraries(Core PUBLIC ${TAGLIB_LIBRARIES})
 
 # SQLite3
 find_package(SQLite3 REQUIRED)
-target_link_libraries(Core PRIVATE SQLite::SQLite3)
+target_link_libraries(Core PRIVATE SQLite3::SQLite3)
