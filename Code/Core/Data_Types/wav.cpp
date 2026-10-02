@@ -13,6 +13,13 @@ WAV::WAV(const std::filesystem::path& file_name)
             throw std::runtime_error("Could not open wav file: " + file_name.string());
         }
 
+        // TODO: DELETE
+        // char byte;
+        // while (file.get(byte)) {
+        //     std::cout << std::bitset<8>(static_cast<unsigned char>(byte)) << " ";
+        // }
+        // TODO: DELETE
+
         //--------------------------------------------------------------------------------
         //                                  HEADER
         //--------------------------------------------------------------------------------
@@ -47,7 +54,8 @@ WAV::WAV(const std::filesystem::path& file_name)
         bits_per_sample = read_u16_lilend(file);
 
         // TODO: might be more stuff in fmt depending?? (check size maybe?)
-
+        
+        // TODO: -SEEK- TO FIND WHERE DATA STARTS (SKIP EXTRA?)
 
         // ------------------------------ data subchunk ------------------------------
         subchunk_2_id = read_u32_bigend(file);

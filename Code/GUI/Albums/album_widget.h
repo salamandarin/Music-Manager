@@ -10,7 +10,7 @@ class Album;
 class AlbumWidget : public QWidget {
     Q_OBJECT
 public:
-    AlbumWidget(Album& core, QWidget* parent=nullptr);
+    AlbumWidget(Album& album, QWidget* parent=nullptr);
     ~AlbumWidget();
 
 signals:
